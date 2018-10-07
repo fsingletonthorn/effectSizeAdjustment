@@ -44,4 +44,4 @@ table3Dat <- str_replace(table3Dat, ",", "")
 table3 <- data.frame(str_split(table3Dat, " ", simplify = T))
 names(table3) <- colLabs
 
-write.csv(table2, file = "Data/ManyLabs3_Data.csv", na = "NA")
+write.csv(table2, file = "", na = "NA")
