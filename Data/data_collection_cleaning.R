@@ -29,9 +29,8 @@ colnames(MASTER)[1] <- "ID" # Change first column name to ID to be able to load 
 ## Trimming master down
 MASTER <- MASTER[(MASTER$Completion..R. == 1)&!is.na(MASTER$Completion..R.),]
 
-###########################################
-### Transforming correlations to Fisher ###
-###########################################
+
+### Transforming correlations to Fisher's z
 RPP<-data.frame(ri.o  = MASTER$T_r..O.)
 
 RPP$ri.o <- MASTER$T_r..O.
@@ -67,7 +66,6 @@ for(i in 1:length(RPP$fis.o)) {
   else if(RPP$fis.o[i] < 0 & RPP$fis.r[i] < 0) { RPP$yi[i] <- RPP$fis.o[i]*-1-RPP$fis.r[i]*-1 } 
   else if(RPP$fis.o[i] < 0 & RPP$fis.r[i] > 0) { RPP$yi[i] <- RPP$fis.o[i]*-1+RPP$fis.r[i] }
   else {  RPP$yi[i] <- RPP$fis.o[i]-RPP$fis.r[i] }
-  
 }
 
 ### Standard errors original and replication study
@@ -95,7 +93,7 @@ data <- data.frame(authorsTitle.o = paste0(MASTER$Authors..O., "-", MASTER$Study
                    pVal.r = RPP$pval.r,
                    seDifference.ro = RPP$sei)
 
-# Removing 3 missing articles 
+# Removing 3 missing articles (NS origs)
 data <- data[!is.na(RPP$ri.o) & !is.na(RPP$ri.r),]
 
 data$source <- "OSCRPP"
@@ -124,42 +122,53 @@ ManyLabs1[c("95CIlb.r", "95CIub.r")]<- str_split(ManyLabs1$`99% CI Lower, Upper.
 # Transforming into numerics
 ManyLabs1[c("95CIlb.O", "95CIub.O","95CIlb.r", "95CIub.r", 'ES.o')] <- sapply(ManyLabs1[c("95CIlb.O", "95CIub.O","95CIlb.r", "95CIub.r", "ES.o")], as.numeric) 
 
-# calculating SEs based on CIs
-ManyLabs1['se.o'] <-  ((ManyLabs1["95CIub.O"] - ManyLabs1["95CIlb.O"]))/ 3.92
-ManyLabs1['se.r'] <-  ((ManyLabs1["95CIub.r"] - ManyLabs1["95CIlb.r"]))/ 3.92
+## calculating SEs based on CIs # only OK as a large sample approximation ~ best to avoid using if at all possible
+#ManyLabs1['se.o'] <-  ((ManyLabs1["95CIub.O"] - ManyLabs1["95CIlb.O"]))/ 3.92
+#ManyLabs1['se.r'] <-  ((ManyLabs1["95CIub.r"] - ManyLabs1["95CIlb.r"]))/ 3.92
 
 # calcualting p values following Altman, D. G., & Bland, J. M. (2011). How to obtain the P value from a confidence interval. BMJ, 343.  Retrieved from http://www.bmj.com/content/343/bmj.d2304.abstract
-ManyLabs1['pVal.o'] <- exp(-0.717*(ManyLabs1$ES.o/ManyLabs1$se.o) - 0.416*(ManyLabs1$ES.o/ManyLabs1$se.o)^2)
+# ManyLabs1['pVal.o'] <- exp(-0.717*(ManyLabs1$ES.o/ManyLabs1$se.o) - 0.416*(ManyLabs1$ES.o/ManyLabs1$se.o)^2)
 
-# Extracting avaliable correlations - initializing 
-ManyLabs1ML_orig$Correlation <- NA 
-# All correlations reported in the paper were .42 (including 2 different studies)
-ManyLabs1ML_orig$Correlation[grepl("Anchoring", ManyLabs1ML_orig$Study.name) | grepl("Relations between I and E math attitudes", ManyLabs1ML_orig$Study.name)] <- .42
+# calculating sample size complete
+ManyLabs1$n.o <- ManyLabs1ML_orig$N1 + ManyLabs1ML_orig$N2
 
-es <- res(r =  ManyLabs1ML_orig$Correlation, n = ManyLabs1ML_orig$N1, dig = 5)
+# calculating r and fisher z from d 
+es.o <- des(d = ManyLabs1$ES.o, n.1 = ManyLabs1$n.o/2, n.2 =  ManyLabs1$n.o/2)
 
 # SE calculated following Borenstein, M., Hedges, L. V., Higgins, J. P., & Rothstein, H. R. (2011). Introduction to Meta-Analysis. West Sussex, United Kingdom: John Wiley & Sons.  equation 6.4
-es$se.z <- ifelse(!is.na(es$r),  sqrt(es$var.r), NA)
+es.o$se.z <- ifelse(!is.na(es.o$r),  sqrt(1/(ManyLabs1$n.o -3)), NA) 
+
+## Removing invalid SEs (studies which use CHI squre stats)
+es.o$se.z[str_detect(string =ManyLabs1ML_orig$Result.used,  c("Chi"))] <- NA
+
+# calculating r and fisher z from d 
+es.r <- des(d = ManyLabs1$`Replication ES.r`, n.1 = ManyLabs1$N.r/2, n.2 =  ManyLabs1$N.r/2)
+
+# SE calculated following Borenstein, M., Hedges, L. V., Higgins, J. P., & Rothstein, H. R. (2011). Introduction to Meta-Analysis. West Sussex, United Kingdom: John Wiley & Sons.  equation 6.4
+es.r$se.z <- ifelse(!is.na(es.r$r),  sqrt(1/(ManyLabs1$N.r -3)), NA) 
+
+## Removing invalid SEs (studies which use CHI square stats)
+es.r$se.z[str_detect(string = ManyLabs1$`Key statistics.r`,  "X")] <- NA
+es.r$pval.r[str_detect(string = ManyLabs1$`Key statistics.r`,  c("X"))] <- NA
 
 ########## End Many labs 1 data recollection ########
-
 data2 <- data.frame(authorsTitle.o = ManyLabs1ML_orig$Reference,
-                   correlation.o = ManyLabs1ML_orig$Correlation, 
-                   cohenD.o = ManyLabs1$ES.o, 
-                   fis.o = es$fisher.z, # Fishers z transform
-                   seFish.o = es$se.z,
-                   n.o = ManyLabs1ML_orig$N1+ManyLabs1ML_orig$N2,
-                   seCohenD.o = ManyLabs1$se.o, 
-                   pVal.o = ManyLabs1['pVal.o'],
-                   resultUsedInRep.o = ManyLabs1ML_orig$Result.used,
-                   correlation.r = NA,
-                   cohenD.r = ManyLabs1$`Replication ES.r`, 
-                   fis.r = es$fisher.z, # Fishers z transform
-                   seFish.r = NA,
-                   n.r = ManyLabs1$N.r,
-                   seCohenD.r = ManyLabs1$se.r,
-                   pVal.r = ManyLabs1$p.r,
-                   seDifference.ro = NA)
+                    correlation.o = es.o$r,
+                    cohenD.o = ManyLabs1$ES.o,
+                    fis.o = es.o$fisher.z, # Fishers z transform
+                    seFish.o = es.o$se.z,
+                    n.o = ManyLabs1$n.o,
+                    seCohenD.o = NA, 
+                    pVal.o = es.o$pval.r,
+                    resultUsedInRep.o = ManyLabs1ML_orig$Result.used,
+                    correlation.r = es.r$r,
+                    cohenD.r = ManyLabs1$`Replication ES.r`,  
+                    seCohenD.r = NA,
+                    fis.r = es.r$fisher.z, # Fishers z transform
+                    seFish.r = es.r$se.z,
+                    n.r = ManyLabs1$N.r,
+                    pVal.r = es.r$pval.r,
+                    seDifference.ro = NA)
 
 data2$source <- "ManyLabs1"
 
@@ -170,59 +179,44 @@ rm(list = c("es","ManyLabs1","ManyLabs1ML_orig"))
 ##### Many labs 3 data recollection ####
 ManyLabs3 <- read_csv("Data/ManyLabs3_Data_ManualAdditions.csv")
 
-# Removing partial eta^2eds  
+# Removing partial eta^2eds  !!!
 ManyLabs3 <-ManyLabs3[ManyLabs3$ESstat=="d",]
-ManyLabs3$corr.o <- es 
-
-# calcualting p values following Altman, D. G., & Bland, J. M. (2011). How to obtain the P value from a confidence interval. BMJ, 343.  Retrieved from http://www.bmj.com/content/343/bmj.d2304.abstract
-ManyLabs3['pVal.o'] <- exp(-0.717*(ManyLabs3$ESOriginal/ManyLabs1$se.o) - 0.416*(ManyLabs1$ES.o/ManyLabs1$se.o)^2)
 
 # converting effect sizes 
 es.o <- des(d = ManyLabs3$ESOriginal, n.1 = ManyLabs3$n.o/2, n.2 = ManyLabs3$n.o/2, dig = 5)
-es.o$seFish <-ifelse(!is.na(es$r),  sqrt(es$var.r), NA)
+es.o$seFish <-ifelse(!is.na(es.o$r),  sqrt(1/(ManyLabs3$N.r -3)), NA)
 
 # Converting rep ESs 
 es.r <- des(d = ManyLabs3$ReplicationES, n.1 = ManyLabs3$N.r/2,  n.2 = ManyLabs3$N.r/2, dig = 5)
-es.r$seFish <- ifelse(!is.na(es$r),  sqrt(es$var.r), NA)
+es.r$seFish <- ifelse(!is.na(es.r$r),  sqrt(1/(ManyLabs3$n.o -3)), NA)
 
-# calculating SEs based on CIs
-ManyLabs3['se.o'] <-  ((ManyLabs3$ESOriginal95CIUpper -  ManyLabs3$ESOriginal95CILower))/ 3.92
-ManyLabs3['se.r'] <-  ((ManyLabs3$Replication95CIUpper - ManyLabs3$Replication95CILower))/ 3.92
-
-# calcualting p values following Altman, D. G., & Bland, J. M. (2011). How to obtain the P value from a confidence interval. BMJ, 343.  Retrieved from http://www.bmj.com/content/343/bmj.d2304.abstract
-ManyLabs3['pVal.o'] <- exp(-0.717*(ManyLabs3$ESOriginal/ManyLabs3$se.o) - 0.416*(ManyLabs3$ESOriginal/ManyLabs3$se.o)^2)
-
+# Amalgomating 
 data3 <- data.frame(authorsTitle.o = ManyLabs3$originalEffects,
                     correlation.o = es.o$r, 
                     cohenD.o = ManyLabs3$ESOriginal, 
+                    seCohenD.o =  ManyLabs3$se.o,
                     fis.o = es.o$fisher.z, 
                     seFish.o = es.o$seFish,
                     n.o = ManyLabs3$n.o,
-                    seCohenD.o = ,
-                    pVal.o = ,
-                    resultUsedInRep.o = ,
-                    correlation.r = NA,
+                    pVal.o = ManyLabs3$pVal.o,
+                    resultUsedInRep.o = NA,
+                    correlation.r = es.r$r,
                     cohenD.r = ManyLabs3$MedianReplicationES, 
-                    fis.r = ,
-                    seFish.r = ,
-                    n.r = ,
-                    seCohenD.r = ,
-                    pVal.r = ,
+                    seCohenD.r =  ManyLabs3$se.r,
+                    fis.r = es.r$fisher.z,
+                    seFish.r = es.r$seFish,
+                    n.r = ManyLabs3$N.r,
+                    pVal.r = ManyLabs3$p.r,
                     seDifference.ro = NA)
 
+data3$source <- "ManyLabs3"
+
+### 
+# Removing everything apart from data sets  
+# rm(list = c("es.o", "es.r", "ManyLabs1","ManyLabs1ML_orig"))
 
 
-
-
-
-
-
-
-
-
-
-
-# careful with coercction ~ especially of p values some of which are marked as <.001 for example
+# careful with coersion ~ especially of p values some of which are marked as <.001 for example
 
 
 # View(join_all(list(data, data2), type = 'full'))
@@ -265,8 +259,8 @@ datax <- data.frame(authorsTitle.o = ,
 
 
 
-
-
+## https://osf.io/z7aux/
+## HAVE TO GO THROUGH AND REMOVE THOSE BASED ON Effect size statistics based on F(df1> 1, df2) and χ2(df) can be converted to correlations (see A3), but their standard errors cannot be computed. 
 
 
 
