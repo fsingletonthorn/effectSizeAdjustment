@@ -4,7 +4,6 @@ library(MBESS)
 library(compute.es)
 library(readr)
 #source(file = "Data/Functions/any_to_any.R") # Not necessary 
-
 ## First extracting data from the OSC's RPP 
 
 ########################################################################################
@@ -113,21 +112,11 @@ ManyLabs1ML_orig <- read_excel("Data/ManyLabs1_Original_ES95CI.xls")
 
 ManyLabs1ML_orig<-ManyLabs1ML_orig[order(match(ManyLabs1ML_orig$Study.name, ManyLabs1$Effect)),]
 
-# Calculating standard errors following: 
-# http://handbook-5-1.cochrane.org/chapter_7/7_7_7_2_obtaining_standard_errors_from_confidence_intervals_and.htm
-# SE = (upper limit – lower limit) / 3.92.
-
 ManyLabs1[c("95CIlb.O", "95CIub.O")]<- str_split(ManyLabs1$`95% CI Lower, Upper.o`, pattern = ", ", simplify = T)
 ManyLabs1[c("95CIlb.r", "95CIub.r")]<- str_split(ManyLabs1$`99% CI Lower, Upper.r`, pattern = ", ", simplify = T)
+
 # Transforming into numerics
 ManyLabs1[c("95CIlb.O", "95CIub.O","95CIlb.r", "95CIub.r", 'ES.o')] <- sapply(ManyLabs1[c("95CIlb.O", "95CIub.O","95CIlb.r", "95CIub.r", "ES.o")], as.numeric) 
-
-## calculating SEs based on CIs # only OK as a large sample approximation ~ best to avoid using if at all possible
-#ManyLabs1['se.o'] <-  ((ManyLabs1["95CIub.O"] - ManyLabs1["95CIlb.O"]))/ 3.92
-#ManyLabs1['se.r'] <-  ((ManyLabs1["95CIub.r"] - ManyLabs1["95CIlb.r"]))/ 3.92
-
-# calcualting p values following Altman, D. G., & Bland, J. M. (2011). How to obtain the P value from a confidence interval. BMJ, 343.  Retrieved from http://www.bmj.com/content/343/bmj.d2304.abstract
-# ManyLabs1['pVal.o'] <- exp(-0.717*(ManyLabs1$ES.o/ManyLabs1$se.o) - 0.416*(ManyLabs1$ES.o/ManyLabs1$se.o)^2)
 
 # calculating sample size complete
 ManyLabs1$n.o <- ManyLabs1ML_orig$N1 + ManyLabs1ML_orig$N2
@@ -190,23 +179,29 @@ es.o$seFish <-ifelse(!is.na(es.o$r),  sqrt(1/(ManyLabs3$N.r -3)), NA)
 es.r <- des(d = ManyLabs3$ReplicationES, n.1 = ManyLabs3$N.r/2,  n.2 = ManyLabs3$N.r/2, dig = 5)
 es.r$seFish <- ifelse(!is.na(es.r$r),  sqrt(1/(ManyLabs3$n.o -3)), NA)
 
+# removing Boroditsky, L. (2000). Metaphoric structuring: Understanding time through spatial metaphors. Cognition, 75(1), 1-28. who used a chi square test, making SEs for Fisher's z wrong
+es.r$pval.r[str_detect(string = ManyLabs3$Effect,  c("MetaphoricRestructuring"))] <- NA
+es.r$pval.r[str_detect(string = ManyLabs3$Effect,  c("MetaphoricRestructuring"))] <- NA
+es.o$pval.r[str_detect(string = ManyLabs3$Effect,  c("MetaphoricRestructuring"))] <- NA
+es.o$pval.r[str_detect(string = ManyLabs3$Effect,  c("MetaphoricRestructuring"))] <- NA
+
 # Amalgomating 
 data3 <- data.frame(authorsTitle.o = ManyLabs3$originalEffects,
                     correlation.o = es.o$r, 
                     cohenD.o = ManyLabs3$ESOriginal, 
-                    seCohenD.o =  ManyLabs3$se.o,
+                    seCohenD.o =  NA,
                     fis.o = es.o$fisher.z, 
                     seFish.o = es.o$seFish,
                     n.o = ManyLabs3$n.o,
-                    pVal.o = ManyLabs3$pVal.o,
+                    pVal.o = es.o$pval.r,
                     resultUsedInRep.o = NA,
                     correlation.r = es.r$r,
-                    cohenD.r = ManyLabs3$MedianReplicationES, 
-                    seCohenD.r =  ManyLabs3$se.r,
+                    cohenD.r = ManyLabs3$ReplicationES, 
+                    seCohenD.r =  NA,
                     fis.r = es.r$fisher.z,
                     seFish.r = es.r$seFish,
                     n.r = ManyLabs3$N.r,
-                    pVal.r = ManyLabs3$p.r,
+                    pVal.r =  es.r$pval.r,
                     seDifference.ro = NA)
 
 data3$source <- "ManyLabs3"
@@ -215,12 +210,16 @@ data3$source <- "ManyLabs3"
 # Removing everything apart from data sets  
 # rm(list = c("es.o", "es.r", "ManyLabs1","ManyLabs1ML_orig"))
 
-
 # careful with coersion ~ especially of p values some of which are marked as <.001 for example
 
 
 # View(join_all(list(data, data2), type = 'full'))
+
+
+
 ### 
+
+
 
 tmp <- join_all(list(data, data2), type = 'full')
 
@@ -245,11 +244,6 @@ datax <- data.frame(authorsTitle.o = ,
                     seCohenD.r = ,
                     pVal.r = ,
                     seDifference.ro = )
-
-
-
-
-
 
 # LATER - convert effect sizes and extract SEs - possibility of using 
 
