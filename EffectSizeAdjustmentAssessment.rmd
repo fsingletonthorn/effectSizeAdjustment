@@ -8,3 +8,12 @@ output: html_notebook
 plot(cars)
 ```
 
+# REMEMBER TO COUNT ALL OF THE ARTICLES INCLUDED FROM EACH SOURCE - all for which Rs could be calculated or extracted from original and replication studies
+
+CIs used to calculate standard errors, Following the Cochrane handbook and: Altman, D. G., & Bland, J. M. (2011). How to obtain the P value from a confidence interval. BMJ, 343.  Retrieved from http://www.bmj.com/content/343/bmj.d2304.abstract
+
+P values for some original studies for Many Labs 1 [x articles]
+
+When sample sizes for original studies were not avaliable they were manually extracted from original articles (for: many labs 3). When effect sizes could not be reasonably transformed into r or d and standrad errors estiamted they were excluded (e.g., partial eta-square n = 2 from Many Labs 2) 
+
+Sample sizes were assumed to be equal in all groups. 

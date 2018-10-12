@@ -3,8 +3,7 @@ options(stringsAsFactors = F)
 
 # Data and lables from table 2 of the supplmentary materials of Camerer, C. F., Dreber, A., Forsell, E., Ho, T.-H., Huber, J., Johannesson, M., . . . Wu, H. (2016). Evaluating replicability of laboratory experiments in economics. Science, 351(6280), 1433.  Retrieved from http://science.sciencemag.org/content/351/6280/1433.abstract
 
-
-lables <- c("StudyRef", "originalPValue", "original_r", "originalN", "replicationPValue", "replication_r", "replicationN", "replicationOriginalRatio", "unstandardisedRatio")
+lables <- c( "AuthorsJournalYear", "StudyRef", "originalPValue", "original_r", "originalN", "replicationPValue", "replication_r", "replicationN","replicated" , "replicationOriginalRatio",  "unstandardisedRatio")
 
 table2 <- c("Abeler et al. (AER 2011) 33 0.046 0.18 120 0.160 0.08 318 No 0.43 (0.36)",
 "Ambrus and Greiner (AER 2012) 34 0.057 0.31 117 0.012 0.23 357 Yes 0.74 (0.69)",
@@ -26,8 +25,16 @@ table2 <- c("Abeler et al. (AER 2011) 33 0.046 0.18 120 0.160 0.08 318 No 0.43 (
 "Kuziemko et al. (QJE 2014) 50 0.070 0.28 42 0.154 0.12 144 No 0.42 (-0.39)")
 
 # Removing whitesapce * 4 from the above
-splitTable2 <- str_split(table2, pattern = "\\) ", n = 2, simplify = T)
-splitTable2[,1] <- str_remove_all(splitTable2[,1], " ")
+splitTable2 <- str_split(table2, pattern = "(?<=\\)) ", n = 2, simplify = T)
+
+# spliting on whitespace
 dat <- str_split(splitTable2[,2], " ", simplify = T)
 
-data.frame(splitTable2[,1], dat)
+# putting it all into dataframe for printing
+data <- data.frame(splitTable2[,1], dat)
+names(data) <- lables
+
+# writing to csv
+write.csv(data,file = "Data/evaluatingReplicabilityOfLaboratoryExperimentsInEconomics.csv" , row.names = F)
+
+

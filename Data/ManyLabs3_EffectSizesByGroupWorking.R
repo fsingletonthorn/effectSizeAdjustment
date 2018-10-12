@@ -44,4 +44,14 @@ table3Dat <- str_replace(table3Dat, ",", "")
 table3 <- data.frame(str_split(table3Dat, " ", simplify = T))
 names(table3) <- colLabs
 
-write.csv(table2, file = "Data/ManyLabs3_Data.csv", na = "NA")
+table3$originalEffects <- c("Stroop Task (originally from Stroop, 1935, adapted for this project from Inzlicht, M., & Gutsell, J. N. (2007). Running on empty neural signals for self-control failure. Psychological Science, 18(11), 933-937.)",
+                     "Boroditsky, L. (2000). Metaphoric structuring: Understanding time through spatial metaphors. Cognition, 75(1), 1-28.",
+                     "Tversky, A., & Kahneman, D. (1973). Availability: A heuristic for judging frequency and probability. Cognitive psychology, 5(2), 207-232.",
+                     "Galinsky, A. D., Magee, J. C., Inesi, M. E., & Gruenfeld, D. H. (2006). Power and perspectives not taken. Psychological Science, 17(12), 1068-1074.",
+                     "Jostmann, N. B., Lakens, D., & Schubert, T. W. (2009). Weight as an embodiment of importance. Psychological science, 20(9), 1169-1174.",
+                     "Szymkow, A., Chandler, J., IJzerman, H., Parzuchowski, M., & Wojciszke, B. (2013). Warmer hearts, warmer rooms. Social Psychology, 44(2), 167-176.",
+"Cacioppo, J. T., Petty, R. E., & Morris, K. J. (1983). Effects of need for cognition on message evaluation, recall, and persuasion. Journal of personality and social psychology, 45(4), 805.",
+"Ross, M., & Wilson, A. E. (2002). It feels like yesterday: self-esteem, valence of personal past experiences, and judgments of subjective distance. Journal of personality and social psychology, 82(5), 792.",
+"Monin, B., & Miller, D. T. (2001). Moral credentials and the expression of prejudice. Journal of personality and social psychology, 81(1), 33.")
+ 
+write.csv(table3, file = "Data/ManyLabs3_Data.csv", na = "NA")

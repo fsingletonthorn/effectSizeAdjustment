@@ -1,13 +1,10 @@
-"","country","year","type","count"
-"1","Afghanistan",1999,"cases",745
-"2","Afghanistan",1999,"population",19987071
-"3","Afghanistan",2000,"cases",2666
-"4","Afghanistan",2000,"population",20595360
-"5","Brazil",1999,"cases",37737
-"6","Brazil",1999,"population",172006362
-"7","Brazil",2000,"cases",80488
-"8","Brazil",2000,"population",174504898
-"9","China",1999,"cases",212258
-"10","China",1999,"population",1272915272
-"11","China",2000,"cases",213766
-"12","China",2000,"population",1280428583
+"","Effect","ESstat","ESOriginal","ESOriginal95CILower","ESOriginal95CIUpper","MedianReplicationES","ReplicationES","Replication95CILower","Replication95CIUpper","ReplicationESMeta","ReplicationESCILowerMeta","ReplicationESCIUpperMeta","ProportionLessThan05","ProportionGreaterThan05","ProportionNS","KeyStatistics","df","N","p","originalEffects"
+"1","StroopTask","d","2.04","1.90","2.18","0.89","0.91","0.84","0.98","0.88","0.84,","0.92","0.00","1.00","0.00","t49.795","3336","3337",".001","Stroop Task (originally from Stroop, 1935, adapted for this project from Inzlicht, M., & Gutsell, J. N. (2007). Running on empty neural signals for self-control failure. Psychological Science, 18(11), 933-937.)"
+"2","MetaphoricRestructuring","d","0.63","0.07","1.20","0.19","0.29","0.17","0.42","0.26","0.15,","0.37","0.00","0.25","0.75","<U+03C7>221.90","1","1335",".001","Boroditsky, L. (2000). Metaphoric structuring: Understanding time through spatial metaphors. Cognition, 75(1), 1-28."
+"3","AvailabilityHeuristic","d","0.82","0.47","1.17","0.07","0.09","0.02","0.16","0.09","0.02,","0.16","0.00","0.14","0.86","PSdep.522","NA","3088","0.015","Tversky, A., & Kahneman, D. (1973). Availability: A heuristic for judging frequency and probability. Cognitive psychology, 5(2), 207-232."
+"4","PowerandPerspective","d","0.77","0.12","1.41","0.03","0.03","-0.04","0.11","0.03","-0.04,","0.10","0.00","0.05","0.95","t.89","2967","2969","0.37","Galinsky, A. D., Magee, J. C., Inesi, M. E., & Gruenfeld, D. H. (2006). Power and perspectives not taken. Psychological Science, 17(12), 1068-1074."
+"5","WeightEmbodiment","d","0.59","0.01","1.16","0.05","0.03","-0.05","0.11","0.03","-0.06,","0.11","0.00","0.00","1.00","t.61","2283","2285","0.543","Jostmann, N. B., Lakens, D., & Schubert, T. W. (2009). Weight as an embodiment of importance. Psychological science, 20(9), 1169-1174."
+"6","WarmthPerceptions","d","0.86","0.40","1.33","0.06","0.01","-0.08","0.06","0.01","-0.06,","0.08","0.05","0.00","0.95","t.22","3117","3119","0.827","Szymkow, A., Chandler, J., IJzerman, H., Parzuchowski, M., & Wojciszke, B. (2013). Warmer hearts, warmer rooms. Social Psychology, 44(2), 167-176."
+"7","ElaborationLikelihood","<U+03B7>p²","0.17","0.06","0.29","0.000001","0.000001","0.000","0.001","0.00005","0.000,","0.002","0.00","0.00","1.00","F.129","df1=1,df2=2361","2365","0.72","Cacioppo, J. T., Petty, R. E., & Morris, K. J. (1983). Effects of need for cognition on message evaluation, recall, and persuasion. Journal of personality and social psychology, 45(4), 805."
+"8","Self-EsteemandSubjectiveDistance","<U+03B7>p²","NA","NA","NA","0.0001","0.0004","0.000","0.005","0.001","0.000","0.004","0.05","0.10","0.85","F1.98","df1=1,df2=3131","3136","0.16","Ross, M., & Wilson, A. E. (2002). It feels like yesterday: self-esteem, valence of personal past experiences, and judgments of subjective distance. Journal of personality and social psychology, 82(5), 792."
+"9","CredentialsandPrejudice","<U+03B7>p²","0.04","0","0.09","0.00","0.0003","0.000","0.003","0.000","0.000,","0.000","0.00","0.10","0.90","F.0004","df1=1,df2=3130","3134","0.985","Monin, B., & Miller, D. T. (2001). Moral credentials and the expression of prejudice. Journal of personality and social psychology, 81(1), 33."
