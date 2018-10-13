@@ -19,9 +19,22 @@ Sample sizes were assumed to be equal in all groups.
 Original p values and replication p values presented here were re-calculated using the Fisher Transformed z score.
 
 
+For nature science reporducibility papers, when multiple replciation studies were run, a fixed effects meta-analysis was performed using the metafor package for each study to estimate the effect. P values, standard errors and ns reflect this pooled estiamte. This method lead to one study more "replicating" according to the 'statistical significance in the same direction of the original study' using the largest perfored study criteria that the original authors reported. 
+
+# I COULD GO THROUGH AN RECALCULATE P VALUES FOR ALL THOSE WITH VALID SEs at the end
+
+
+
+TRY SMALL TELESCOPES, lower bound of 95% CIs, other methods of adjustment I.e., (Anderson et al., 2017; McShane & Böckenholt, 2016; Perugini et al., 2014; and Taylor & Muller, 1996). Maybe look into some of the meta-analytic methods?
+
+
 
 ## https://osf.io/z7aux/
 ## HAVE TO GO THROUGH AND REMOVE THOSE BASED ON 
+
+
+
+
 
 
 
