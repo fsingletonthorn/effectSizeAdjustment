@@ -4,8 +4,10 @@ library(MBESS)
 library(compute.es)
 library(readr)
 library(metafor)
-#source(file = "Data/Functions/any_to_any.R") # Not necessary 
-## First extracting data from the OSC's RPP 
+
+#source(file = "Data/Functions/any_to_any.R") # Not necessary, but possible later to aid translation b/w effect sizes with reasonable SEs being developed
+
+#### First extracting data from the OSC's RPP  ####
 
 ########################################################################################
 ### Code from https://github.com/CenterForOpenScience/rpp/blob/master/masterscript.R####
@@ -272,19 +274,21 @@ natSciOutput$correlation.r <- ztor(natSciOutput$fis.r)
                       seCohenD.r = NA,
                       pVal.r = natSciOutput$pVal.r,
                       seDifference.ro = NA)
-  
+
 ### 
 # Removing everything apart from data sets  
 # rm(list = c("es.o", "es.r", "ManyLabs1","ManyLabs1ML_orig"))
 
 # careful with coersion ~ especially of p values some of which are marked as <.001 for example
 
-
 # View(join_all(list(data, data2), type = 'full'))
 
 
 
 
+  
+  
+  
 
 
 
