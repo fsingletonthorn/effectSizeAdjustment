@@ -3,6 +3,7 @@ library(readxl)
 library(MBESS)
 library(compute.es)
 library(readr)
+library(metafor)
 #source(file = "Data/Functions/any_to_any.R") # Not necessary 
 ## First extracting data from the OSC's RPP 
 
@@ -21,13 +22,12 @@ if(!require(metafor)){install.packages('metafor')}
 library(metafor)
 
 # Read in Tilburg data for OSF projects 
-info <- GET('https://osf.io/fgjvw/?action=download', write_disk('rpp_data.csv', overwrite = TRUE)) #downloads data file from the OSF
-MASTER <- read.csv("rpp_data.csv")[1:167, ]
+# info <- GET('https://osf.io/fgjvw/?action=download', write_disk('rpp_data.csv', overwrite = TRUE)) #downloads data file from the OSF - has been done.
+MASTER <- read.csv("Data/rpp_data.csv")[1:167, ]
 colnames(MASTER)[1] <- "ID" # Change first column name to ID to be able to load .csv file
 
 ## Trimming master down
 MASTER <- MASTER[(MASTER$Completion..R. == 1)&!is.na(MASTER$Completion..R.),]
-
 
 ### Transforming correlations to Fisher's z
 RPP<-data.frame(ri.o  = MASTER$T_r..O.)
@@ -206,6 +206,73 @@ data3 <- data.frame(authorsTitle.o = ManyLabs3$originalEffects,
 
 data3$source <- "ManyLabs3"
 
+
+#### End of Many labs 3 recollection #### 
+#### Social science experiments from nature and science Data recollection ####
+# data from Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., . . . Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637-644. doi:10.1038/s41562-018-0399-z
+
+natSci <- read_csv(file ="Data/socialScienceExperimentsInNatureAndScience.csv")
+# View(natSci)
+
+# calcualting z values and sampling variances 
+r1Sums <- escalc(measure = "ZCOR", ri = natSci$r_rs1, ni = natSci$n_rs1)
+r2Sums <- escalc(measure = "ZCOR", ri = natSci$r_rs2, ni = natSci$n_rs2)
+rOSums <- escalc(measure = "ZCOR", ri = natSci$r_os, ni = natSci$n_os)
+
+natSciOutput$fis.o <- rOSums$yi
+natSciOutput$seFish.o <- sqrt(rOSums$vi)
+
+summary(r1Sums )
+
+# intitialising data colls
+ess <- cbind(yi = c(1,2), xi = c(1,2))
+natSciOutput <- natSci
+natSciOutput$nTotal.r <- ifelse(!is.na(natSci$n_rs2), natSci$n_rs1 + natSci$n_rs2, natSci$n_rs1)
+
+
+# Running a fixed effects meta-analysis on for each set of studies in the cases when a second study was run
+for(i in 1:nrow(r1Sums)) {
+  if(!is.na(r2Sums$yi[i])) {
+    # Create dataframe for MA 
+  ess <- rbind(r1Sums[i,], r2Sums[i,])
+   modelout <- rma(yi = ess$yi, vi = ess$vi, method = "FE")
+   natSciOutput$fis.r[i] <- modelout$b
+   natSciOutput$seFish.r[i] <- modelout$se
+   natSciOutput$pVal.r[i]<- modelout$pval 
+  } else {
+    natSciOutput$fis.r[i] <- r1Sums$yi[i]
+    natSciOutput$seFish.r[i] <- r1Sums$vi[i]
+    natSciOutput$pVal.r[i]<- natSciOutput$p_rs1[i]
+    }
+}
+
+# Recalculating corres from orig
+natSciOutput$correlation.r <- ztor(natSciOutput$fis.r)
+
+# Excluding SEs developed when original studs were performed using Chi Square tests 
+  natSciOutput$seFish.r[str_detect(natSciOutput$type_os, "Chi")] <- NA
+  natSciOutput$seFish.o[str_detect(natSciOutput$type_os, "Chi")] <- NA
+# Checked that they were not used in the meta-analysis using "natSciOutput$n_rs2[str_detect(natSciOutput$type_os, "Chi")] " which gives 2 NAs, i.e., no second studies were performed for either 
+  
+  
+  data4 <- data.frame(authorsTitle.o = NA,
+                      correlation.o = natSciOutput$r_os, 
+                      cohenD.o = NA, 
+                      fis.o = natSciOutput$fis.o, 
+                      seFish.o = natSciOutput$seFish.o,
+                      n.o = natSciOutput$n_os,
+                      seCohenD.o = NA, 
+                      pVal.o = natSciOutput$p_os,
+                      resultUsedInRep.o = str_c(natSciOutput$type_os, "=", natSciOutput$stat_os), 
+                      correlation.r = natSciOutput$correlation.r,
+                      cohenD.r = NA, 
+                      fis.r = natSciOutput$fis.r,
+                      seFish.r = natSciOutput$seFish.r,
+                      n.r = natSciOutput$nTotal.r,
+                      seCohenD.r = NA,
+                      pVal.r = natSciOutput$pVal.r,
+                      seDifference.ro = NA)
+  
 ### 
 # Removing everything apart from data sets  
 # rm(list = c("es.o", "es.r", "ManyLabs1","ManyLabs1ML_orig"))
@@ -217,15 +284,17 @@ data3$source <- "ManyLabs3"
 
 
 
+
+
+
+
+
+
 ### 
 
 
 
-tmp <- join_all(list(data, data2), type = 'full')
-
-
-
-
+tmp <- join_all(list(data, data2, data3), type = 'full')
 
 datax <- data.frame(authorsTitle.o = ,
                     correlation.o = , 
@@ -246,6 +315,8 @@ datax <- data.frame(authorsTitle.o = ,
                     seDifference.ro = )
 
 # LATER - convert effect sizes and extract SEs - possibility of using 
+
+
 
 
 
