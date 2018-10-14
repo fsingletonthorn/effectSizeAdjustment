@@ -222,7 +222,9 @@ r2Sums <- escalc(measure = "ZCOR", ri = natSci$r_rs2, ni = natSci$n_rs2)
 rOSums <- escalc(measure = "ZCOR", ri = natSci$r_os, ni = natSci$n_os)
 
 natSci$fis.o <- rOSums$yi
-natSci$seFish.o <- sqrt(rOSums$vi)
+natSci$seFish.o <- sqrt(1/(natSci$n_os -3))
+
+
 
 summary(r1Sums )
 
@@ -274,6 +276,8 @@ natSci$correlation.r <- ztor(natSci$fis.r)
                       seCohenD.r = NA,
                       pVal.r = natSci$pVal.r,
                       seDifference.ro = NA)
+  
+  data4$source <- "NatSci"
 
 ### 
 # Removing everything apart from data sets  
@@ -281,25 +285,101 @@ natSci$correlation.r <- ztor(natSci$fis.r)
 
 # careful with coersion ~ especially of p values some of which are marked as <.001 for example
 
-View(plyr::join_all(list(data, data2, data3, data4), type = 'full'))
 
 ### ####
+econ <- read_csv(file = "Data/evaluatingReplicabilityOfLaboratoryExperimentsInEconomics.csv")
+
+es.o <- escalc(ri = econ$original_r, ni = econ$originalN, measure = "ZCOR")
+es.r <- escalc(ri = econ$replication_r, ni = econ$replicationN, measure = "ZCOR")
+
+### Standard errors original and replication study - None appear to use techniques for which SEs can be meaningfully extracted
+es.o$seFish <- NA# sqrt(1/(econ$originalN-3))
+es.r$seFish <- NA# sqrt(1/(econ$replicationN-3))
+
+# View(econ)
+
+# Amalgomating 
+data5 <- data.frame(authorsTitle.o = econ$AuthorsJournalYear,
+                    correlation.o = econ$original_r, 
+                    cohenD.o = NA, 
+                    seCohenD.o =  NA,
+                    fis.o = es.o$yi, 
+                    seFish.o = es.o$seFish,
+                    n.o = econ$originalN,
+                    pVal.o =  econ$originalPValue,
+                    resultUsedInRep.o = NA,
+                    correlation.r = econ$replication_r,
+                    cohenD.r = NA, 
+                    seCohenD.r =  NA,
+                    fis.r = es.r$yi,
+                    seFish.r = es.r$seFish,
+                    n.r = econ$replicationN,
+                    pVal.r =  econ$replicationPValue,
+                    seDifference.ro = NA)
+
+data5$source <- "Econ"
+
+##### Xphi data recollection #####
+# Data from Cova, F., Strickland, B., Abatista, A., Allard, A., Andow, J., Attie, M., . . . Colombo, M. (2018). Estimating the reproducibility of experimental philosophy. Review of Philosophy and Psychology, 1-36. 
+xPhi <- read_csv(file ="Data/XPhiReplicability_CompleteData.csv")
+
+es.o <- escalc(ri = xPhi$OriginalRES, ni = xPhi$OriginalN_Effect, measure = "ZCOR")
+es.r <- escalc(ri = xPhi$ReplicationRES, ni = xPhi$ReplicationN_Effect, measure = "ZCOR")
+
+### Standard errors original and replication study - None appear to use techniques for which SEs can be meaningfully extracted
+es.o$seFish <- sqrt(1/(xPhi$OriginalN_Effect-3))
+es.r$seFish <- sqrt(1/(xPhi$ReplicationN_Effect-3))
+
+# extracting original p values
+resSplit <- str_split(xPhi$OriginalANALYSIS, "p", simplify = T)
+resSplit[21,2] <- resSplit[21,3]
+resSplit[36,2] <- .01
+pvalues <- str_remove_all(resSplit[,2], " |=|\\)|,|B|1.62|,|Ex|orted") 
+pvalues[25] <- NA
+
+xPhi$pVal.o <- pvalues
+
+
+# extracting replication p values
+resSplit.r <- str_split(xPhi$ReplicationANALYSIS, "p", simplify = T)
+pvalues.r <- str_remove_all(resSplit.r[,2], " |=|, η2=0.007|, B = 0.42, Ex") 
+
+xPhi$pVal.r <- pvalues.r
+
+# Remove SEs from studies with Chi square stats or F degrees of freedom 1 > 1 
+es.r$seFish[grepl(x =  xPhi$OriginalANALYSIS, pattern = "χ|X2|F\\(2,|F \\(2")] <- NA
+es.o$seFish[grepl(x =  xPhi$OriginalANALYSIS, pattern = "χ|X2|F\\(2,|F \\(2")] <- NA
+
+# Amalgomating 
+data5 <- data.frame(authorsTitle.o = xPhi$PAPER_ID,
+                    correlation.o = xPhi$OriginalRES, 
+                    cohenD.o = NA, 
+                    seCohenD.o =  NA,
+                    fis.o = es.o$yi, 
+                    seFish.o = es.o$seFish,
+                    n.o = xPhi$OriginalN_Effect,
+                    pVal.o =  xPhi$pVal.o,
+                    resultUsedInRep.o = xPhi$OriginalANALYSIS,
+                    correlation.r = xPhi$ReplicationRES,
+                    cohenD.r = NA, 
+                    seCohenD.r =  NA,
+                    fis.r = es.r$yi,
+                    seFish.r = es.r$seFish,
+                    n.r = xPhi$ReplicationN_Effect,
+                    pVal.r =  xPhi$pVal.r,
+                    seDifference.ro = NA)
+
+data5$source <- "xPhi"
 
 
 
-  
-  
-  
 
 
 
 
 
-### 
 
-
-
-tmp <- join_all(list(data, data2, data3), type = 'full')
+tmp <- plyr::join_all(list(data, data2, data3, data4, data5), type = 'full')
 
 datax <- data.frame(authorsTitle.o = ,
                     correlation.o = , 
@@ -319,18 +399,13 @@ datax <- data.frame(authorsTitle.o = ,
                     pVal.r = ,
                     seDifference.ro = )
 
+
+
+
+
 # LATER - convert effect sizes and extract SEs - possibility of using 
 
-
-
-
-
-
-
-
-
 ## https://osf.io/z7aux/
-## HAVE TO GO THROUGH AND REMOVE THOSE BASED ON Effect size statistics based on F(df1> 1, df2) and χ2(df) can be converted to correlations (see A3), but their standard errors cannot be computed. 
 
 
 
