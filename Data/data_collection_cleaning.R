@@ -221,15 +221,15 @@ r1Sums <- escalc(measure = "ZCOR", ri = natSci$r_rs1, ni = natSci$n_rs1)
 r2Sums <- escalc(measure = "ZCOR", ri = natSci$r_rs2, ni = natSci$n_rs2)
 rOSums <- escalc(measure = "ZCOR", ri = natSci$r_os, ni = natSci$n_os)
 
-natSciOutput$fis.o <- rOSums$yi
-natSciOutput$seFish.o <- sqrt(rOSums$vi)
+natSci$fis.o <- rOSums$yi
+natSci$seFish.o <- sqrt(rOSums$vi)
 
 summary(r1Sums )
 
 # intitialising data colls
 ess <- cbind(yi = c(1,2), xi = c(1,2))
-natSciOutput <- natSci
-natSciOutput$nTotal.r <- ifelse(!is.na(natSci$n_rs2), natSci$n_rs1 + natSci$n_rs2, natSci$n_rs1)
+natSci <- natSci
+natSci$nTotal.r <- ifelse(!is.na(natSci$n_rs2), natSci$n_rs1 + natSci$n_rs2, natSci$n_rs1)
 
 
 # Running a fixed effects meta-analysis on for each set of studies in the cases when a second study was run
@@ -238,41 +238,41 @@ for(i in 1:nrow(r1Sums)) {
     # Create dataframe for MA 
   ess <- rbind(r1Sums[i,], r2Sums[i,])
    modelout <- rma(yi = ess$yi, vi = ess$vi, method = "FE")
-   natSciOutput$fis.r[i] <- modelout$b
-   natSciOutput$seFish.r[i] <- modelout$se
-   natSciOutput$pVal.r[i]<- modelout$pval 
+   natSci$fis.r[i] <- modelout$b
+   natSci$seFish.r[i] <- modelout$se
+   natSci$pVal.r[i]<- modelout$pval 
   } else {
-    natSciOutput$fis.r[i] <- r1Sums$yi[i]
-    natSciOutput$seFish.r[i] <- r1Sums$vi[i]
-    natSciOutput$pVal.r[i]<- natSciOutput$p_rs1[i]
+    natSci$fis.r[i] <- r1Sums$yi[i]
+    natSci$seFish.r[i] <- r1Sums$vi[i]
+    natSci$pVal.r[i]<- natSci$p_rs1[i]
     }
 }
 
 # Recalculating corres from orig
-natSciOutput$correlation.r <- ztor(natSciOutput$fis.r)
+natSci$correlation.r <- ztor(natSci$fis.r)
 
 # Excluding SEs developed when original studs were performed using Chi Square tests 
-  natSciOutput$seFish.r[str_detect(natSciOutput$type_os, "Chi")] <- NA
-  natSciOutput$seFish.o[str_detect(natSciOutput$type_os, "Chi")] <- NA
-# Checked that they were not used in the meta-analysis using "natSciOutput$n_rs2[str_detect(natSciOutput$type_os, "Chi")] " which gives 2 NAs, i.e., no second studies were performed for either 
+  natSci$seFish.r[str_detect(natSci$type_os, "Chi")] <- NA
+  natSci$seFish.o[str_detect(natSci$type_os, "Chi")] <- NA
+# Checked that they were not used in the meta-analysis using "natSci$n_rs2[str_detect(natSci$type_os, "Chi")] " which gives 2 NAs, i.e., no second studies were performed for either 
   
   
   data4 <- data.frame(authorsTitle.o = NA,
-                      correlation.o = natSciOutput$r_os, 
+                      correlation.o = natSci$r_os, 
                       cohenD.o = NA, 
-                      fis.o = natSciOutput$fis.o, 
-                      seFish.o = natSciOutput$seFish.o,
-                      n.o = natSciOutput$n_os,
+                      fis.o = natSci$fis.o, 
+                      seFish.o = natSci$seFish.o,
+                      n.o = natSci$n_os,
                       seCohenD.o = NA, 
-                      pVal.o = natSciOutput$p_os,
-                      resultUsedInRep.o = str_c(natSciOutput$type_os, "=", natSciOutput$stat_os), 
-                      correlation.r = natSciOutput$correlation.r,
+                      pVal.o = natSci$p_os,
+                      resultUsedInRep.o = str_c(natSci$type_os, "=", natSci$stat_os), 
+                      correlation.r = natSci$correlation.r,
                       cohenD.r = NA, 
-                      fis.r = natSciOutput$fis.r,
-                      seFish.r = natSciOutput$seFish.r,
-                      n.r = natSciOutput$nTotal.r,
+                      fis.r = natSci$fis.r,
+                      seFish.r = natSci$seFish.r,
+                      n.r = natSci$nTotal.r,
                       seCohenD.r = NA,
-                      pVal.r = natSciOutput$pVal.r,
+                      pVal.r = natSci$pVal.r,
                       seDifference.ro = NA)
 
 ### 
@@ -281,8 +281,9 @@ natSciOutput$correlation.r <- ztor(natSciOutput$fis.r)
 
 # careful with coersion ~ especially of p values some of which are marked as <.001 for example
 
-# View(join_all(list(data, data2), type = 'full'))
+View(plyr::join_all(list(data, data2, data3, data4), type = 'full'))
 
+### ####
 
 
 
