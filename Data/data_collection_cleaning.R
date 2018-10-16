@@ -4,7 +4,9 @@ library(MBESS)
 library(compute.es)
 library(readr)
 library(metafor)
+library(ggplot2)
 
+# View(plyr::join_all(list(data, data2), type = 'full'))
 #source(file = "Data/Functions/any_to_any.R") # Not necessary, but possible later to aid translation b/w effect sizes with reasonable SEs being developed
 
 #### First extracting data from the OSC's RPP  ####
@@ -14,10 +16,10 @@ library(metafor)
 ########################################################################################
 
 # source functions
-if(!require(httr)){install.packages('httr')}
-library(httr)
-info <- GET('https://osf.io/b2vn7/?action=download', write_disk('functions.r', overwrite = TRUE)) #downloads data file from the OSF
-source('functions.r')
+# if(!require(httr)){install.packages('httr')}
+# library(httr)
+# info <- GET('https://osf.io/b2vn7/?action=download', write_disk('functions.r', overwrite = TRUE)) #downloads data file from the OSF
+# source('functions.r')
 if(!require(Hmisc)){install.packages('Hmisc')}
 library(Hmisc)
 if(!require(metafor)){install.packages('metafor')}
@@ -39,21 +41,22 @@ RPP$ri.r <- MASTER$T_r..R.
 RPP$N.o <- MASTER$T_df2..O.+2
 RPP$N.r <- MASTER$T_df2..R.+2
 
+
 ### Partial correlation, so degrees of freedom plus 2 in order to get N
-RPP$N.o[MASTER$ID == 82] <- MASTER$T_df1..O.[82]+2
-RPP$N.r[MASTER$ID == 82] <- MASTER$T_df1..R.[82]+2
+RPP$N.o[MASTER$ID == 82] <- MASTER$T_df1..O.[MASTER$ID == 82]+2
+RPP$N.r[MASTER$ID == 82] <- MASTER$T_df1..R.[MASTER$ID == 82]+2
 
 ### Correlation
-RPP$N.o[MASTER$ID == 120] <- MASTER$T_N..O.[120]
-RPP$N.r[MASTER$ID == 120] <- MASTER$T_N..R.[120]
-RPP$N.o[MASTER$ID == 154] <- MASTER$T_N..O.[154]
-RPP$N.r[MASTER$ID == 154] <- MASTER$T_N..R.[154]
-RPP$N.o[MASTER$ID == 155] <- MASTER$T_N..O.[155]
-RPP$N.r[MASTER$ID == 155] <- MASTER$T_N..R.[155]
+RPP$N.o[MASTER$ID == 120] <- MASTER$T_N..O.[MASTER$ID == 120]
+RPP$N.r[MASTER$ID == 120] <- MASTER$T_N..R.[MASTER$ID == 120]
+RPP$N.o[MASTER$ID == 154] <- MASTER$T_N..O.[MASTER$ID == 154]
+RPP$N.r[MASTER$ID == 154] <- MASTER$T_N..R.[MASTER$ID == 154]
+RPP$N.o[MASTER$ID == 155] <- MASTER$T_N..O.[MASTER$ID == 155]
+RPP$N.r[MASTER$ID == 155] <- MASTER$T_N..R.[MASTER$ID == 155]
 
 ### t
-RPP$N.o[MASTER$ID == 121] <- MASTER$T_N..O.[121]
-RPP$N.r[MASTER$ID == 121] <- MASTER$T_N..R.[121]
+RPP$N.o[MASTER$ID == 121] <- MASTER$T_N..O.[MASTER$ID == 121]
+RPP$N.r[MASTER$ID == 121] <- MASTER$T_N..R.[MASTER$ID == 121]
 
 ### Transform to Fisher's z
 RPP$fis.o <- 0.5*log((1 + RPP$ri.o) / (1 - RPP$ri.o)) 
@@ -85,13 +88,16 @@ data <- data.frame(authorsTitle.o = paste0(MASTER$Authors..O., "-", MASTER$Study
                    fis.o = RPP$fis.o, # Fishers z transform
                    seFish.o = RPP$sei.o, # Standard error Fisher trans correlation coef. 
                    n.o = RPP$N.o, # sample size 
-                   pVal.o = RPP$pval.o, # P value 
-                   resultUsedInRep.o  = MASTER$Test.statistic..O.,
-                   correlation.r = RPP$ri.o,
+                   pValFish.o = RPP$pval.o, # p value from fisher trans r value  
+                   pVal.o = MASTER$Reported.P.value..O., # P value from same analysis as replicated study  
+                   testStatistic.o  = MASTER$Test.statistic..O., # test stat from original study 
+                   correlation.r = RPP$ri.r,
                    fis.r = RPP$fis.r, # Fishers z transform
                    n.r = RPP$N.r,
                    seFish.r = RPP$sei.r,
-                   pVal.r = RPP$pval.r,
+                   pValFish.r = RPP$pval.r,
+                   pVal.r = MASTER$P.value..R., 
+                   testStatistic.r = MASTER$Test.statistic..R.,
                    seDifference.ro = RPP$sei)
 
 # Removing 3 missing articles (NS origs)
@@ -103,7 +109,7 @@ data$source <- "OSCRPP"
 
 
 # Removing everything apart from data from WS 
-rm(list = c("RPP","MASTER","info"))
+# rm(list = c("RPP","MASTER","info"))
 
 ##############################################
 ####### Importing dataset MANY LABS 1 ########
@@ -116,6 +122,9 @@ ManyLabs1ML_orig<-ManyLabs1ML_orig[order(match(ManyLabs1ML_orig$Study.name, Many
 
 ManyLabs1[c("95CIlb.O", "95CIub.O")]<- str_split(ManyLabs1$`95% CI Lower, Upper.o`, pattern = ", ", simplify = T)
 ManyLabs1[c("95CIlb.r", "95CIub.r")]<- str_split(ManyLabs1$`99% CI Lower, Upper.r`, pattern = ", ", simplify = T)
+
+# Estimating p values and SE from 95% CIs 
+
 
 # Transforming into numerics
 ManyLabs1[c("95CIlb.O", "95CIub.O","95CIlb.r", "95CIub.r", 'ES.o')] <- sapply(ManyLabs1[c("95CIlb.O", "95CIub.O","95CIlb.r", "95CIub.r", "ES.o")], as.numeric) 
@@ -130,7 +139,7 @@ es.o <- des(d = ManyLabs1$ES.o, n.1 = ManyLabs1$n.o/2, n.2 =  ManyLabs1$n.o/2)
 es.o$se.z <- ifelse(!is.na(es.o$r),  sqrt(1/(ManyLabs1$n.o -3)), NA) 
 
 ## Removing invalid SEs (studies which use CHI squre stats)
-es.o$se.z[str_detect(string =ManyLabs1ML_orig$Result.used,  c("Chi"))] <- NA
+es.o$se.z[str_detect(string = ManyLabs1ML_orig$Result.used,  c("Chi"))] <- NA
 
 # calculating r and fisher z from d 
 es.r <- des(d = ManyLabs1$`Replication ES.r`, n.1 = ManyLabs1$N.r/2, n.2 =  ManyLabs1$N.r/2)
@@ -142,36 +151,55 @@ es.r$se.z <- ifelse(!is.na(es.r$r),  sqrt(1/(ManyLabs1$N.r -3)), NA)
 es.r$se.z[str_detect(string = ManyLabs1$`Key statistics.r`,  "X")] <- NA
 es.r$pval.r[str_detect(string = ManyLabs1$`Key statistics.r`,  c("X"))] <- NA
 
+# Extracting p values from original studies
+ManyLabs1$pVal.o <- NA
+
+# Extracting the p values from the reported test stat strings
+ManyLabs1$pVal.o <- str_split(ManyLabs1$testStatistic.o, "p [=]|[<]", simplify = T)[,2] %>%
+  str_extract("......") %>%
+  str_remove_all(",|p| |") %>%
+  as.numeric()
+
+ManyLabs1$pVal.o[str_detect(ManyLabs1$testStatistic.o, "p < .01")] <- "< .01"
+ManyLabs1$pVal.o[str_detect(ManyLabs1$testStatistic.o, "p < .05")] <- "< .05"
+
+   
+# Caclulating these for ease p values 
+ManyLabs1$pVal.o[ManyLabs1$testStatistic.o == "r = .42"|ManyLabs1$testStatistic.o =="r = .42, n = 243"] <- 
+  es.o$pval.r[ManyLabs1$testStatistic.o == "r = .42"|ManyLabs1$testStatistic.o =="r = .42, n = 243"] 
+data.frame(ManyLabs1$pVal.o, ManyLabs1$testStatistic.o)
+
+
 ########## End Many labs 1 data recollection ########
 data2 <- data.frame(authorsTitle.o = ManyLabs1ML_orig$Reference,
                     correlation.o = es.o$r,
                     cohenD.o = ManyLabs1$ES.o,
                     fis.o = es.o$fisher.z, # Fishers z transform
                     seFish.o = es.o$se.z,
+                    pValFish.o = es.o$pval.r,
                     n.o = ManyLabs1$n.o,
                     seCohenD.o = NA, 
-                    pVal.o = es.o$pval.r,
-                    resultUsedInRep.o = ManyLabs1ML_orig$Result.used,
+                    pVal.o = ManyLabs1$pVal.o,
+                    testStatistic.o = ManyLabs1$testStatistic.o,
                     correlation.r = es.r$r,
                     cohenD.r = ManyLabs1$`Replication ES.r`,  
                     seCohenD.r = NA,
                     fis.r = es.r$fisher.z, # Fishers z transform
                     seFish.r = es.r$se.z,
                     n.r = ManyLabs1$N.r,
-                    pVal.r = es.r$pval.r,
+                    pValFish.r = es.r$pval.r,
+                    pVal.r = ManyLabs1$p.r,
+                    testStatistic.r = ManyLabs1$`Key statistics.r`,
                     seDifference.ro = NA)
 
 data2$source <- "ManyLabs1"
 
 ### 
 # Removing everything apart from data sets  
-rm(list = c("es","ManyLabs1","ManyLabs1ML_orig"))
+# rm(list = c("es","ManyLabs1","ManyLabs1ML_orig"))
 
 ##### Many labs 3 data recollection ####
 ManyLabs3 <- read_csv("Data/ManyLabs3_Data_ManualAdditions.csv")
-
-# Removing partial eta^2eds  !!!
-ManyLabs3 <-ManyLabs3[ManyLabs3$ESstat=="d",]
 
 # converting effect sizes 
 es.o <- des(d = ManyLabs3$ESOriginal, n.1 = ManyLabs3$n.o/2, n.2 = ManyLabs3$n.o/2, dig = 5)
@@ -179,15 +207,23 @@ es.o$seFish <-ifelse(!is.na(es.o$r),  sqrt(1/(ManyLabs3$N.r -3)), NA)
 
 # Converting rep ESs 
 es.r <- des(d = ManyLabs3$ReplicationES, n.1 = ManyLabs3$N.r/2,  n.2 = ManyLabs3$N.r/2, dig = 5)
+# removing values based on eta-squared values
+es.r$r[c(7,9)] <- NA 
 es.r$seFish <- ifelse(!is.na(es.r$r),  sqrt(1/(ManyLabs3$n.o -3)), NA)
 
 # removing Boroditsky, L. (2000). Metaphoric structuring: Understanding time through spatial metaphors. Cognition, 75(1), 1-28. who used a chi square test, making SEs for Fisher's z wrong
 es.r$pval.r[str_detect(string = ManyLabs3$Effect,  c("MetaphoricRestructuring"))] <- NA
-es.r$pval.r[str_detect(string = ManyLabs3$Effect,  c("MetaphoricRestructuring"))] <- NA
-es.o$pval.r[str_detect(string = ManyLabs3$Effect,  c("MetaphoricRestructuring"))] <- NA
 es.o$pval.r[str_detect(string = ManyLabs3$Effect,  c("MetaphoricRestructuring"))] <- NA
 
-# Amalgomating 
+# Extracting test stats from rep study
+testStats.r <- data.frame(str_split(ManyLabs3$KeyStatistics.r, " =", simplify = T)[,1],
+           ManyLabs3$df.r,
+           str_split(ManyLabs3$KeyStatistics.r, " =", simplify = T)[,2])
+ManyLabs3$testStatistic.r <- str_glue("{testStats.r[,1]} ({testStats.r[,2]}) = {testStats.r[,3]}")
+
+
+
+# Amalgomating
 data3 <- data.frame(authorsTitle.o = ManyLabs3$originalEffects,
                     correlation.o = es.o$r, 
                     cohenD.o = ManyLabs3$ESOriginal, 
@@ -195,8 +231,8 @@ data3 <- data.frame(authorsTitle.o = ManyLabs3$originalEffects,
                     fis.o = es.o$fisher.z, 
                     seFish.o = es.o$seFish,
                     n.o = ManyLabs3$n.o,
-                    pVal.o = es.o$pval.r,
-                    resultUsedInRep.o = NA,
+                    pVal.o = ManyLabs3$p.o,
+                    testStatistic.o = ManyLabs3$testStatistic.o,
                     correlation.r = es.r$r,
                     cohenD.r = ManyLabs3$ReplicationES, 
                     seCohenD.r =  NA,
@@ -204,7 +240,8 @@ data3 <- data.frame(authorsTitle.o = ManyLabs3$originalEffects,
                     seFish.r = es.r$seFish,
                     n.r = ManyLabs3$N.r,
                     pVal.r =  es.r$pval.r,
-                    seDifference.ro = NA)
+                    seDifference.ro = NA,
+                    testStatistic.r = ManyLabs3$testStatistic.r)
 
 data3$source <- "ManyLabs3"
 
@@ -232,7 +269,9 @@ summary(r1Sums )
 ess <- cbind(yi = c(1,2), xi = c(1,2))
 natSci <- natSci
 natSci$nTotal.r <- ifelse(!is.na(natSci$n_rs2), natSci$n_rs1 + natSci$n_rs2, natSci$n_rs1)
-
+natSci$fis.r <- NA
+natSci$seFish.r <- NA
+natSci$pVal.r <- NA
 
 # Running a fixed effects meta-analysis on for each set of studies in the cases when a second study was run
 for(i in 1:nrow(r1Sums)) {
@@ -257,9 +296,10 @@ natSci$correlation.r <- ztor(natSci$fis.r)
   natSci$seFish.r[str_detect(natSci$type_os, "Chi")] <- NA
   natSci$seFish.o[str_detect(natSci$type_os, "Chi")] <- NA
 # Checked that they were not used in the meta-analysis using "natSci$n_rs2[str_detect(natSci$type_os, "Chi")] " which gives 2 NAs, i.e., no second studies were performed for either 
+  # cleaning up author names: 
+  natSci$Authors <- str_remove_all(natSci$Authors, "\"|[0-9]?[0-9]\\s")
   
-  
-  data4 <- data.frame(authorsTitle.o = NA,
+  data4 <- data.frame(authorsTitle.o = natSci$Authors,
                       correlation.o = natSci$r_os, 
                       cohenD.o = NA, 
                       fis.o = natSci$fis.o, 
@@ -267,7 +307,7 @@ natSci$correlation.r <- ztor(natSci$fis.r)
                       n.o = natSci$n_os,
                       seCohenD.o = NA, 
                       pVal.o = natSci$p_os,
-                      resultUsedInRep.o = str_c(natSci$type_os, "=", natSci$stat_os), 
+                      testStatistic.o = str_c(natSci$type_os, "=", natSci$stat_os), 
                       correlation.r = natSci$correlation.r,
                       cohenD.r = NA, 
                       fis.r = natSci$fis.r,
@@ -307,7 +347,7 @@ data5 <- data.frame(authorsTitle.o = econ$AuthorsJournalYear,
                     seFish.o = es.o$seFish,
                     n.o = econ$originalN,
                     pVal.o =  econ$originalPValue,
-                    resultUsedInRep.o = NA,
+                    testStatistic.o = NA,
                     correlation.r = econ$replication_r,
                     cohenD.r = NA, 
                     seCohenD.r =  NA,
@@ -337,8 +377,10 @@ resSplit[36,2] <- .01
 pvalues <- str_remove_all(resSplit[,2], " |=|\\)|,|B|1.62|,|Ex|orted") 
 pvalues[25] <- NA
 
-xPhi$pVal.o <- pvalues
+ # pnorm(q = 0.02384606, mean = 0, sd = 0.001482005, lower.tail = F)
 
+xPhi$pVal.o <- pvalues
+as.numeric(pvalues)
 
 # extracting replication p values
 resSplit.r <- str_split(xPhi$ReplicationANALYSIS, "p", simplify = T)
@@ -351,7 +393,7 @@ es.r$seFish[grepl(x =  xPhi$OriginalANALYSIS, pattern = "χ|X2|F\\(2,|F \\(2")] 
 es.o$seFish[grepl(x =  xPhi$OriginalANALYSIS, pattern = "χ|X2|F\\(2,|F \\(2")] <- NA
 
 # Amalgomating 
-data5 <- data.frame(authorsTitle.o = xPhi$PAPER_ID,
+data6 <- data.frame(authorsTitle.o = xPhi$PAPER_ID,
                     correlation.o = xPhi$OriginalRES, 
                     cohenD.o = NA, 
                     seCohenD.o =  NA,
@@ -359,7 +401,7 @@ data5 <- data.frame(authorsTitle.o = xPhi$PAPER_ID,
                     seFish.o = es.o$seFish,
                     n.o = xPhi$OriginalN_Effect,
                     pVal.o =  xPhi$pVal.o,
-                    resultUsedInRep.o = xPhi$OriginalANALYSIS,
+                    testStatistic.o = xPhi$OriginalANALYSIS,
                     correlation.r = xPhi$ReplicationRES,
                     cohenD.r = NA, 
                     seCohenD.r =  NA,
@@ -369,17 +411,58 @@ data5 <- data.frame(authorsTitle.o = xPhi$PAPER_ID,
                     pVal.r =  xPhi$pVal.r,
                     seDifference.ro = NA)
 
-data5$source <- "xPhi"
+data6$source <- "xPhi"
+
+########## End xPhi data recollection #########
+
+loopr <- read_excel('Data/EmbargoFolder/LOOPR_data.xlsx')
+
+# Effect sizes from study
+loopr$correlation.o <- as.numeric(loopr$OriginalEffect) 
+loopr$correlation.r <- as.numeric(loopr$ReplicationEffect)
+loopr$DisattenuatedCorrelation.r <- loopr$DisattenuatedReplicationEffect
+
+es.o <- escalc(ri = loopr$correlation.o, ni = loopr$OriginalSampleSize, measure = "ZCOR")
+es.r <- escalc(ri = loopr$correlation.r, ni = loopr$ReplicationSampleSize, measure = "ZCOR")
 
 
+### Standard errors original and replication study - None appear to use techniques for which SEs can be meaningfully extracted
+es.o$seFish <- sqrt(1/(loopr$OriginalSampleSize-3))
+es.r$seFish <- sqrt(1/(loopr$ReplicationSampleSize-3))
+
+# Removing those that were in fact beta coefficents from consideration 
+loopr$DisattenuatedCorrelation.r[loopr$ReplicationEffectType == "B"] <- loopr$correlation.o[loopr$ReplicationEffectType == "B"] <- loopr$correlation.r[(loopr$ReplicationEffectType == "B")] <- es.r[(loopr$ReplicationEffectType == "B"),] <- es.o[(loopr$ReplicationEffectType == "B"),] <- NA
 
 
+View(data_frame(loopr$ReplicationFisheredEffectSizeByOutcome, es.r$yi))
 
+View(loopr)
 
+# Amalgomating 
+data7 <- data.frame(authorsTitle.o = paste0("Looper", as.numeric(gsub("([0-9]+).*$", "\\1", loopr$OutcomeNumber))),
+                    correlation.o = loopr$correlation.o, 
+                    cohenD.o = NA, 
+                    seCohenD.o =  NA,
+                    fis.o = es.o$yi, 
+                    seFish.o = es.o$seFish,
+                    n.o = loopr$OriginalSampleSize,
+                    pVal.o =  loopr$OriginalPValue,
+                    testStatistic.o = NA,
+                    correlation.r = loopr$correlation.r,
+                    correlationDisattenuated.r = loopr$DisattenuatedCorrelation.r, 
+                    cohenD.r = NA, 
+                    seCohenD.r =  NA,
+                    fis.r = es.r$yi,
+                    seFish.r = es.r$seFish,
+                    n.r = loopr$ReplicationSampleSize,
+                    pVal.r =  loopr$ReplicationPValue,
+                    seDifference.ro = NA,
+                    testStatistic.r = NA)
 
+data7$source <- "LOOPR"
 
-
-tmp <- plyr::join_all(list(data, data2, data3, data4, data5), type = 'full')
+#  data7
+tmp <- plyr::join_all(list(data, data2, data3, data4, data5, data6, data7), type = 'full')
 
 datax <- data.frame(authorsTitle.o = ,
                     correlation.o = , 
@@ -389,7 +472,7 @@ datax <- data.frame(authorsTitle.o = ,
                     n.o = ,
                     seCohenD.o = , 
                     pVal.o = ,
-                    resultUsedInRep.o = ,
+                    testStatistic.o = ,
                     correlation.r = ,
                     cohenD.r = , 
                     fis.r = ,
@@ -400,12 +483,26 @@ datax <- data.frame(authorsTitle.o = ,
                     seDifference.ro = )
 
 
-
-
-
 # LATER - convert effect sizes and extract SEs - possibility of using 
-
 ## https://osf.io/z7aux/
+
+
+### Finding the 
+
+
+### Finding minimium effect that would have been significant in the original study - 
+minimumEffectDetectable <- qnorm(.05, mean = 0, sd = tmp$seFish.o, lower.tail = FALSE)
+upper95.r <- tmp$fis.r + ( 1.96 * tmp$seFish.r )
+lower95.r <- tmp$fis.r - ( 1.96 * tmp$seFish.r )
+
+
+
+
+
+
+
+
+
 
 
 
