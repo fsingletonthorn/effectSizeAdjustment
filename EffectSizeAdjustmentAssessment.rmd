@@ -5,8 +5,15 @@ output: html_notebook
 
 
 ```{r}
-plot(cars)
+source(file = 'Data/data_collection_cleaning.R')
+devtools::install_github('hollylkirk/ochRe')
+library(ochRe)
 ```
+
+### LIST OF ALL OF THE TYPES OF REPLICATION SUCCESS HERE ! ! ! ! !
+
+
+
 
 # REMEMBER TO COUNT ALL OF THE ARTICLES INCLUDED FROM EACH SOURCE - all for which Rs could be calculated or extracted from original and replication studies
 
@@ -47,10 +54,6 @@ Perugini et al., 2014
 Safeguard power - the lower bound of the xx% CI. 
 
 
-
-Can estiamte 
-
-
 ### What would be a reasonable blanket rule for an effect that no longer matters?
 I.e., an effect that  is .2 of the original effect? 
 
@@ -74,18 +77,47 @@ One of the benifits of this approach is that standard errors can be developed fo
 
 Effects which were non-significant were included following the inclusion rules used by studies includied - if the original authors reported them as significant. This means that some of the p values for included studies were in fact over .05. Results which were not reported as significant were not included. 
 
+Because in the loopr study, some measures used shorter form version of the original results, all results presented have been disattenuated using the Spearman-Brown prediction formula and Spearman disattenuation formula to estimate the trait-outcome associations that would be expected if our outcome measure had used the same number of items as the original study (Lord & Novick, 1968). Following the other large scale replication studies, the signs of negative original correlations were set to positive (and the sign of the replicaiton sample were switched too). 
 
 
 
+IT MAY BE WORTH EXLUDING THOSE NON-sig few from the begining
+
+```{r message=FALSE}
 
 
 
+ggplot(tmp, aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic()  + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) # scale_shape_manual(values = c(0,1,2,15,16,17)) +
+# summary(abs(loopr$correlation.o))  
+
+
+ggplot(tmp[as.numeric(tmp$pVal.r) <.05 | is.na(as.numeric(tmp$pVal.r)),], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) # scale_shape_manual(values = c(0,1,2,15,16,17)) +
+
+mean((tmp$correlation.r-tmp$correlation.o)/tmp$correlation.o, na.rm = T)
+mean((tmp$correlation.r-tmp$correlation.o), na.rm = T)
+
+cor.test(tmp$correlation.r, tmp$correlation.o, na.rm = T)
+
+
+```
 
 
 
+### Testing methods of removing originals
+
+```{r}
 
 
+# extracting just the significant ones (i.e., successful replications according to p < .05 on the replication)
+dat <- tmp[as.numeric(tmp$pVal.r) <.05 | is.na(as.numeric(tmp$pVal.r)),]
 
+mean((dat$correlation.r-dat$correlation.o)/dat$correlation.o, na.rm = T)
+mean((dat$correlation.r-dat$correlation.o), na.rm = T)
+mean(data.frame(dat$correlation.r[-30], dat$correlation.o[-30], (dat$correlation.r[-30]-dat$correlation.o[-30])/dat$correlation.o[-30])[,3], na.rm = T)
+cor.test(dat$correlation.r, dat$correlation.o, na.rm = T) 
+```
+
+###
 
 
 

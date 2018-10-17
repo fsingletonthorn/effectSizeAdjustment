@@ -5,9 +5,8 @@ library(compute.es)
 library(readr)
 library(metafor)
 library(ggplot2)
+library(BayesFactor)
 
-# View(plyr::join_all(list(data, data2), type = 'full'))
-#source(file = "Data/Functions/any_to_any.R") # Not necessary, but possible later to aid translation b/w effect sizes with reasonable SEs being developed
 
 #### First extracting data from the OSC's RPP  ####
 
@@ -422,25 +421,24 @@ loopr$correlation.o <- as.numeric(loopr$OriginalEffect)
 loopr$correlation.r <- as.numeric(loopr$ReplicationEffect)
 loopr$DisattenuatedCorrelation.r <- loopr$DisattenuatedReplicationEffect
 
-es.o <- escalc(ri = loopr$correlation.o, ni = loopr$OriginalSampleSize, measure = "ZCOR")
-es.r <- escalc(ri = loopr$correlation.r, ni = loopr$ReplicationSampleSize, measure = "ZCOR")
+# Making correlations positive in the first instance for easily comparibility with the other studies 
+loopr$DisattenuatedCorrelationPositive.r <- ifelse(loopr$correlation.o<0, -loopr$DisattenuatedCorrelation.r, loopr$DisattenuatedCorrelation.r)
+loopr$correlationPositive.o <- ifelse(loopr$correlation.o<0, -loopr$correlation.o, loopr$correlation.o)
 
+# NOTE THIS USES THE DISATTENUATED CORRELATION for the replication - switched such that the original was always positive  
+es.o <- escalc(ri = loopr$correlationPositive.o, ni = loopr$OriginalSampleSize, measure = "ZCOR")
+es.r <- escalc(ri = loopr$DisattenuatedCorrelationPositive.r, ni = loopr$ReplicationSampleSize, measure = "ZCOR")
 
 ### Standard errors original and replication study - None appear to use techniques for which SEs can be meaningfully extracted
 es.o$seFish <- sqrt(1/(loopr$OriginalSampleSize-3))
 es.r$seFish <- sqrt(1/(loopr$ReplicationSampleSize-3))
 
 # Removing those that were in fact beta coefficents from consideration 
-loopr$DisattenuatedCorrelation.r[loopr$ReplicationEffectType == "B"] <- loopr$correlation.o[loopr$ReplicationEffectType == "B"] <- loopr$correlation.r[(loopr$ReplicationEffectType == "B")] <- es.r[(loopr$ReplicationEffectType == "B"),] <- es.o[(loopr$ReplicationEffectType == "B"),] <- NA
-
-
-View(data_frame(loopr$ReplicationFisheredEffectSizeByOutcome, es.r$yi))
-
-View(loopr)
+loopr$DisattenuatedCorrelationPositive.r[loopr$ReplicationEffectType == "B"] <- loopr$correlationPositive.o[loopr$ReplicationEffectType == "B"] <- loopr$DisattenuatedCorrelation.r[loopr$ReplicationEffectType == "B"] <- loopr$correlation.o[loopr$ReplicationEffectType == "B"] <- loopr$correlation.r[(loopr$ReplicationEffectType == "B")] <- es.r[(loopr$ReplicationEffectType == "B"),] <- es.o[(loopr$ReplicationEffectType == "B"),] <- NA
 
 # Amalgomating 
 data7 <- data.frame(authorsTitle.o = paste0("Looper", as.numeric(gsub("([0-9]+).*$", "\\1", loopr$OutcomeNumber))),
-                    correlation.o = loopr$correlation.o, 
+                    correlation.o = loopr$correlationPositive.o, 
                     cohenD.o = NA, 
                     seCohenD.o =  NA,
                     fis.o = es.o$yi, 
@@ -448,14 +446,14 @@ data7 <- data.frame(authorsTitle.o = paste0("Looper", as.numeric(gsub("([0-9]+).
                     n.o = loopr$OriginalSampleSize,
                     pVal.o =  loopr$OriginalPValue,
                     testStatistic.o = NA,
-                    correlation.r = loopr$correlation.r,
-                    correlationDisattenuated.r = loopr$DisattenuatedCorrelation.r, 
+                    correlation.r = loopr$DisattenuatedCorrelationPositive.r,
+                    # correlationNotDisttenuated.r = loopr$DisattenuatedCorrelation.r, 
                     cohenD.r = NA, 
                     seCohenD.r =  NA,
                     fis.r = es.r$yi,
                     seFish.r = es.r$seFish,
                     n.r = loopr$ReplicationSampleSize,
-                    pVal.r =  loopr$ReplicationPValue,
+                    pVal.r = loopr$ReplicationPValue,
                     seDifference.ro = NA,
                     testStatistic.r = NA)
 
@@ -463,33 +461,32 @@ data7$source <- "LOOPR"
 
 #  data7
 tmp <- plyr::join_all(list(data, data2, data3, data4, data5, data6, data7), type = 'full')
+# tmp <- plyr::join_all(list(data, data2, data3, data4, data5, data6), type = 'full')
 
-datax <- data.frame(authorsTitle.o = ,
-                    correlation.o = , 
-                    cohenD.o = , 
-                    fis.o = , 
-                    seFish.o = ,
-                    n.o = ,
-                    seCohenD.o = , 
-                    pVal.o = ,
-                    testStatistic.o = ,
-                    correlation.r = ,
-                    cohenD.r = , 
-                    fis.r = ,
-                    seFish.r = ,
-                    n.r = ,
-                    seCohenD.r = ,
-                    pVal.r = ,
-                    seDifference.ro = )
-
+##     datax <- data.frame(authorsTitle.o = ,
+##                         correlation.o = , 
+##                         cohenD.o = , 
+##                         fis.o = , 
+##                         seFish.o = ,
+##                         n.o = ,
+##                         seCohenD.o = , 
+##                         pVal.o = ,
+##                         testStatistic.o = ,
+##                         correlation.r = ,
+##                         cohenD.r = , 
+##                         fis.r = ,
+##                         seFish.r = ,
+##                         n.r = ,
+##                         seCohenD.r = ,
+##                         pVal.r = ,
+##                         seDifference.ro = )
+##     
 
 # LATER - convert effect sizes and extract SEs - possibility of using 
 ## https://osf.io/z7aux/
 
 
 ### Finding the 
-
-
 ### Finding minimium effect that would have been significant in the original study - 
 minimumEffectDetectable <- qnorm(.05, mean = 0, sd = tmp$seFish.o, lower.tail = FALSE)
 upper95.r <- tmp$fis.r + ( 1.96 * tmp$seFish.r )
@@ -500,12 +497,5 @@ lower95.r <- tmp$fis.r - ( 1.96 * tmp$seFish.r )
 
 
 
-
-
-
-
-
-
-
-
+mean(qnorm(.05, mean = 0, sd = tmp$seFish.o, lower.tail = FALSE), na.rm =T )
 
