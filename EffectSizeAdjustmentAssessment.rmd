@@ -4,9 +4,9 @@ output: html_notebook
 ---
 
 
-```{r}
+```{r message=FALSE, warning=FALSE, echo=FALSE}
 source(file = 'Data/data_collection_cleaning.R')
-devtools::install_github('hollylkirk/ochRe')
+# devtools::install_github('hollylkirk/ochRe')
 library(ochRe)
 ```
 
@@ -85,19 +85,19 @@ IT MAY BE WORTH EXLUDING THOSE NON-sig few from the begining
 
 ```{r message=FALSE}
 
-
-
-ggplot(tmp, aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic()  + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) # scale_shape_manual(values = c(0,1,2,15,16,17)) +
+ggplot(allData, aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) +  geom_point(alpha = 1, na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic()  + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(8,16)) #  +
 # summary(abs(loopr$correlation.o))  
 
 
-ggplot(tmp[as.numeric(tmp$pVal.r) <.05 | is.na(as.numeric(tmp$pVal.r)),], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) # scale_shape_manual(values = c(0,1,2,15,16,17)) +
 
-mean((tmp$correlation.r-tmp$correlation.o)/tmp$correlation.o, na.rm = T)
-mean((tmp$correlation.r-tmp$correlation.o), na.rm = T)
+mean((allData$correlation.r-allData$correlation.o)/allData$correlation.o, na.rm = T)
+mean((allData$correlation.r-allData$correlation.o), na.rm = T)
 
-cor.test(tmp$correlation.r, tmp$correlation.o, na.rm = T)
+mean((allData$fis.r -allData$fis.o)/allData$fis.o, na.rm = T)
 
+cor.test(allData$correlation.r, allData$correlation.o, na.rm = T)
+
+# allData
 
 ```
 
@@ -106,10 +106,12 @@ cor.test(tmp$correlation.r, tmp$correlation.o, na.rm = T)
 ### Testing methods of removing originals
 
 ```{r}
-
-
 # extracting just the significant ones (i.e., successful replications according to p < .05 on the replication)
-dat <- tmp[as.numeric(tmp$pVal.r) <.05 | is.na(as.numeric(tmp$pVal.r)),]
+dat <- allData[as.numeric(allData$pVal.r) <.05 | is.na(as.numeric(allData$pVal.r)),]
+
+
+ggplot(allData[allData$significant.r==TRUE,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) 
+
 
 mean((dat$correlation.r-dat$correlation.o)/dat$correlation.o, na.rm = T)
 mean((dat$correlation.r-dat$correlation.o), na.rm = T)
@@ -118,6 +120,28 @@ cor.test(dat$correlation.r, dat$correlation.o, na.rm = T)
 ```
 
 ###
+
+
+
+
+
+
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -5,8 +5,6 @@ library(compute.es)
 library(readr)
 library(metafor)
 library(ggplot2)
-library(BayesFactor)
-
 
 #### First extracting data from the OSC's RPP  ####
 
@@ -361,7 +359,6 @@ data5$source <- "Econ"
 ##### Xphi data recollection #####
 # Data from Cova, F., Strickland, B., Abatista, A., Allard, A., Andow, J., Attie, M., . . . Colombo, M. (2018). Estimating the reproducibility of experimental philosophy. Review of Philosophy and Psychology, 1-36. 
 xPhi <- read_csv(file ="Data/XPhiReplicability_CompleteData.csv")
-
 es.o <- escalc(ri = xPhi$OriginalRES, ni = xPhi$OriginalN_Effect, measure = "ZCOR")
 es.r <- escalc(ri = xPhi$ReplicationRES, ni = xPhi$ReplicationN_Effect, measure = "ZCOR")
 
@@ -383,7 +380,8 @@ as.numeric(pvalues)
 
 # extracting replication p values
 resSplit.r <- str_split(xPhi$ReplicationANALYSIS, "p", simplify = T)
-pvalues.r <- str_remove_all(resSplit.r[,2], " |=|, η2=0.007|, B = 0.42, Ex") 
+pvalues.r <- str_remove_all(resSplit.r[,2], " |=|, η2=0.007|, B = 0.42, Ex|,η20.007") 
+
 
 xPhi$pVal.r <- pvalues.r
 
@@ -459,32 +457,18 @@ data7 <- data.frame(authorsTitle.o = paste0("Looper", as.numeric(gsub("([0-9]+).
 
 data7$source <- "LOOPR"
 
-#  data7
-tmp <- plyr::join_all(list(data, data2, data3, data4, data5, data6, data7), type = 'full')
-# tmp <- plyr::join_all(list(data, data2, data3, data4, data5, data6), type = 'full')
+# Bringing it all together
+allData <- plyr::join_all(list(data, data2, data3, data4, data5, data6, data7), type = 'full')
 
-##     datax <- data.frame(authorsTitle.o = ,
-##                         correlation.o = , 
-##                         cohenD.o = , 
-##                         fis.o = , 
-##                         seFish.o = ,
-##                         n.o = ,
-##                         seCohenD.o = , 
-##                         pVal.o = ,
-##                         testStatistic.o = ,
-##                         correlation.r = ,
-##                         cohenD.r = , 
-##                         fis.r = ,
-##                         seFish.r = ,
-##                         n.r = ,
-##                         seCohenD.r = ,
-##                         pVal.r = ,
-##                         seDifference.ro = )
-##     
+# Replacing one value which seems to be have an effect size in it too
+allData$pVal.r[ which(allData$pVal.r == "0.092,η20.007")] <- '0.092'
 
-# LATER - convert effect sizes and extract SEs - possibility of using 
-## https://osf.io/z7aux/
+# Setting binary for significant / not replication
+allData$significant.r  <- (as.numeric(allData$pVal.r) <.05 | is.na(as.numeric(allData$pVal.r)))
 
+# Prepping for MLM - calculating SEs and variance
+allData$fisherZDiff <- allData$fis.r - allData$fis.o
+allData$seDifference.ro <- sqrt(1/(allData$n.o-3) + 1/(allData$n.r-3))
 
 ### Finding the 
 ### Finding minimium effect that would have been significant in the original study - 
@@ -492,10 +476,6 @@ minimumEffectDetectable <- qnorm(.05, mean = 0, sd = tmp$seFish.o, lower.tail = 
 upper95.r <- tmp$fis.r + ( 1.96 * tmp$seFish.r )
 lower95.r <- tmp$fis.r - ( 1.96 * tmp$seFish.r )
 
-
-
-
-
-
+# metafor 
 mean(qnorm(.05, mean = 0, sd = tmp$seFish.o, lower.tail = FALSE), na.rm =T )
 
