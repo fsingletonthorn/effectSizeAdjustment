@@ -1,6 +1,17 @@
 # source(file = 'Data/data_collection_cleaning.R')
 source(file = "R code effect size estimation/appendixCodeFunctionsJeffreys.R")
 
+
+
+# first off simple calculation of the proportion of studies conducted per published result given a significnat main effect
+
+# How to get to .9 or .75 of the literature being sig, assuming all studies are statistically signifincat
+
+studiesPerPublishedPaper <- paste(round(.75/.44,2), "to", round(.9/.44,2))
+
+
+
+
 # Sample characteristics
 # Calculating the number included in the meta-analysis (also the number included in the study)
 nMeta <- sum((!is.na(allData$fisherZDiff)))
@@ -35,11 +46,9 @@ bfapplyplus0 <- function(x){
 allData$bf10 <- apply(data.frame(allData$correlation.r, allData$n.r), MARGIN = 1, FUN = bfapply10) 
 allData$bf01 <- 1/bf10 
 
-
 # one sided ~ probably makes more sense as they have all been shifted to positive direction
 allData$bfplus0 <- apply(data.frame(allData$correlation.r, allData$n.r), MARGIN = 1, FUN = bfapplyplus0) 
 allData$bf0plus <- 1/bfplus0 
-
 
 #### Amount of change in subsets ####
 
@@ -73,7 +82,6 @@ plotSigR <- ggplot(allData[allData$significant.r==TRUE,], aes(correlation.o, cor
 # two sided prior, Exluding studies with BF10 lower than 3, i.e., without evidence moderate or greater for the alternative
 plotBF10Greater3 <- ggplot(allData[(bf10>3),], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF10 lower than 3")
 
-
 # two sided prior, excluding those with evidence for null > 3
 plotBF01Lesser3 <- ggplot(allData[(bf01<3) & (sign(allData$correlation.o) == sign(allData$correlation.r)),], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF01 greater than 3")
 
@@ -84,8 +92,6 @@ plotBF0plusLesser3 <- ggplot(allData[bf0plus<3,], aes(correlation.o, correlation
 plotBFPlus0Greater3 <- ggplot(allData[bfplus0>3,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF+0 less than than 3")
 
 #### Meta-analyses ####
-
-
 # Random effects model with random effects for authors nested within source
 REMod <- rma.mv(yi = fisherZDiff, V = data$seDifference.ro^2, random =  ~ authorsTitle.o|source,  data = allData)
 summary(REMod)
@@ -103,5 +109,3 @@ REAuthorMod <- rma(yi = fisherZDiff, V = seDifference.ro^2, random = ~ authorsTi
 forest(REMod, xlim = c(-1, 1))
 
 summary(REMod)
-
-

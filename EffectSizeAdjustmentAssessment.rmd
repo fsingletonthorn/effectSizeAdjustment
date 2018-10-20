@@ -6,13 +6,32 @@ output: html_notebook
 
 ```{r message=FALSE, warning=FALSE, echo=FALSE}
 source(file = 'Data/data_collection_cleaning.R')
-# devtools::install_github('hollylkirk/ochRe')
-library(ochRe)
+
 ```
 
-### LIST OF ALL OF THE TYPES OF REPLICATION SUCCESS HERE ! ! ! ! !
+
+## Introduction
 
 
+
+
+Methods
+SEE MARKDOWN DOC
+
+Results 
+
+A paper hoping to estimate the average effect of publication bias in psychology using what effect sizes
+
+
+
+
+
+
+
+
+
+
+### LIST OF ALL OF THE VERSIONS OF REPLICATION SUCCESS HERE ! ! ! ! !
 
 
 # REMEMBER TO COUNT ALL OF THE ARTICLES INCLUDED FROM EACH SOURCE - all for which Rs could be calculated or extracted from original and replication studies
@@ -80,22 +99,22 @@ Effects which were non-significant were included following the inclusion rules u
 Because in the loopr study, some measures used shorter form version of the original results, all results presented have been disattenuated using the Spearman-Brown prediction formula and Spearman disattenuation formula to estimate the trait-outcome associations that would be expected if our outcome measure had used the same number of items as the original study (Lord & Novick, 1968). Following the other large scale replication studies, the signs of negative original correlations were set to positive (and the sign of the replicaiton sample were switched too). 
 
 
+xPhi included 2 origianl studies which were non-significant, these were removed from analysis.
+
 
 IT MAY BE WORTH EXLUDING THOSE NON-sig few from the begining
 
+## Testing 
+
 ```{r message=FALSE}
 
-ggplot(allData, aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) +  geom_point(alpha = 1, na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic()  + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(8,16)) #  +
+ggplot(allData, aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) +  geom_point(alpha = 1, na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic()  + ylim(c(-.5, 1))+ xlim(c(-.0, 1)) + scale_shape_manual(values = c(8,16)) 
+
 # summary(abs(loopr$correlation.o))  
-
-
-
 mean((allData$correlation.r-allData$correlation.o)/allData$correlation.o, na.rm = T)
-mean((allData$correlation.r-allData$correlation.o), na.rm = T)
-
 mean((allData$fis.r -allData$fis.o)/allData$fis.o, na.rm = T)
 
-cor.test(allData$correlation.r, allData$correlation.o, na.rm = T)
+# cor.test(allData$correlation.r, allData$correlation.o, na.rm = T)
 
 # allData
 
@@ -107,16 +126,11 @@ cor.test(allData$correlation.r, allData$correlation.o, na.rm = T)
 
 ```{r}
 # extracting just the significant ones (i.e., successful replications according to p < .05 on the replication)
-dat <- allData[as.numeric(allData$pVal.r) <.05 | is.na(as.numeric(allData$pVal.r)),]
 
 
-ggplot(allData[allData$significant.r==TRUE,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) 
 
 
-mean((dat$correlation.r-dat$correlation.o)/dat$correlation.o, na.rm = T)
-mean((dat$correlation.r-dat$correlation.o), na.rm = T)
-mean(data.frame(dat$correlation.r[-30], dat$correlation.o[-30], (dat$correlation.r[-30]-dat$correlation.o[-30])/dat$correlation.o[-30])[,3], na.rm = T)
-cor.test(dat$correlation.r, dat$correlation.o, na.rm = T) 
+
 ```
 
 ###

@@ -5,6 +5,8 @@ library(compute.es)
 library(readr)
 library(metafor)
 library(ggplot2)
+# devtools::install_github('hollylkirk/ochRe')
+library(ochRe)
 
 #### First extracting data from the OSC's RPP  ####
 
@@ -97,8 +99,9 @@ data <- data.frame(authorsTitle.o = paste0(MASTER$Authors..O., "-", MASTER$Study
                    testStatistic.r = MASTER$Test.statistic..R.,
                    seDifference.ro = RPP$sei)
 
-# Removing 3 missing articles (NS origs)
+# Removing 3 articles with missing effect sizes, and one NS origs
 data <- data[!is.na(RPP$ri.o) & !is.na(RPP$ri.r),]
+data <- data[-which(data$authorsTitle.o=='KA Ranganath, BA Nosek-Implicit attitude generalization occurs immediately; explicit attitude generalization takes time'),]
 
 data$source <- "OSCRPP"
 
@@ -382,12 +385,14 @@ as.numeric(pvalues)
 resSplit.r <- str_split(xPhi$ReplicationANALYSIS, "p", simplify = T)
 pvalues.r <- str_remove_all(resSplit.r[,2], " |=|, η2=0.007|, B = 0.42, Ex|,η20.007") 
 
-
 xPhi$pVal.r <- pvalues.r
 
 # Remove SEs from studies with Chi square stats or F degrees of freedom 1 > 1 
 es.r$seFish[grepl(x =  xPhi$OriginalANALYSIS, pattern = "χ|X2|F\\(2,|F \\(2")] <- NA
 es.o$seFish[grepl(x =  xPhi$OriginalANALYSIS, pattern = "χ|X2|F\\(2,|F \\(2")] <- NA
+
+# EXCLUDING STUDIES WHICH WERE NOT SIGNIFICANT 
+data.frame(xPhi$pVal.o,  as.numeric(xPhi$pVal.o) > .05 & !is.na(as.numeric(xPhi$pVal.o)))
 
 # Amalgomating 
 data6 <- data.frame(authorsTitle.o = xPhi$PAPER_ID,
@@ -435,7 +440,7 @@ es.r$seFish <- sqrt(1/(loopr$ReplicationSampleSize-3))
 loopr$DisattenuatedCorrelationPositive.r[loopr$ReplicationEffectType == "B"] <- loopr$correlationPositive.o[loopr$ReplicationEffectType == "B"] <- loopr$DisattenuatedCorrelation.r[loopr$ReplicationEffectType == "B"] <- loopr$correlation.o[loopr$ReplicationEffectType == "B"] <- loopr$correlation.r[(loopr$ReplicationEffectType == "B")] <- es.r[(loopr$ReplicationEffectType == "B"),] <- es.o[(loopr$ReplicationEffectType == "B"),] <- NA
 
 # Amalgomating 
-data7 <- data.frame(authorsTitle.o = paste0("Looper", as.numeric(gsub("([0-9]+).*$", "\\1", loopr$OutcomeNumber))),
+data7 <- data.frame(authorsTitle.o = loopr$OriginalStudyCitation,
                     correlation.o = loopr$correlationPositive.o, 
                     cohenD.o = NA, 
                     seCohenD.o =  NA,
@@ -466,16 +471,23 @@ allData$pVal.r[ which(allData$pVal.r == "0.092,η20.007")] <- '0.092'
 # Setting binary for significant / not replication
 allData$significant.r  <- (as.numeric(allData$pVal.r) <.05 | is.na(as.numeric(allData$pVal.r)))
 
+# Setting binary for significant and in the same direction / not replication
+allData$significantSameDirection.r  <- (as.numeric(allData$pVal.r) <.05 | is.na(as.numeric(allData$pVal.r)))& sign(allData$correlation.o)==sign(allData$correlation.r)
+
+# Setting binary for significant and in the same direction / not replication
+allData$significantSameDirection.r  <- (as.numeric(allData$pVal.r) <.05 | is.na(as.numeric(allData$pVal.r)))& sign(allData$correlation.o)==sign(allData$correlation.r)
+allData$significantSameDirection.r[is.na(allData$significantSameDirection.r)] <- TRUE
+
 # Prepping for MLM - calculating SEs and variance
 allData$fisherZDiff <- allData$fis.r - allData$fis.o
 allData$seDifference.ro <- sqrt(1/(allData$n.o-3) + 1/(allData$n.r-3))
 
 ### Finding the 
 ### Finding minimium effect that would have been significant in the original study - 
-minimumEffectDetectable <- qnorm(.05, mean = 0, sd = tmp$seFish.o, lower.tail = FALSE)
-upper95.r <- tmp$fis.r + ( 1.96 * tmp$seFish.r )
-lower95.r <- tmp$fis.r - ( 1.96 * tmp$seFish.r )
+# minimumEffectDetectable <- qnorm(.05, mean = 0, sd = tmp$seFish.o, lower.tail = FALSE)
+# upper95.r <- tmp$fis.r + ( 1.96 * tmp$seFish.r )
+# lower95.r <- tmp$fis.r - ( 1.96 * tmp$seFish.r )
 
 # metafor 
-mean(qnorm(.05, mean = 0, sd = tmp$seFish.o, lower.tail = FALSE), na.rm =T )
+# mean(qnorm(.05, mean = 0, sd = tmp$seFish.o, lower.tail = FALSE), na.rm =T )
 
