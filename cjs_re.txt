@@ -1,0 +1,40 @@
+
+model {
+#priors
+mean.p~dunif(0,1)
+mean.phi~dunif(0,1)
+mu.phi<-log(mean.phi/(1-mean.phi))
+sigma.phi~dunif(0,10)
+tau.phi<-pow(sigma.phi,-2)
+mu.p<-log(mean.p/(1-mean.p))
+sigma.p~dunif(0,10)
+tau.p<-pow(sigma.p,-2)
+
+
+for (t in 1:(n.occasions-1))
+ {logit(phi[t])<-mu.phi+epsilon.phi[t]
+logit(p[t])<-mu.p+epsilon.p[t]
+     epsilon.phi[t]~dnorm(0,tau.phi)
+     epsilon.p[t]~dnorm(0,tau.p)
+ }
+
+
+#likelihood
+for (i in 1:nind)
+ {
+      z[i,f[i]]<-1   #state at first capture must be 1!
+  for (t in (f[i]+1):n.occasions)
+     {
+        # state
+	  mu1[i,t]<-phi[t-1]*z[i,t-1] 
+         z[i,t]~dbern(mu1[i,t])
+	    mu2[i,t]<-p[t-1]*z[i,t]
+         y[i,t]~dbern(mu2[i,t])
+         
+         }
+    }
+
+
+
+}
+

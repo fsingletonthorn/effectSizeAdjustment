@@ -89,20 +89,27 @@ plotBF0plusLesser3 <- ggplot(allData[bf0plus<3,], aes(correlation.o, correlation
 # One sided default bayes factor, including only studies with ev for alternative > 3
 plotBFPlus0Greater3 <- ggplot(allData[bfplus0>3,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF+0 less than than 3")
 
+
+
+### Descriptives
+
+nNotSig.r <- sum(allData$significant.r)
+nBFPlus0Greater3 <- 
+
+
+
+
 #### Meta-analyses ####
 # Random effects model with random effects for authors nested within source
 REMod <- rma.mv(yi = fisherZDiff, V = allData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = allData)
 summary(REMod)
-summary(oldREMod)
-# oldREMod <- REMod
-#
 
 # Random effects model with random effects for article of effect and fixed effect for Source
 REModFixSource <- rma.mv(yi = fisherZDiff, V = allData$seDifference.ro^2, random =  ~ authorsTitle.o, mods = ~source,  data = allData)
 summary(REModFixSource) 
 
 # The first model with only significant replications
-REModOnlySigR <- rma.mv(yi = fisherZDiff, V = allData[allData$significant.r==TRUE,]$seDifference.ro^2, random =  ~ 1|authorsTitle.o/source,  data = allData[allData$significant.r==TRUE,])
+REModOnlySigR <- rma.mv(yi = fisherZDiff, V = allData[allData$significant.r==TRUE,]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = allData[allData$significant.r==TRUE,])
 summary(REModOnlySigR)
 
 REAuthorMod <- rma(yi = fisherZDiff, V = allData$seDifference.ro^2, random = ~ authorsTitle.o, mods = ~ source,  data = allData)

@@ -1,0 +1,61 @@
+model{
+# Mixture Model Priors:
+alpha ~ dunif(0,1) # flat prior on slope for predicted effect size under H1
+tau ~ dgamma(0.001,0.001) # vague prior on study precision
+phi ~ dbeta(1, 1) # flat prior on the true effect rate
+
+for(i in 1:nStudy){
+mu_study_ori[i]~ dnorm(0, 0.0001)# hyperparameter for random intercepts Mean on the study level   ## CHECK 
+mu_study_rep[i]~ dnorm(0, 0.0001)# hyperparameter for random intercepts Mean on the study level   ## CHECK 
+#tau_study[i]~ dgamma(.01,.01) # hyperparameter for random intercepts precision on the study level ## CHECK 
+}
+
+for(i in 1:nSource){
+mu_source_ori[i]~ dnorm(0, 0.0001) # hyperparameter for random intercepts Mean on the source level (i.e., the OSC project etc.) ## CHECK 
+mu_source_rep[i]~ dnorm(0, 0.0001) # hyperparameter for random intercepts Mean on the source level (i.e., the OSC project etc.) ## CHECK 
+#tau_source[i]~ dgamma(.01,.01) # hyperparameter for random intercepts precision on the source level (i.e., the OSC project etc.) ## CHECK loop needed?
+}
+# prior on true effect size of original studies:
+for (i in 1:n){
+trueOrgEffect[i] ~ dnorm(0, 1)
+}
+
+# Mixture Model Likelihood:
+# Study level
+for(i in 1:n){
+clust[i] ~ dbern(phi)# extract errors in variables (FT stands for Fisher-transformed):
+orgEffect_FT[i] ~ dnorm(trueOrgEffect[i] + mu_study_ori[study[i]] + mu_source_ori[source[i]], orgTau[i])
+repEffect_FT[i] ~ dnorm(trueRepEffect[i] + mu_study_rep[study[i]] + mu_source_rep[source[i]], repTau[i])
+trueRepEffect[i] ~ dnorm(mu[i], tau)
+
+# if clust[i] = 0 then H0 is true; if clust[i] = 1 then H1 is true and
+# the replication effect is a function of the original effect:
+mu[i] <- alpha * trueOrgEffect[i] * equals(clust[i], 1)
+# when clust[i] = 0, then mu[i] = 0;
+# when clust[i] = 1, then mu[i] = alpha * trueOrgEffect[i]
+  }
+}
+
+# Original model
+# model{
+#   # Mixture Model Priors:
+#   alpha ~ dunif(0,1) # flat prior on slope for predicted effect size under H1
+#   tau ~ dgamma(0.001,0.001) # vague prior on study precision
+#   phi ~ dbeta(1, 1) # flat prior on the true effect rate
+#   # prior on true effect size of original studies:
+#   for (i in 1:n){
+#     trueOrgEffect[i] ~ dnorm(0, 1)
+#   }
+#   # Mixture Model Likelihood:
+#   for(i in 1:n){
+#     clust[i] ~ dbern(phi)# extract errors in variables (FT stands for Fisher-transformed):
+#     orgEffect_FT[i] ~ dnorm(trueOrgEffect[i], orgTau[i])
+#     mu[i] <- alpha * trueOrgEffect[i] * equals(clust[i], 1)
+#     trueRepEffect[i] ~ dnorm(mu[i], tau)
+#     repEffect_FT[i] ~ dnorm(trueRepEffect[i], repTau[i])
+#     # if clust[i] = 0 then H0 is true; if clust[i] = 1 then H1 is true and
+#     # the replication effect is a function of the original effect:
+#     # when clust[i] = 0, then mu[i] = 0;
+#     # when clust[i] = 1, then mu[i] = alpha * trueOrgEffect[i]
+#   }
+# }
