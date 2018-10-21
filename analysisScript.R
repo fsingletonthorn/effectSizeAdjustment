@@ -10,8 +10,6 @@ source(file = "R code effect size estimation/appendixCodeFunctionsJeffreys.R")
 studiesPerPublishedPaper <- paste(round(.75/.44,2), "to", round(.9/.44,2))
 
 
-
-
 # Sample characteristics
 # Calculating the number included in the meta-analysis (also the number included in the study)
 nMeta <- sum((!is.na(allData$fisherZDiff)))
@@ -93,19 +91,24 @@ plotBFPlus0Greater3 <- ggplot(allData[bfplus0>3,], aes(correlation.o, correlatio
 
 #### Meta-analyses ####
 # Random effects model with random effects for authors nested within source
-REMod <- rma.mv(yi = fisherZDiff, V = data$seDifference.ro^2, random =  ~ authorsTitle.o|source,  data = allData)
+REMod <- rma.mv(yi = fisherZDiff, V = allData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = allData)
 summary(REMod)
+summary(oldREMod)
+# oldREMod <- REMod
+#
 
 # Random effects model with random effects for article of effect and fixed effect for Source
-REModFixSource <- rma.mv(yi = fisherZDiff, V = data$seDifference.ro^2, random =  ~ authorsTitle.o, mods = ~source,  data = allData)
+REModFixSource <- rma.mv(yi = fisherZDiff, V = allData$seDifference.ro^2, random =  ~ authorsTitle.o, mods = ~source,  data = allData)
 summary(REModFixSource) 
 
-# The first model with only significant replication 
-REModOnlySigR <- rma.mv(yi = fisherZDiff, V = data$seDifference.ro^2, random =  ~ authorsTitle.o|source,  data = allData[allData$significant.r==TRUE,])
+# The first model with only significant replications
+REModOnlySigR <- rma.mv(yi = fisherZDiff, V = allData[allData$significant.r==TRUE,]$seDifference.ro^2, random =  ~ 1|authorsTitle.o/source,  data = allData[allData$significant.r==TRUE,])
 summary(REModOnlySigR)
 
-REAuthorMod <- rma(yi = fisherZDiff, V = seDifference.ro^2, random = ~ authorsTitle.o, mods = ~ source,  data = allData)
+REAuthorMod <- rma(yi = fisherZDiff, V = allData$seDifference.ro^2, random = ~ authorsTitle.o, mods = ~ source,  data = allData)
 
-forest(REMod, xlim = c(-1, 1))
 
-summary(REMod)
+
+
+
+
