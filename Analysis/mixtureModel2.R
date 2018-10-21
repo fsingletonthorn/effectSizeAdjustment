@@ -40,17 +40,18 @@ jagMod_additional <- jags.model(file = 'Analysis/BMWMod_additional2.R',
                                  nSource = length(unique(jagData$source)), nStudy = length(unique(jagData$authorsTitle.o)), 
                                  study = as.factor(as.character(jagData$authorsTitle.o)), 
                                  source = as.factor(as.character(jagData$source))),
-                     n.chains=1) # INCREASE B CHAINS
+                     n.chains=2) # INCREASE B CHAINS
 
 
 # Parameters to keep
-params <- c("clust",
+params <- c(#"clust",
   #"orgEffect_FT" ,
   #"repEffect_FT" ,
   #"trueRepEffect",
   "alpha")
 
 # Running model and summarising 
-samples <- coda.samples(jagMod_additional,params,n.iter = 20000)
+samples2 <- coda.samples(jagMod_additional,params,n.iter = 20000)
+samples2Sum<-summary(samples2)
 
-
+traceplot(samples2)
