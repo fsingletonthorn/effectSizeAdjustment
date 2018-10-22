@@ -30,12 +30,12 @@ samples <- coda.samples(jagMod,params,n.iter = 10000)
 samplesSum<-summary(samples)
 # Highest prob density interval
 HPDinterval(samples)
-traceplot(samples)
+plot(samples)
 # Traceplot - be warned, this takes forever unless you are only looking at one parameter at a time - I suggest alpha, the most important (assuming all else is working)
 # traceplot(samples)
 
 # Taking a burn in of 5000 out
-summary(window(samples, start=5001))
+
 
 # plot(samples)
 
@@ -51,7 +51,7 @@ jagMod_additional <- jags.model(file = 'Analysis/BMWMod_additional.R',
 
 
 # Parameters to keep
-params <- c("mu_source_rep",
+params <- c("mu_source_rep","mu_source_ori",
   #"clust",
   #"orgEffect_FT" ,
   #"trueOrgEffect",
@@ -60,12 +60,15 @@ params <- c("mu_source_rep",
   "alpha")
 
 # Running model and summarising 
-samples2 <- coda.samples(jagMod_additional,params,n.iter = 10000)
+samples2 <- coda.samples(jagMod_additional,params,n.iter = 50000)
 samples2Sum<-summary(samples2)
 samples2Sum
+summary(window(samples2, start=75000))
 plot(samples2)
 # View(samples2Sum)
 
+HPDinterval(samples2)
+  
 sums <- do.call(cbind.data.frame, samples2Sum)
 View(data.frame(sums))
 
