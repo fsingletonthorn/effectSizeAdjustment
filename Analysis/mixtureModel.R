@@ -64,7 +64,7 @@ samples2 <- coda.samples(jagMod_additional,params,n.iter = 10000)
 samples2Sum<-summary(samples2)
 samples2Sum
 plot(samples2)
-View(samples2Sum)
+# View(samples2Sum)
 
 sums <- do.call(cbind.data.frame, samples2Sum)
 View(data.frame(sums))
