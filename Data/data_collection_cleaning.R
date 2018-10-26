@@ -7,6 +7,24 @@ library(metafor)
 library(ggplot2)
 # devtools::install_github('hollylkirk/ochRe')
 library(ochRe)
+# Setting up a dataframe of names of the source studies for easy plotting later
+
+projectNames <- data_frame(c("OSC (2015) \n General Psychology",
+                                                     "Klein et al. (2014)\n Many Labs 1", 
+                                                     "Ebersole et al. (2016)\n Many Labs 3",
+                                                     "Camerer, et al. (2018)\n Nature Science",
+                                                     "Camerer et al. (2016)\n Economics",
+                                                     "Cova, et al. (2018)\n Experimental Philosophy",
+                                                     "Soto (2019)\n Personality Psychology",
+                                                     "Klein et al. (2018)\n Many Labs 2"))
+projectNamesSingleLine <- data_frame(unique(allData$source), c("OSC (2015)",
+                                                     "Klein et al. (2014), Many Labs 1", 
+                                                     "Ebersole et al. (2016), Many Labs 3",
+                                                     "Camerer, et al. (2018), Nature Science",
+                                                     "Camerer et al. (2016), Economics",
+                                                     "Cova, et al. (2018), Experimental Philosophy",
+                                                     "Soto (2019), Personality Psychology",
+                                                     "Klein et al. (2018), Many Labs 2"))
 
 #### First extracting data from the OSC's RPP  ####
 
@@ -82,7 +100,7 @@ RPP$pval.r <- pnorm(RPP$fis.r, sd = RPP$sei.r, lower.tail = FALSE)
 ### Standard error of difference score
 RPP$sei <- sqrt(1/(RPP$N.o-3) + 1/(RPP$N.r-3))
 
-data <- data.frame(authorsTitle.o = paste0(MASTER$Authors..O., "-", MASTER$Study.Title..O.),
+data <- data_frame(authorsTitle.o = paste0(MASTER$Authors..O., "-", MASTER$Study.Title..O.),
                    correlation.o = RPP$ri.o, # Pearson R
                    fis.o = RPP$fis.o, # Fishers z transform
                    seFish.o = RPP$sei.o, # Standard error Fisher trans correlation coef. 
@@ -95,16 +113,26 @@ data <- data.frame(authorsTitle.o = paste0(MASTER$Authors..O., "-", MASTER$Study
                    n.r = RPP$N.r,
                    seFish.r = RPP$sei.r,
                    pValFish.r = RPP$pval.r,
-                   pVal.r = MASTER$P.value..R., 
-                   testStatistic.r = MASTER$Test.statistic..R.,
+                   pVal.r = as.character(MASTER$P.value..R.), 
+                   testStatistic.r = as.character(MASTER$Test.statistic..R.),
                    seDifference.ro = RPP$sei)
 
 # Removing 3 articles with missing effect sizes, and one NS origs
 data <- data[!is.na(RPP$ri.o) & !is.na(RPP$ri.r),]
 data <- data[-which(data$authorsTitle.o=='KA Ranganath, BA Nosek-Implicit attitude generalization occurs immediately; explicit attitude generalization takes time'),]
 
-data$source <- "OSCRPP"
+# pvalue for missing data replication study 
+data$pVal.r[data$pVal.r=="2.2 x 10-16"] <- 2.2 * 10^16
+data$pVal.r[data$pVal.r=="prep > .99"] <- "< .0005" # estimated using psych::p.rep(.0005)
+data$pVal.r[data$pVal.r=="0"] <- "< .001"
+data$pVal.r[data$pVal.r=="X"] <- data$pValFish.r[data$pVal.r=="X"] # this one is a correlation, this p value should be accurate
 
+# Checking that all NAs are non-significant 
+# data$pVal.r[is.na(as.numeric(data$pVal.r))]
+
+data$source <- as.character(projectNames[1,1])
+  #"OSC (2015)"
+data$abrev <- "OSCRPP"
 ########## End RPP data recollection ########
 
 
@@ -123,17 +151,19 @@ ManyLabs1ML_orig<-ManyLabs1ML_orig[order(match(ManyLabs1ML_orig$Study.name, Many
 ManyLabs1[c("95CIlb.O", "95CIub.O")]<- str_split(ManyLabs1$`95% CI Lower, Upper.o`, pattern = ", ", simplify = T)
 ManyLabs1[c("95CIlb.r", "95CIub.r")]<- str_split(ManyLabs1$`99% CI Lower, Upper.r`, pattern = ", ", simplify = T)
 
-# Estimating p values and SE from 95% CIs 
-
-
 # Transforming into numerics
 ManyLabs1[c("95CIlb.O", "95CIub.O","95CIlb.r", "95CIub.r", 'ES.o')] <- sapply(ManyLabs1[c("95CIlb.O", "95CIub.O","95CIlb.r", "95CIub.r", "ES.o")], as.numeric) 
 
 # calculating sample size complete
 ManyLabs1$n.o <- ManyLabs1ML_orig$N1 + ManyLabs1ML_orig$N2
 
-# calculating r and fisher z from d 
-es.o <- des(d = ManyLabs1$ES.o, n.1 = ManyLabs1$n.o/2, n.2 =  ManyLabs1$n.o/2)
+# calculating r and fisher z from d (accounting for unequal sample sizes)
+es.o.equal <- data.frame(des(d = ManyLabs1$ES.o, n.1 = ManyLabs1$n.o/2, n.2 =  ManyLabs1$n.o/2))
+es.o.unequal <- data.frame(des(d = ManyLabs1$ES.o, n.1 = ManyLabs1ML_orig$N1, n.2 =  ManyLabs1ML_orig$N2))
+es.o <- es.o.unequal 
+
+# Bringing the above together
+for(i in 1:nrow(es.o.equal)) { if(es.o$n.2[i] == 0 & !is.na(es.o$n.2[i]))  es.o[i,] <- es.o.equal[i,] }
 
 # SE calculated following Borenstein, M., Hedges, L. V., Higgins, J. P., & Rothstein, H. R. (2011). Introduction to Meta-Analysis. West Sussex, United Kingdom: John Wiley & Sons.  equation 6.4
 es.o$se.z <- ifelse(!is.na(es.o$r),  sqrt(1/(ManyLabs1$n.o -3)), NA) 
@@ -192,7 +222,13 @@ data2 <- data.frame(authorsTitle.o = ManyLabs1ML_orig$Reference,
                     testStatistic.r = ManyLabs1$`Key statistics.r`,
                     seDifference.ro = NA)
 
-data2$source <- "ManyLabs1"
+data2$source <- as.character(projectNames[2,1])
+data2$abrev <- "ML1"
+  #"Klein et al. (2014), Many Labs 1"
+
+# Checking that all NAs are non-significant 
+# data2$pVal.r[is.na(as.numeric(as.character(data2$pVal.r)))]
+
 
 ### 
 # Removing everything apart from data sets  
@@ -212,15 +248,14 @@ es.r$r[c(7,9)] <- NA
 es.r$seFish <- ifelse(!is.na(es.r$r),  sqrt(1/(ManyLabs3$n.o -3)), NA)
 
 # removing Boroditsky, L. (2000). Metaphoric structuring: Understanding time through spatial metaphors. Cognition, 75(1), 1-28. who used a chi square test, making SEs for Fisher's z wrong
-es.r$pval.r[str_detect(string = ManyLabs3$Effect,  c("MetaphoricRestructuring"))] <- NA
-es.o$pval.r[str_detect(string = ManyLabs3$Effect,  c("MetaphoricRestructuring"))] <- NA
+es.r$seFish[str_detect(string = ManyLabs3$Effect,  c("MetaphoricRestructuring"))] <- NA
+es.o$seFish[str_detect(string = ManyLabs3$Effect,  c("MetaphoricRestructuring"))] <- NA
 
 # Extracting test stats from rep study
 testStats.r <- data.frame(str_split(ManyLabs3$KeyStatistics.r, " =", simplify = T)[,1],
            ManyLabs3$df.r,
            str_split(ManyLabs3$KeyStatistics.r, " =", simplify = T)[,2])
 ManyLabs3$testStatistic.r <- str_glue("{testStats.r[,1]} ({testStats.r[,2]}) = {testStats.r[,3]}")
-
 
 
 # Amalgomating
@@ -243,8 +278,13 @@ data3 <- data.frame(authorsTitle.o = ManyLabs3$originalEffects,
                     seDifference.ro = NA,
                     testStatistic.r = ManyLabs3$testStatistic.r)
 
-data3$source <- "ManyLabs3"
+data3$source <- as.character(projectNames[3,1])
+  #"Ebersole et al. (2016), Many Labs 3"
+data3$abrev <- "ML3"
 
+
+# Checking that all NAs are non-significant 
+# data3$pVal.r[is.na(as.numeric(as.character(data3$pVal.r)))]
 
 #### End of Many labs 3 recollection #### 
 #### Social science experiments from nature and science Data recollection ####
@@ -260,8 +300,6 @@ rOSums <- escalc(measure = "ZCOR", ri = natSci$r_os, ni = natSci$n_os)
 
 natSci$fis.o <- rOSums$yi
 natSci$seFish.o <- sqrt(1/(natSci$n_os -3))
-
-
 
 summary(r1Sums )
 
@@ -317,14 +355,13 @@ natSci$correlation.r <- ztor(natSci$fis.r)
                       pVal.r = natSci$pVal.r,
                       seDifference.ro = NA)
   
-  data4$source <- "NatSci"
+data4$source <- as.character(projectNames[4,1])
+  #"Camerer, et al. (2018), Nature Science"
+data4$abrev <- "natSci"
 
-### 
-# Removing everything apart from data sets  
-# rm(list = c("es.o", "es.r", "ManyLabs1","ManyLabs1ML_orig"))
-
-# careful with coersion ~ especially of p values some of which are marked as <.001 for example
-
+  # Checking that all NAs are non-significant 
+  # data4$pVal.r[is.na(as.numeric(as.character(data4$pVal.r)))]
+  
 
 ### ####
 econ <- read_csv(file = "Data/evaluatingReplicabilityOfLaboratoryExperimentsInEconomics.csv")
@@ -357,7 +394,13 @@ data5 <- data.frame(authorsTitle.o = econ$AuthorsJournalYear,
                     pVal.r =  econ$replicationPValue,
                     seDifference.ro = NA)
 
-data5$source <- "Econ"
+data5$source <- as.character(projectNames[5,1])
+  #  "Camerer et al. (2016), Economics"
+data5$abrev <- "econ"
+
+# Checking that all NAs are non-significant 
+# data5$pVal.r[is.na(as.numeric(as.character(data5$pVal.r)))]
+
 
 ##### Xphi data recollection #####
 # Data from Cova, F., Strickland, B., Abatista, A., Allard, A., Andow, J., Attie, M., . . . Colombo, M. (2018). Estimating the reproducibility of experimental philosophy. Review of Philosophy and Psychology, 1-36. 
@@ -413,10 +456,14 @@ data6 <- data.frame(authorsTitle.o = xPhi$PAPER_ID,
                     pVal.r =  xPhi$pVal.r,
                     seDifference.ro = NA)
 
-data6$source <- "xPhi"
+data6$source <- as.character(projectNames[6,1])
+  #"Cova, et al. (2018), Experimental Philosophy"
+data6$abrev <- "xPhi"
+# Checking that NA p values are significant 
+data6$pVal.r[is.na(as.numeric(as.character(data6$pVal.r)))]
 
 ########## End xPhi data recollection #########
-
+########## Begin LOOPR data collection ############
 loopr <- read_excel('Data/EmbargoFolder/LOOPR_data.xlsx')
 
 # Effect sizes from study
@@ -460,19 +507,70 @@ data7 <- data.frame(authorsTitle.o = loopr$OriginalStudyCitation,
                     seDifference.ro = NA,
                     testStatistic.r = NA)
 
-data7$source <- "LOOPR"
+data7$source <- as.character(projectNames[7,1])
+data7$abrev <- "loopr"
+  #"Soto (2019), Personality Psychology"
+
+# Checking that NA p values are significant 
+# data7$pVal.r[is.na(as.numeric(as.character(data7$pVal.r)))]
+
+
+####### end loopr data collection########
+##### Begin ManyLabs  data collection #####
+
+ml2 <- read_xlsx("Data/EmbargoFolder/ML2_Data_extracted_from_tables.xlsx")
+
+## Removing six studies for which effect sizes cannot be derrived (i.e., 4 which are diffs b/w effects, only es for each reported, and 2 which were cohen's q's)
+ml2 <- ml2[-which(is.na(as.numeric(ml2$Original_effect_size_d))),]
+
+View(ml2)
+
+# estimating rs and fishers z values 
+es.o <- des(as.numeric(ml2$Original_effect_size_d), n.1 = ml2$Original_study_sample_size/2, n.2 = ml2$Original_study_sample_size/2)
+es.o$seFish <- sqrt(1/(ml2$Original_study_sample_size-3))
+
+es.r <-  des(as.numeric(ml2$Replication_global_effect_size), n.1 = ml2$Replication_sample_size/2, n.2 = ml2$Replication_sample_size/2)
+es.r$seFish  <- sqrt(1/(ml2$Replication_sample_size-3))
+
+# Removing invalid SEs
+es.r$seFish[str_detect(ml2$OriginalTest, 'Chi')] <- es.o$seFish[str_detect(ml2$OriginalTest, 'Chi')] <- NA
+
+# Amalgomating
+data8 <- data.frame(authorsTitle.o = ml2$ArticleRef,
+                    correlation.o = es.o$r, 
+                    cohenD.o = es.o$d, 
+                    seCohenD.o =  NA,
+                    fis.o = es.o$fisher.z, 
+                    seFish.o = es.o$seFish,
+                    n.o = ml2$Original_study_sample_size,
+                    pVal.o =  NA,
+                    testStatistic.o = ml2$OriginalTest,
+                    correlation.r = es.r$r,
+                    cohenD.r = es.r$d, 
+                    seCohenD.r =  NA,
+                    fis.r = es.r$fisher.z,
+                    seFish.r = es.r$seFish,
+                    n.r = ml2$Original_study_sample_size,
+                    pVal.r = as.character(ml2$`replication_sample_size,_p_<_.0001`),
+                    seDifference.ro = NA,
+                    testStatistic.r = ml2$ReplicationTest)
+
+data8$source <- as.character(projectNames[8,1])
+  #"Klein et al. (2018), Many Labs 2"
+data8$abrev <- "ML2"
+
+
+# Checking that NA p values are significant 
+# data8$pVal.r[is.na(as.numeric(as.character(data8$pVal.r)))]
 
 # Bringing it all together
-allData <- plyr::join_all(list(data, data2, data3, data4, data5, data6, data7), type = 'full')
-
-# Replacing one value which seems to be have an effect size in it too
-allData$pVal.r[ which(allData$pVal.r == "0.092,η20.007")] <- '0.092'
+allData <- plyr::join_all(list(data, data2, data3, data4, data5, data6, data7, data8), type = 'full')
 
 # Setting binary for significant / not replication
 allData$significant.r  <- (as.numeric(allData$pVal.r) <.05 | is.na(as.numeric(allData$pVal.r)))
 
 # Setting binary for significant and in the same direction / not replication
-allData$significantSameDirection.r  <- (as.numeric(allData$pVal.r) <.05 | is.na(as.numeric(allData$pVal.r)))& sign(allData$correlation.o)==sign(allData$correlation.r)
+allData$significantSameDirection.r  <- (as.numeric(allData$pVal.r) <.05 | is.na(as.numeric(allData$pVal.r))) & (sign(allData$correlation.o) == sign(allData$correlation.r))
 
 # Setting binary for significant and in the same direction / not replication
 allData$significantSameDirection.r  <- (as.numeric(allData$pVal.r) <.05 | is.na(as.numeric(allData$pVal.r)))& sign(allData$correlation.o)==sign(allData$correlation.r)
@@ -481,6 +579,20 @@ allData$significantSameDirection.r[is.na(allData$significantSameDirection.r)] <-
 # Prepping for MLM - calculating SEs and variance
 allData$fisherZDiff <- allData$fis.r - allData$fis.o
 allData$seDifference.ro <- sqrt(1/(allData$n.o-3) + 1/(allData$n.r-3))
+
+# For plotting - correlation coefficent difference 
+allData$correlationDifference.ro <- allData$correlation.r - allData$correlation.o
+
+
+
+# percentage change from original to eventual effect size
+allData$percentageChangeES.ro <-  (allData$fis.r - allData$fis.o)/allData$fis.o
+
+
+                           
+                           
+                           
+
 
 ### Finding the 
 ### Finding minimium effect that would have been significant in the original study - 

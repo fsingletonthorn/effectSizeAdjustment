@@ -3,11 +3,11 @@ library(brms)
 
 # https://osf.io/xhj4d/  - Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., . . . Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637-644. doi:10.1038/s41562-018-0399-z
 # Getting rid of missing data
-jagData <- allData[ !is.na(allData$fis.o)& !is.na(allData$seFish.r) & !is.na(allData$seFish.o) & !is.na(allData$fis.r),] 
-
+jagData <- allData[ !is.na(allData$fis.o) & !is.na(allData$fis.r)  & !is.na(allData$n.o)  & !is.na(allData$n.r) ,]  #& (allData$abrev == "natSci"),] 
+View(allData[allData$abrev == "natSci",])
 nrow(jagData)
 ## ADDING IN MISSING DATA 
-jagData <- allData[ !is.na(allData$fis.o) & !is.na(allData$n.o) & !is.na(allData$n.r) & !is.na(allData$fis.r),] 
+# jagData <- allData[ !is.na(allData$fis.o) & !is.na(allData$n.o) & !is.na(allData$n.r) & !is.na(allData$fis.r),] 
 jagData$seFish.o <- sqrt(1/(jagData$n.o-3))
 jagData$seFish.r <- sqrt(1/(jagData$n.r-3))
 
@@ -19,15 +19,14 @@ jagMod <- jags.model(file = 'Analysis/BMWMod.R',
                      n.chains=4)
 
 # Parameters to keep
-params <- c(# "clust",
-  #"orgEffect_FT" ,
-  #"repEffect_FT" ,
+params <- c("clust",
   #"trueRepEffect",
+  #"trueOrgEffect"
   "alpha")
 
 # Running model and summarising 
 samples <- coda.samples(jagMod,params,n.iter = 10000)
-samplesSum<-summary(samples)
+samplesSum <- summary(samples)
 # Highest prob density interval
 HPDinterval(samples)
 plot(samples)
@@ -47,20 +46,21 @@ jagMod_additional <- jags.model(file = 'Analysis/BMWMod_additional.R',
                                  nSource = length(unique(jagData$source)), #nStudy = length(unique(jagData$authorsTitle.o)), 
                                  #study = as.factor(as.character(jagData$authorsTitle.o)), 
                                  source = as.factor(as.character(jagData$source))),
-                     n.chains=4)
+                                 n.chains=4)
 
 
 # Parameters to keep
 params <- c("mu_source_rep","mu_source_ori",
-  #"clust",
-  #"orgEffect_FT" ,
-  #"trueOrgEffect",
-  #"repEffect_FT" ,
-  #"trueRepEffect",
+  "clust",
+  "orgEffect_FT" ,
+  "trueOrgEffect",
+  "repEffect_FT" ,
+  "trueRepEffect",
   "alpha")
 
+
 # Running model and summarising 
-samples2 <- coda.samples(jagMod_additional,params,n.iter = 50000)
+samples2 <- coda.samples(jagMod_additional,params,n.iter = 10000)
 samples2Sum<-summary(samples2)
 samples2Sum
 summary(window(samples2, start=75000))
@@ -69,8 +69,30 @@ plot(samples2)
 
 HPDinterval(samples2)
   
-sums <- do.call(cbind.data.frame, samples2Sum)
+## Collecting information from both models
+sums <- do.call(cbind.data.frame, samplesSum)
+statsMeans <- sums$statistics.Mean
+# par(mar = c(0, 0, 0, 0))
+alpha <- statsMeans[grepl(pattern = "alpha", rownames(sums))]
+jagData$probRealEffect <- statsMeans[grepl(pattern = "clust", rownames(sums))]
+jagData$trueRepEffectModel <- statsMeans[grepl(pattern = "trueRepEffect", rownames(sums))]
+jagData$trueOrgEffectModel <- statsMeans[grepl(pattern = "trueOrgEffect", rownames(sums))]
+
+plot(jagData$probRealEffect ~ as.factor(jagData$source))
+plot(jagData$trueRepEffectModel ~ as.factor(jagData$source))
+plot(jagData$probRealEffect ~ jagData$trueRepEffectModel)
+plot(jagData$trueRepEffectModel ~ as.factor(jagData$source))
+plot(trueOrgEffectModel ~ fis.o, data = jagData)
+plot(trueRepEffectModel ~ fis.r, data = jagData)
+
+sum((jagData$probRealEffect > .5)/nrow(jagData))
+
+mu_source_ori <- statsMeans[grepl(pattern = "mu_source_ori", rownames(sums))]
+mu_source_rep <- statsMeans[grepl(pattern = "mu_source_rep", rownames(sums))]
+
 View(data.frame(sums))
+
+
 
 
 

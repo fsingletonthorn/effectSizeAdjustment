@@ -11,67 +11,27 @@ source(file = 'Data/data_collection_cleaning.R')
 
 
 ## Introduction
+See word document 
 
-
-
-
-Methods
-SEE MARKDOWN DOC
-
-Results 
-
-A paper hoping to estimate the average effect of publication bias in psychology using what effect sizes
-
-
-
-
-
-
-
-
-
-
-### LIST OF ALL OF THE VERSIONS OF REPLICATION SUCCESS HERE ! ! ! ! !
-
-
-# REMEMBER TO COUNT ALL OF THE ARTICLES INCLUDED FROM EACH SOURCE - all for which Rs could be calculated or extracted from original and replication studies
 
 ## Methods 
-Many of the studies did not present the original test statistics and p values (Many labs 1, 3 (CHECK 2), ), which were manually extracted from the original articles.
+### Data extraction
+All of the large scale replication projects that have been performed in behavioural science reserach were collected. The original source of each study, test statistics, effect sizes, sample sizes, standard errors, p-values were extracted for each original and replication study. Several of the large scale replication projects did not present the original test statistics and p values (e.g., Many labs 1 and 3). In these cases, these values were manually extracted from the original articles. When sample sizes for original studies were not avaliable they were manually extracted from original articles. When the original and replication effect sizes were not reported as Fisher Z transformed correlation coefficents, effect sizes were converted from test statistics or effect sizes for analysis. In cases where sample sizes were not reported per group, equal sample sizes among groups were assumed to be equal in these estimates. See table one for the number of valid studies extracted from each project. All results are reported in correlation coefficients following {Open Science Collaboration, 2015 #611} in order to present results in a common metric which is likely intuitivly understandable and familiar to most psychologists and behavioural reserachers. 
 
-When sample sizes for original studies were not avaliable they were manually extracted from original articles (for: many labs 3). Effect size statistics such as F values with a df1 of > 1, and χ2 values have been converted to correlations and Cohen's d values, but their standard errors cannot be computed directly. These studies have been excluded from the meta-analyses.
+Three studies which did not report that their findings were indicitive of a true effect were excluded from {Open Science Collaboration, 2015 #611}. For the Nature Science reporducibility projects {Camerer, 2018 #967}, when multiple replciation studies were run, a fixed effects meta-analysis was performed using the metafor package {Viechtbauer, 2010 #796} for each study to estimate the true effect. P values, standard errors and ns reflect this pooled estiamte. This method leads to one study more "replicating" according to the 'statistical significance in the same direction of the original study' than was originally reported in the nature science project, where they using the largest perfored study instead of a pooled estiamte.
 
-Sample sizes were assumed to be equal in all groups. Original p values and replication p values presented here were re-calculated using the Fisher Transformed z score.
+In the LOOPR study CITATION, some measures used shorter form version of the original questionaire, all results presented have been disattenuated using the Spearman-Brown prediction formula and Spearman disattenuation formula to estimate the trait-outcome associations that would be expected if our outcome measure had used the same number of items as the original study (Lord & Novick, 1968). Following the other large scale replication studies, the signs of negative original correlations were set to positive (and the sign of the replicaiton sample were switched too). 
 
+The experimental philosophy reproducibility project included 2 origianl studies which were non-significant (and which were not claimed to provide evidence for the effects under test), these were removed from analysis. 
 
-For nature science reporducibility papers, when multiple replciation studies were run, a fixed effects meta-analysis was performed using the metafor package for each study to estimate the effect. P values, standard errors and ns reflect this pooled estiamte. This method lead to one study more "replicating" according to the 'statistical significance in the same direction of the original study' using the largest perfored study criteria that the original authors reported. 
+Many labs 2 [CITATION] original p values were recalculated from summary statitsics (i.e., from Cohen's d). Four studies from this reporducibility project were removed because effect sizes could not be simply derrived (the original and replication studies examined a differnece in effect sizes seen in different conditions, and the effects were not directly tested against each other), and two additional were excluded because their effect sizes were only avalible in Cohen's q.
 
-# I COULD GO THROUGH AN RECALCULATE P VALUES FOR ALL THOSE WITH VALID SEs at the end
+INSERT TABLE 1 HERE
 
+### Analysis
+All analysis was perfomred in R {R Development Core Team, 2018 #314} using the Metafor package {Viechtbauer, 2010 #796}. In order to obtain a reasonable estimate of the change in effect size between original and replication studies, a multilevel random effects meta-analysis was performed on the difference in Fisher Z transformed correlations between original and replication studies. Standard errors were estiamted as $\sqrt{\frac{1}{N_{1} -3} +  \frac{1}{N_{2} -3} }$, with $N_1$ being the sample size in the original study and $N_2$ being the sample size in the replication study. Empirical Bayes estimates of the random effects were obtained following {Robinson, 1991 #999}. 
 
-
-TRY SMALL TELESCOPES, lower bound of 95% CIs, other methods of adjustment I.e., (Anderson et al., 2017; McShane & Böckenholt, 2016; Perugini et al., 2014; and Taylor & Muller, 1996). Maybe look into some of the meta-analytic methods?
-
-
-There are four main suggested methods for estimating effect sizes from single studies for use in power analysis, while accounting for publication bias. 
-
-Small telescopes - 
-
-
-Anderson et al, 2017 /  Taylor & Muller, 1996
-Estimate the distribution assuming a truncated t distribtuion. Fun!  Probably do with and without removing the 0s for this one - as negative effects might be estimated at 0 / negative.  
-
-
-McShane & Böckenholt, 2016
-Power Calibrated Effect Size approach ~~ Perform and check which effect size it is equivilent to selecting as an estimate of the effect size
- SEE: McShane, B. B., & Böckenholt, U. (2016). Planning sample sizes when effect sizes are uncertain The power-calibrated effect size approach.R for methods for this. 
- 
- Note this is meant to provide a specific thing, i.e., an estiamte accounting for uncertainty not a an estimate of the true effect sans publcaiton bias, and properly should be used on the second study too. 
-
-
-Perugini et al., 2014
-Safeguard power - the lower bound of the xx% CI. 
-
+Confidence intervals around binomial proportions are 95% Wilson Score intervals. Replication Bayes factors were calculated following 
 
 ### What would be a reasonable blanket rule for an effect that no longer matters?
 I.e., an effect that  is .2 of the original effect? 
@@ -84,25 +44,6 @@ EXCLUDE STUDIES - Find the smallest effect that would have been statistically si
 
 
 
-
-#### Conversion
-All effect sizes were converted into correlation coefficents, or extracted as such. Only effect sizes which could be converted into correlation coefficents are used in the current analysis. 
-
-
-This was done for two primary reasons. Most of the large scale replication projects have primarily reported their results in Pearson's r (i.e., all but one of the projects included in the current research). Secondarily, r values are broadly well understood and commonly used by psychologists. 
-
-One of the benifits of this approach is that standard errors can be developed for the Cohen's z transform of the correlation coefficents, and for differneces between z-transformed correlation coefficients, if values were developed from test statstics of r, t, or F(1,df2) following (Open Science Collaboration, 2015). However, standard errors developed this way are not valid for F statistics with a $df_1$ of > 1 or chi square statistics. These studies have been exlcuded from analyses which require these values [...!...]. 
-
-
-Effects which were non-significant were included following the inclusion rules used by studies includied - if the original authors reported them as significant. This means that some of the p values for included studies were in fact over .05. Results which were not reported as significant were not included. 
-
-Because in the loopr study, some measures used shorter form version of the original results, all results presented have been disattenuated using the Spearman-Brown prediction formula and Spearman disattenuation formula to estimate the trait-outcome associations that would be expected if our outcome measure had used the same number of items as the original study (Lord & Novick, 1968). Following the other large scale replication studies, the signs of negative original correlations were set to positive (and the sign of the replicaiton sample were switched too). 
-
-
-xPhi included 2 origianl studies which were non-significant, these were removed from analysis.
-
-
-IT MAY BE WORTH EXLUDING THOSE NON-sig few from the begining
 
 ## Testing 
 
