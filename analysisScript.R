@@ -10,8 +10,17 @@ library(RColorBrewer)
 library(reshape2)
 source("https://gist.githubusercontent.com/benmarwick/2a1bb0133ff568cbe28d/raw/fb53bd97121f7f9ce947837ef1a4c65a73bffb3f/geom_flat_violin.R")
 
+
+sumStats <- function(x, na.rm = T){
+return(list(mean = mean(x, na.rm = na.rm), sd = sd(x, na.rm = na.rm), median = median(x, na.rm = na.rm) , quantile = quantile(x, na.rm = na.rm), n = sum(!is.na(x)), nNA = sum(is.na(x))))
+  }
+Summary.
 # install.packages("BayesFactor")
 # library(BayesFactor)
+
+# Could approximate SEs using: # Not valid for F stats
+ # allData$seFish.r  <- ifelse( is.na(allData$seFish.r ), sqrt(1/(allData$n.r-3)), allData$seFish.r)
+# Need to cull SEs from inappropraite tests in the RPP too, if I end up using them 
 
 
 # first off simple calculation of the proportion of studies conducted per published result given a significnat main effect
@@ -20,6 +29,13 @@ source("https://gist.githubusercontent.com/benmarwick/2a1bb0133ff568cbe28d/raw/f
 
 studiesPerPublishedPaper <- paste(round(.75/.44,2), "to", round(.9/.44,2))
 
+# converting to cohen's d 
+effsizes.r <- compute.es::res(allData$correlation.r, n = allData$n.r, verbose = F)
+allData$cohensD.r <- effsizes.r$d
+
+# converting to cohen's d 
+effsizes.o <- compute.es::res(allData$correlation.o, n = allData$n.o, verbose = F)
+allData$cohensD.o <- effsizes.o$d
 
 # Sample characteristics
 # Calculating the number included in the meta-analysis (also the number included in the questions asking about change)
@@ -34,6 +50,11 @@ CIonProp <- WilsonBinCI(sum(!is.na(allData$correlationDifference.ro < 0)), p = p
 # N with valid SEs
 nSEsValid <- sum(!is.na(allData$seFish.o) & !is.na(allData$seFish.r))
 
+# sum stats effect size (corr and d)
+summaryCor.r <- sumStats(allData$correlation.o, na.rm = T)
+summaryCor.o <- sumStats(allData$correlation.o, na.rm = T)
+summaryD.r <-   sumStats(allData$cohensD.r, na.rm = T)
+summaryD.o <-   sumStats(allData$cohensD.o, na.rm = T)
 
 #### Default bayes factors ####
 # Setting up functions for BFs for apply function 
@@ -89,6 +110,44 @@ allData$bf0Rep <- 1/allData$bfRep0
 
 
 sum(allData$bf0Rep < 1, na.rm = T)/sum(!is.na(allData$bf0Rep < 3))
+
+
+## Finding minimium effect that would have been significant in the original study - 
+minimumEffectDetectableZ <- qnorm(.05, mean = 0, sd = allData$seFish.o, lower.tail = FALSE)
+CIs90UB <-   allData$fis.r + (qnorm(0.95)*allData$seFish.r)
+CIs90LB <-   allData$fis.r - (qnorm(0.95)*allData$seFish.r)
+
+upper95.r <- allData$fis.r + ( 1.96 * allData$seFish.r )
+lower95.r <- allData$fis.r - ( 1.96 * allData$seFish.r )
+
+# Extracting all studies 
+# NOTE  - the p values from the fisher trans cors. misclassifies just 4 articles v. the original articles:  
+# View(allData[lower95.r > 0 & !allData$significant.r,]);  View(allData[lower95.r < 0 & allData$significant.r,]); 
+nonMatchesStatisticalSig <- sum( c(lower95.r > 0 & !allData$significant.r,lower95.r < 0 & allData$significant.r), na.rm = T ) 
+
+minimumEffectDetectableR <- ztor( minimumEffectDetectableZ)
+
+tost <- list()
+
+for(i in 1:nrow(allData)) {
+  if(!is.na(allData$n.r[i])&!is.na(allData$correlation.r[i])&!is.na(minimumEffectDetectable[i])) {
+    tost[[i]] <- TOSTER::TOSTr(verbose = F, n = allData$n.r[i], r = allData$correlation.r[i], low_eqbound_r = -1, high_eqbound_r =  minimumEffectDetectableR[i], plot = FALSE)
+  } else {tost[[i]] <- " NA "}
+}
+
+
+tostOutcomes <- sapply(tost, function(m) m[3], simplify = T)
+tostOutcomes <- sapply(tost, function(m) m[3], simplify = T)
+tostOCors <- sapply(tost, function(m) m[1], simplify = T)
+tostULZ <- sapply(tost, function(m) m[12], simplify = T)
+View( 
+  data.frame(   unlist( tostOCors ), allData$correlation.r,as.numeric(unlist( tostOutcomes )) < .05, CIs90UB < minimumEffectDetectable,  (CIs90UB < minimumEffectDetectable) == ( as.numeric(unlist( tostOutcomes )) < .05),
+minimumEffectDetectable,
+CIs90UB,unlist(tostULZ), unlist( tostOutcomes ) )
+)
+mean(CIs90UB < minimumEffectDetectable, na.rm =T)
+sum(CIs90UB < minimumEffectDetectable, na.rm =T)
+
 
 
 #### Amount of change in subsets ####
@@ -190,7 +249,7 @@ for(i in 1:length(unique(allData$source))) {
   LOOTracking[[i]] <- rma.mv(yi = tempData$fisherZDiff, V = tempData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = tempData)
 }
 
-
+# extrating estiamtes from list
 estimatesLOOSource <- sapply(LOOTracking, function(m) m[1], simplify = T)
 pvaluesLOOSource <- sapply(LOOTracking, function(m) m[5], simplify = T)
 
@@ -231,10 +290,6 @@ for(i in 1:length(unique(allData$source))) {
 }
 
 
-
-
-
-View(LOOTracking)
 ###### Figures ######
 
 # functions used in plots 
