@@ -1,8 +1,10 @@
 # source(file = 'Data/data_collection_cleaning.R')
 source(file = "R code effect size estimation/appendixCodeFunctionsJeffreys.R")
 source(file = "Analysis/Wilson score interval.R")
+# source(file = 'Data/data_collection_cleaning.R') # this calls the data
 library(readr)
 library(tidyr)
+library(tidyverse)
 library(ggplot2)
 library(Hmisc)
 library(plyr)
@@ -13,23 +15,17 @@ source("https://gist.githubusercontent.com/benmarwick/2a1bb0133ff568cbe28d/raw/f
 
 sumStats <- function(x, na.rm = T){
 return(list(mean = mean(x, na.rm = na.rm), sd = sd(x, na.rm = na.rm), median = median(x, na.rm = na.rm) , quantile = quantile(x, na.rm = na.rm), n = sum(!is.na(x)), nNA = sum(is.na(x))))
-  }
-Summary.
-# install.packages("BayesFactor")
-# library(BayesFactor)
+}
 
-# Could approximate SEs using: # Not valid for F stats
- # allData$seFish.r  <- ifelse( is.na(allData$seFish.r ), sqrt(1/(allData$n.r-3)), allData$seFish.r)
-# Need to cull SEs from inappropraite tests in the RPP too, if I end up using them 
-
+# Could approximate SEs using: # Not valid for F stats w/ df1 > 2 / chi square tests
+allData$seFishAprox.r  <- ifelse( is.na(allData$seFish.r ), sqrt(1/(allData$n.r-3)), allData$seFish.r)
+allData$seFishAprox.o  <- ifelse( is.na(allData$seFish.o ), sqrt(1/(allData$n.o-3)), allData$seFish.o)
 
 # first off simple calculation of the proportion of studies conducted per published result given a significnat main effect
-
-# How to get to .9 or .75 of the literature being sig, assuming all studies are statistically signifincat
-
+# How to get to .9 or .75 of the literature being sig, assuming all studies are statistically significant
 studiesPerPublishedPaper <- paste(round(.75/.44,2), "to", round(.9/.44,2))
 
-# converting to cohen's d 
+# converting to cohen's d
 effsizes.r <- compute.es::res(allData$correlation.r, n = allData$n.r, verbose = F)
 allData$cohensD.r <- effsizes.r$d
 
@@ -87,15 +83,6 @@ bfapplyRep0 <- function(x){
   }
 }
 
-
-z <- 1:nrow(allData)
-x <- data.frame(allData$correlation.o, allData$n.o, allData$correlation.r, allData$n.r)
-for(i in 1:nrow(allData)) {
-y <- i
-z[i] <- bfapplyRep0(x[y,])
-}
-z <- x[y,]
-
 # Two sided default Bayes factor
 allData$bf10 <- apply(data.frame(allData$correlation.r, allData$n.r), MARGIN = 1, FUN = bfapply10) 
 allData$bf01 <- 1/allData$bf10 
@@ -106,96 +93,150 @@ allData$bf0plus <- 1/allData$bfplus0
 
 # Replication Bayes factor
 allData$bfRep0 <- apply(data.frame(allData$correlation.o, allData$n.o, allData$correlation.r, allData$n.r), MARGIN = 1, FUN = bfapplyRep0) 
-allData$bf0Rep <- 1/allData$bfRep0 
-
-
-sum(allData$bf0Rep < 1, na.rm = T)/sum(!is.na(allData$bf0Rep < 3))
-
+allData$bf0Rep <- 1/allData$bfRep0
 
 ## Finding minimium effect that would have been significant in the original study - 
-minimumEffectDetectableZ <- qnorm(.05, mean = 0, sd = allData$seFish.o, lower.tail = FALSE)
-CIs90UB <-   allData$fis.r + (qnorm(0.95)*allData$seFish.r)
-CIs90LB <-   allData$fis.r - (qnorm(0.95)*allData$seFish.r)
+minimumEffectDetectableZ <- qnorm(.05, mean = 0, sd = allData$seFishAprox.o, lower.tail = FALSE)
+CIs90UB <-   allData$fis.r + (qnorm(0.95)*allData$seFishAprox.r)
+CIs90LB <-   allData$fis.r - (qnorm(0.95)*allData$seFishAprox.r)
 
 upper95.r <- allData$fis.r + ( 1.96 * allData$seFish.r )
 lower95.r <- allData$fis.r - ( 1.96 * allData$seFish.r )
 
 # Extracting all studies 
-# NOTE  - the p values from the fisher trans cors. misclassifies just 4 articles v. the original articles:  
-# View(allData[lower95.r > 0 & !allData$significant.r,]);  View(allData[lower95.r < 0 & allData$significant.r,]); 
-nonMatchesStatisticalSig <- sum( c(lower95.r > 0 & !allData$significant.r,lower95.r < 0 & allData$significant.r), na.rm = T ) 
+# View(allData[lower95.r > 0 & !allData$significantSameDirection.r,]);  View(allData[lower95.r < 0 & allData$significantSameDirection.r,]); 
+nonMatchesStatisticalSig <- sum( c(lower95.r > 0 & !allData$significantSameDirection.r,lower95.r < 0 & allData$significantSameDirection.r), na.rm = T )
 
-minimumEffectDetectableR <- ztor( minimumEffectDetectableZ)
+tableBayesFactors <-data_frame(Article = natSci$Authors, Original_r = allData$correlation.o[allData$abrev=="natSci"], Original_N =allData$n.o[allData$abrev=="natSci"], Replication_r = allData$correlation.r[allData$abrev=="natSci"], Replication_n = allData$n.r[allData$abrev=="natSci"], Camerer_et_al._BFP0 = natSci$bfP0_rp, Camerer_et_al._BFRep0 = natSci$bfR0_rp, BFrep0 =  1/allData$bf0Rep[allData$abrev=="natSci"],  BF0plus = 1/allData$bf0plus[allData$abrev=="natSci"], BF01 = 1/allData$bf01[allData$abrev=="natSci"])
 
-tost <- list()
+minimumEffectDetectableR <- ztor(minimumEffectDetectableZ)
 
-for(i in 1:nrow(allData)) {
-  if(!is.na(allData$n.r[i])&!is.na(allData$correlation.r[i])&!is.na(minimumEffectDetectable[i])) {
-    tost[[i]] <- TOSTER::TOSTr(verbose = F, n = allData$n.r[i], r = allData$correlation.r[i], low_eqbound_r = -1, high_eqbound_r =  minimumEffectDetectableR[i], plot = FALSE)
-  } else {tost[[i]] <- " NA "}
-}
+# calculating the number of equiv studies
+proportionEquiv <- mean(CIs90UB < minimumEffectDetectableZ, na.rm =T)
+nEquiv <- sum(CIs90UB < minimumEffectDetectableZ, na.rm =T)
 
+allData$statisticallyEquiv.ro <- CIs90UB < minimumEffectDetectableZ
 
-tostOutcomes <- sapply(tost, function(m) m[3], simplify = T)
-tostOutcomes <- sapply(tost, function(m) m[3], simplify = T)
-tostOCors <- sapply(tost, function(m) m[1], simplify = T)
-tostULZ <- sapply(tost, function(m) m[12], simplify = T)
-View( 
-  data.frame(   unlist( tostOCors ), allData$correlation.r,as.numeric(unlist( tostOutcomes )) < .05, CIs90UB < minimumEffectDetectable,  (CIs90UB < minimumEffectDetectable) == ( as.numeric(unlist( tostOutcomes )) < .05),
-minimumEffectDetectable,
-CIs90UB,unlist(tostULZ), unlist( tostOutcomes ) )
-)
-mean(CIs90UB < minimumEffectDetectable, na.rm =T)
-sum(CIs90UB < minimumEffectDetectable, na.rm =T)
+#Tested with:
+#allData$statisticallyEquiv.ro <- (CIs90UB < minimumEffectDetectableZ)
+#i = 8
+#TOSTER::TOSTr(n = allData$n.r[i], r = allData$correlation.r[i], low_eqbound_r = -1, high_eqbound_r = minimumEffectDetectableR[i])
 
-
-
-#### Amount of change in subsets ####
-
-# extracting amount of change in subsetss 
+######################################
+#### Amount of change in subsets #####
+######################################
+# Reduction in all studies: 
+reductionAllData <- allData %>% 
+  filter(!is.na(fisherZDiff)) %>% 
+  summarise(meanPropChange = mean((fisherZDiff)/fis.o, na.rm = TRUE), mean.r = mean(fis.r, na.rm = T) , mean.o = mean(fis.o, na.rm = T), 
+            meanDiff = mean(fisherZDiff, na.rm = T), sdDiff = sd(fisherZDiff, na.rm = T),    
+            medianPropChange = median((fisherZDiff)/fis.o, na.rm = TRUE), median.r = median(fis.r, na.rm = T) , median.o = median(fis.o, na.rm = T) ,
+            medianDiff = median(fisherZDiff, na.rm = T),
+            nTrue = sum(!is.na(fisherZDiff)), nValid = sum(!is.na(allData$fis.r - allData$fis.o)))
+# extracting amount of change in subsets
 # Sig results replication only (same direction)
 reductionSignifcantR <- allData %>% 
-  filter(significantSameDirection.r) %>% 
-  summarise(arr = mean((fis.r - fis.o)/fis.o, na.rm = TRUE), nSig = sum(!is.na(pVal.r)), n = length(fis.o))
+  filter(significantSameDirection.r & !is.na(significantSameDirection.r)) %>% 
+  summarise(meanPropChange = mean((fisherZDiff)/fis.o, na.rm = TRUE), mean.r = mean(fis.r, na.rm = T) , mean.o = mean(fis.o, na.rm = T), 
+            meanDiff = mean(fisherZDiff, na.rm = T), sdDiff = sd(fisherZDiff, na.rm = T),    
+            medianPropChange = median((fisherZDiff)/fis.o, na.rm = TRUE), median.r = median(fis.r, na.rm = T) , median.o = median(fis.o, na.rm = T) ,
+            medianDiff = median(fisherZDiff, na.rm = T),
+            nTrue = sum(!is.na(significantSameDirection.r)), nValid = sum(!is.na(allData$significantSameDirection.r) & !is.na(allData$fis.r - allData$fis.o)))
 # BF01 < 3 (exclude those with moderate or greater evidence for the null)
-reductionSbf01LessThan3<- allData %>% 
+reductionSbf01LessThan3 <- allData %>% 
   filter(bf01<3) %>% 
-  summarise(arr = mean((fis.r - fis.o)/fis.o, na.rm = TRUE), nApplicable = sum(!is.na(bf01)), n = length(fis.o))
+  summarise(meanPropChange = mean((fisherZDiff)/fis.o, na.rm = TRUE), mean.r = mean(fis.r, na.rm = T) , mean.o = mean(fis.o, na.rm = T) ,
+            meanDiff = mean(fisherZDiff, na.rm = T), sdDiff = sd(fisherZDiff, na.rm = T),   
+            medianPropChange = median((fisherZDiff)/fis.o, na.rm = TRUE), median.r = median(fis.r, na.rm = T) , median.o = median(fis.o, na.rm = T) ,
+            medianDiff = median(fisherZDiff, na.rm = T),
+            nTrue = sum(!is.na(statisticallyEquiv.ro)), nValid = sum(!is.na(allData$bf01) & !is.na(allData$fis.r - allData$fis.o)))
 # BF10 > 3 (Only those with evidence for the alternative)
 reductionSbf10MoreThan3 <- allData %>% 
   filter(bf10>3) %>% 
-  summarise(arr = mean((fis.r - fis.o)/fis.o, na.rm = TRUE), nApplicable = sum(!is.na(bf10)), n = length(fis.o))
+  summarise(meanPropChange = mean((fisherZDiff)/fis.o, na.rm = TRUE), mean.r = mean(fis.r, na.rm = T) , mean.o = mean(fis.o, na.rm = T) , 
+            meanDiff = mean(fisherZDiff, na.rm = T), sdDiff = sd(fisherZDiff, na.rm = T),    
+            medianPropChange = median((fisherZDiff)/fis.o, na.rm = TRUE), median.r = median(fis.r, na.rm = T) , median.o = median(fis.o, na.rm = T) ,
+            medianDiff = median(fisherZDiff, na.rm = T),
+            nTrue = sum(!is.na(statisticallyEquiv.ro)), nValid = sum(!is.na(allData$bf10) & !is.na(allData$fis.r - allData$fis.o)))
 # BF0Plus < 3 (exclude those with moderate evidence for the null, one sided alternative)
 reductionSbf0PlusLessThan3 <- allData %>% 
   filter(bf0plus<3) %>% 
-  summarise(arr = mean((fis.r - fis.o)/fis.o, na.rm = TRUE), nApplicable = sum(!is.na(bf0plus)), n = length(fis.o))
+  summarise(meanPropChange = mean((fisherZDiff)/fis.o, na.rm = TRUE), mean.r = mean(fis.r, na.rm = T) , mean.o = mean(fis.o, na.rm = T) ,
+            meanDiff = mean(fisherZDiff, na.rm = T), sdDiff = sd(fisherZDiff, na.rm = T),   
+            medianPropChange = median((fisherZDiff)/fis.o, na.rm = TRUE), median.r = median(fis.r, na.rm = T) , median.o = median(fis.o, na.rm = T) ,
+            medianDiff = median(fisherZDiff, na.rm = T),
+            nTrue = sum(!is.na(statisticallyEquiv.ro)), nValid = sum(!is.na(allData$bf0plus)& !is.na(allData$fis.r - allData$fis.o)))
 # BFPlus0 (Exclude those without moderate evidence for the one sided alternative)
 reductionSbfPlus0MoreThan3 <- allData %>% 
   filter(bfplus0>3) %>%
-  summarise(arr = mean((fis.r - fis.o)/fis.o, na.rm = TRUE), nApplicable = sum(!is.na(bfplus0)), n = length(fis.o))
+  summarise(meanPropChange = mean((fisherZDiff)/fis.o, na.rm = TRUE), mean.r = mean(fis.r, na.rm = T) , mean.o = mean(fis.o, na.rm = T) ,
+            meanDiff = mean(fisherZDiff, na.rm = T), sdDiff = sd(fisherZDiff, na.rm = T),    
+            medianPropChange = median((fisherZDiff)/fis.o, na.rm = TRUE), median.r = median(fis.r, na.rm = T) , median.o = median(fis.o, na.rm = T) ,
+            medianDiff = median(fisherZDiff, na.rm = T),
+            nTrue = sum(!is.na(statisticallyEquiv.ro)), nValid = sum(!is.na(allData$bfplus0) & !is.na(allData$fis.r - allData$fis.o)))
+# BF0Rep < 3 (exclude those with moderate evidence for the null, replication alternative)
+reductionSbf0RepLessThan3 <- allData %>% 
+  filter(bf0Rep<3) %>% 
+  summarise(meanPropChange = mean((fisherZDiff)/fis.o, na.rm = TRUE), mean.r = mean(fis.r, na.rm = T) , mean.o = mean(fis.o, na.rm = T) ,
+            meanDiff = mean(fisherZDiff, na.rm = T), sdDiff = sd(fisherZDiff, na.rm = T),  
+            medianPropChange = median((fisherZDiff)/fis.o, na.rm = TRUE), median.r = median(fis.r, na.rm = T) , median.o = median(fis.o, na.rm = T) ,
+            medianDiff = median(fisherZDiff, na.rm = T),
+            nTrue = sum(!is.na(statisticallyEquiv.ro)), nValid = sum(!is.na(allData$bf0Rep) & !is.na(allData$fis.r - allData$fis.o)))
+# BFRep0 (Exclude those without moderate evidence for the replication alternative)
+reductionSbfRep0MoreThan3 <- allData %>% 
+  filter(bfRep0>3) %>%
+  summarise(meanPropChange = mean((fisherZDiff)/fis.o, na.rm = TRUE), mean.r = mean(fis.r, na.rm = T) , mean.o = mean(fis.o, na.rm = T) ,
+            meanDiff = mean(fisherZDiff, na.rm = T), sdDiff = sd(fisherZDiff, na.rm = T),  
+            medianPropChange = median((fisherZDiff)/fis.o, na.rm = TRUE), median.r = median(fis.r, na.rm = T) , median.o = median(fis.o, na.rm = T) ,
+            medianDiff = median(fisherZDiff, na.rm = T),
+            nTrue = sum(!is.na(statisticallyEquiv.ro)), nValid = sum(!is.na(allData$bfRep0) & !is.na(allData$fis.r - allData$fis.o)))
+# Significant TOST (Exclude those without moderate evidence for the one sided alternative)
+reductionEquiv <- allData %>% 
+  filter(!statisticallyEquiv.ro) %>%
+  summarise(meanPropChange = mean((fisherZDiff)/fis.o, na.rm = TRUE), mean.r = mean(fis.r, na.rm = T) , mean.o = mean(fis.o, na.rm = T) ,
+            meanDiff = mean(fisherZDiff, na.rm = T), sdDiff = sd(fisherZDiff, na.rm = T),   
+            medianPropChange = median((fisherZDiff)/fis.o, na.rm = TRUE), median.r = median(fis.r, na.rm = T) , median.o = median(fis.o, na.rm = T) ,
+            medianDiff = median(fisherZDiff, na.rm = T),
+            nTrue = sum(!is.na(statisticallyEquiv.ro)), nValid = sum(!is.na(allData$statisticallyEquiv.ro)& !is.na(allData$fis.r - allData$fis.o)))
 
+
+# Bringing all of the above together:
+tableReductions <- rbind(Overall = reductionAllData, StatisticalSignificance = reductionSignifcantR, Nonequivalence = reductionEquiv, BF0RepBelow3 = reductionSbf0RepLessThan3 , BFRep0Above3 = reductionSbfRep0MoreThan3,  BF01Below3 = reductionSbf01LessThan3 , BF10Above3 = reductionSbf10MoreThan3, BF0PBelow3 = reductionSbf0PlusLessThan3, BFP0Above3 = reductionSbfPlus0MoreThan3)
+ # tableReductions$Category <- row.names(tableReductions)
+# Calculating naive CIs around mean differences 
+boundDist <- qt(0.975, df = tableReductions$nTrue - 1)*tableReductions$sdDiff/sqrt(tableReductions$nTrue)
+tableReductions$lbMeanDiff <- tableReductions$meanDiff - boundDist
+tableReductions$ubMeanDiff <- tableReductions$meanDiff + boundDist
+
+kableReductions <- kable(tableReductions, digits = 2)
+
+#########################################################
 #### Plots of the effects plotted against each other ####
+#########################################################
+
+# Plotting effects on each other 
+plotAllData <- ggplot(allData, aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("All data")
+
+# Plotting only non-equivalent studies  
+plotNonequiv <- ggplot(allData[!allData$statisticallyEquiv.ro,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Non-equivalent studies")
 
 # Plotting just significant studies (sig and in same direction)
-plotSigR <- ggplot(allData[allData$significantSameDirection.r==TRUE,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Significant replications in the same direction only")
+plotSigR <- ggplot(allData[allData$significantSameDirection.r==TRUE,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source)))+ geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Significant replications in the same direction only")
 
-# two sided prior, Exluding studies with BF10 lower than 3, i.e., without evidence moderate or greater for the alternative
-plotBF10Greater3 <- ggplot(allData[(allData$bf10>3),], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF10 lower than 3")
+# two sided test, Exluding studies with BF10 lower than 3, i.e., without evidence moderate or greater for the alternative
+plotBF10Greater3 <- ggplot(allData[(allData$bf10>3),], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source)))+ geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF10 lower than 3")
 
-# two sided prior, excluding those with evidence for null > 3
-plotBF01Lesser3 <- ggplot(allData[(allData$bf01<3) & (sign(allData$correlation.o) == sign(allData$correlation.r)),], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF01 greater than 3")
+# two sided test, excluding those with evidence for null > 3
+plotBF01Lesser3 <- ggplot(allData[(allData$bf01<3) & (sign(allData$correlation.o) == sign(allData$correlation.r)),], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0)+  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF01 greater than 3")
 
 # One sided default bayes factor, excluding studies with ev for null > 3
-plotBF0plusLesser3 <- ggplot(allData[allData$bf0plus<3,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF0+ (one sided) greater than 3")
+plotBF0plusLesser3 <- ggplot(allData[allData$bf0plus<3,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0)+  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF0+ (one sided) greater than 3")
 
 # One sided default bayes factor, including only studies with ev for alternative > 3
-plotBFPlus0Greater3 <- ggplot(allData[allData$bfplus0>3,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF+0 less than than 3")
+plotBFPlus0Greater3 <- ggplot(allData[allData$bfplus0>3,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0)+  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF+0 less than than 3")
 
 # Replication bayes factor, including only studies *without* evidence for the null vs the original effect over 3
-plotBFRep0Lesser3 <- ggplot(allData[allData$bf0Rep <3,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF0Rep greater than than 3")
-
-# average effect size decrease, exlcuding studies with BF0Reps greater than 3 
-
+plotBFRep0Lesser3 <- ggplot(allData[allData$bf0Rep <3,], aes(correlation.o, correlation.r, size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0)+  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF0Rep greater than than 3")
 
 
 ### Descriptives
@@ -203,7 +244,10 @@ nNotSig.r <- sum(allData$significant.r)
 
 sum(allData$bf0plus<1, na.rm=T)/sum(!is.na(allData$bf0plus))
 
-#### Meta-analyses ####
+######################################
+###### Multilevel meta-analysis ######
+######################################
+
 # Random effects model with random effects for authors nested within source
 REMod <- rma.mv(yi = allData$fisherZDiff, V = allData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = allData)
 summary(REMod)
@@ -221,76 +265,93 @@ dDecrease <- (2*cDcreaseCIs) / sqrt(1-cDcreaseCIs^2)
 
 
 # The first model but with only significant replications
-REModOnlySigR <- rma.mv(yi = fisherZDiff, V = allData[allData$significant.r==TRUE,]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = allData[allData$significant.r==TRUE,])
-summary(REModOnlySigR)
-
-correlationDecreaseOnlySig <- ztor(as.numeric(REModOnlySigR[1]))
-dDecreaseOnlySig <- (2*correlationDecreaseOnlySig) / sqrt(1-correlationDecreaseOnlySig^2)
+REModOnlySigR <- rma.mv(yi = fisherZDiff, V = allData[allData$significantSameDirection.r==TRUE,]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = allData[allData$significantSameDirection.r==TRUE,])
 
 # the first model removing all studies with BFs0Plus > 3 (i.e., moderate evidence for a null)
-REModBF0PlusGreaterThan3Excluded <- rma.mv(yi = fisherZDiff, V = allData[allData$bf0plus > 3 & !is.na(allData$bf0plus > 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = allData[allData$bf0plus > 3 & !is.na(allData$bf0plus > 3),])
-summary(REModBF0PlusGreaterThan3Excluded)
+REModBF0PlusGreaterThan3Excluded <- rma.mv(yi = fisherZDiff, V = allData[allData$bf0plus < 3 & !is.na(allData$bf0plus < 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = allData[allData$bf0plus < 3 & !is.na(allData$bf0plus > 3),])
 
 # the first model removing all studies with BFsPlus0 < 3 (i.e., those without evidence for the alternative)
-REModBFPlus0LessThan3Excluded <- rma.mv(yi = fisherZDiff, V = allData[allData$bfplus0 < 3 & !is.na(allData$bfplus0 < 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = allData[allData$bfplus0 < 3 & !is.na(allData$bfplus0 < 3),])
-summary(REModBFPlus0LessThan3Excluded)
+REModBFPlus0LessThan3Excluded <- rma.mv(yi = fisherZDiff, V = allData[allData$bfplus0 > 3 & !is.na(allData$bfplus0 > 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = allData[allData$bfplus0 > 3 & !is.na(allData$bfplus0 > 3),])
+
+# the first model removing all studies with BFs01 > 3 (i.e., moderate evidence for a null)
+REModBF01GreaterThan3Excluded <- rma.mv(yi = fisherZDiff, V = allData[allData$bf01 < 3 & !is.na(allData$bf01 < 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = allData[allData$bf01 < 3 & !is.na(allData$bf01 > 3),])
+
+# the first model removing all studies with BFs10 < 3 (i.e., those without evidence for the alternative)
+REModBF10LessThan3Excluded <- rma.mv(yi = fisherZDiff, V = allData[allData$bf10 > 3 & !is.na(allData$bf10 > 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = allData[allData$bf10 > 3 & !is.na(allData$bf10 > 3),])
 
 # the first model removing all studies with BFs0Rep < 3 (i.e., those without evidence for the for the null vs. origianl greater than 3)
-REModBF0RepGreaterThan3Excluded <- rma.mv(yi = fisherZDiff, V = allData[allData$bfplus0 < 3 & !is.na(allData$bfplus0 < 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = allData[allData$bfplus0 < 3 & !is.na(allData$bfplus0 < 3),])
-summary(REModBFPlus0LessThan3Excluded)
+REModBF0RepGreaterThan3Excluded <-  rma.mv(yi = fisherZDiff, V = allData[allData$bf0Rep < 3 & !is.na(allData$bf0Rep < 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = allData[allData$bf0Rep < 3 & !is.na(allData$bf0Rep < 3),])
+
+# the first model removing all studies with BFs0Rep < 3 (i.e., those without evidence for the for the null vs. origianl greater than 3)
+REModBFRep0LessThan3Excluded <- rma.mv(yi = fisherZDiff, V = allData[allData$bfRep0 > 3 & !is.na(allData$bfRep0 > 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data =  allData[allData$bfRep0 > 3 & !is.na(allData$bfRep0 > 3),])
+
+# The first model but with only non-equiv 
+REModNonequiv <- rma.mv(yi = fisherZDiff, V = allData[allData$statisticallyEquiv.ro==FALSE & !is.na(allData$statisticallyEquiv.ro==FALSE),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = allData[allData$statisticallyEquiv.ro==FALSE & !is.na(allData$statisticallyEquiv.ro==FALSE),])
+
+modRes <- data.frame( modelN = REMod$k, modelEstimate = REMod$b, MLM95lb = REMod$ci.lb, MLM95ub = REMod$ci.ub, row.names = "Overall")
+modRes1 <- data.frame(modelN = REModOnlySigR$k, modelEstimate = REModOnlySigR$b, MLM95lb = REModOnlySigR$ci.lb, MLM95ub = REModOnlySigR$ci.ub, row.names = "StatisticalSignificance")
+modRes2 <- data.frame(modelN = REModBF0PlusGreaterThan3Excluded$k, modelEstimate = REModBF0PlusGreaterThan3Excluded$b, MLM95lb = REModBF0PlusGreaterThan3Excluded$ci.lb, MLM95ub = REModBF0PlusGreaterThan3Excluded$ci.ub, row.names = "BF0PBelow3")
+modRes3 <- data.frame(modelN = REModBFPlus0LessThan3Excluded$k, modelEstimate = REModBFPlus0LessThan3Excluded$b, MLM95lb = REModBFPlus0LessThan3Excluded$ci.lb, MLM95ub = REModBFPlus0LessThan3Excluded$ci.ub, row.names = "BFP0Above3")
+modRes4 <- data.frame(modelN = REModBF01GreaterThan3Excluded$k, modelEstimate = REModBF01GreaterThan3Excluded$b, MLM95lb = REModBF01GreaterThan3Excluded$ci.lb, MLM95ub = REModBF01GreaterThan3Excluded$ci.ub, row.names = "BF01Below3")
+modRes5 <- data.frame(modelN = REModBF10LessThan3Excluded$k, modelEstimate = REModBF10LessThan3Excluded$b, MLM95lb = REModBF10LessThan3Excluded$ci.lb, MLM95ub = REModBF10LessThan3Excluded$ci.ub, row.names = "BF10Above3")
+modRes6 <- data.frame(modelN = REModBF0RepGreaterThan3Excluded$k, modelEstimate = REModBF0RepGreaterThan3Excluded$b, MLM95lb = REModBF0RepGreaterThan3Excluded$ci.lb, MLM95ub = REModBF0RepGreaterThan3Excluded$ci.ub, row.names = "BF0RepBelow3")
+modRes7 <- data.frame(modelN = REModBFRep0LessThan3Excluded$k, modelEstimate = REModBFRep0LessThan3Excluded$b, MLM95lb = REModBFRep0LessThan3Excluded$ci.lb, MLM95ub = REModBFRep0LessThan3Excluded$ci.ub, row.names = "BFRep0Above3")
+modRes8 <- data.frame(modelN = REModNonequiv$k, modelEstimate = REModNonequiv$b, MLM95lb = REModNonequiv$ci.lb, MLM95ub = REModNonequiv$ci.ub, row.names = "Nonequivalence")
+
+modSumaries <- rbind(modRes, modRes1, modRes2, modRes3, modRes4, modRes5, modRes6, modRes7, modRes8)
+
+tableAllEstimates <- merge.data.frame(tableReductions, modSumaries, by = "row.names", sort = F)
+
 
 
 #### Leave one out cross validation for main model, excluding first each source
 LOOTracking <- list()
 
-for(i in 1:length(unique(allData$source))) {
-  # exlude <- unique(allData$source)[i]
-  tempData <- allData[-which(allData$source == unique(allData$source)[i]),]
-  LOOTracking[[i]] <- rma.mv(yi = tempData$fisherZDiff, V = tempData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = tempData)
-}
+# for(i in 1:length(unique(allData$source))) {
+#   # exlude <- unique(allData$source)[i]
+#   tempData <- allData[-which(allData$source == unique(allData$source)[i]),]
+#   LOOTracking[[i]] <- rma.mv(yi = tempData$fisherZDiff, V = tempData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = tempData)
+# }
 
 # extrating estiamtes from list
-estimatesLOOSource <- sapply(LOOTracking, function(m) m[1], simplify = T)
-pvaluesLOOSource <- sapply(LOOTracking, function(m) m[5], simplify = T)
-
-# Checking that none go below sig 
-# pvaluesLOOSource < .05
-
-maximumSourceDif <-  (as.numeric(estimatesLOOSource)- as.numeric(REMod[1]))
- unique(allData$source)[which(as.numeric(REMod[1]) - as.numeric(estimatesLOOSource) ==(max(as.numeric(REMod[1]) - as.numeric(estimatesLOOSource))))]
-
-
-## LOO removing studies
-for(i in 1:length(unique(allData$authorsTitle.o))) {
-  # exlude <- unique(allData$source)[i]
-  tempData <- allData[-which(allData$authorsTitle.o == unique(allData$authorsTitle.o)[i]),]
-  LOOTracking[[i]] <- rma.mv(yi = tempData$fisherZDiff, V = tempData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = tempData)
-}
-
-estimatesLOOStudy <- sapply(LOOTracking, function(m) m[1], simplify = T)
-pvaluesLOOStudy <- sapply(LOOTracking, function(m) m[5], simplify = T)
-
-estimatesLOOStudy 
+#estimatesLOOSource <- sapply(LOOTracking, function(m) m[1], simplify = T)
+#pvaluesLOOSource <- sapply(LOOTracking, function(m) m[5], simplify = T)
+#
+## Checking that none go below sig 
+## pvaluesLOOSource < .05
+#
+#maximumSourceDif <-  (as.numeric(estimatesLOOSource)- as.numeric(REMod[1]))
+# unique(allData$source)[which(as.numeric(REMod[1]) - as.numeric(estimatesLOOSource) ==(max(as.numeric(REMod[1]) - as.numeric(estimatesLOOSource))))]
+#
+#
+### LOO removing studies
+#for(i in 1:length(unique(allData$authorsTitle.o))) {
+#  # exlude <- unique(allData$source)[i]
+#  tempData <- allData[-which(allData$authorsTitle.o == unique(allData$authorsTitle.o)[i]),]
+#  LOOTracking[[i]] <- rma.mv(yi = tempData$fisherZDiff, V = tempData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = tempData)
+#}
+#
+#estimatesLOOStudy <- sapply(LOOTracking, function(m) m[1], simplify = T)
+#pvaluesLOOStudy <- sapply(LOOTracking, function(m) m[5], simplify = T)
+#
+#estimatesLOOStudy 
 
 # No changes in significance
 # sum(as.numeric(pvaluesLOOStudy) > .05)
 # And no large changes in intercept 
-maximumStudyDif <- max(as.numeric(REMod[1]) - as.numeric(estimatesLOOStudy))
+#  maximumStudyDif <- max(as.numeric(REMod[1]) - as.numeric(estimatesLOOStudy))
+#  
+#  LOOTracking <- list()
+#  
+#  for(i in 1:length(unique(allData$source))) {
+#    # exlude <- unique(allData$source)[i]
+#    tempData <- allData[-which(allData$source == unique(allData$source)[i]),]
+#    LOOTracking[[i]] <- rma.mv(yi = tempData$fisherZDiff, V = tempData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = tempData)
+#  }
 
-
-LOOTracking <- list()
-
-
-
-
-for(i in 1:length(unique(allData$source))) {
-  # exlude <- unique(allData$source)[i]
-  tempData <- allData[-which(allData$source == unique(allData$source)[i]),]
-  LOOTracking[[i]] <- rma.mv(yi = tempData$fisherZDiff, V = tempData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = tempData)
-}
-
-
+#####################
 ###### Figures ######
+#####################
 
 # functions used in plots 
 lb <- function(x) mean(x) - sd(x)
@@ -327,8 +388,7 @@ ggplot(allData, aes(y = percentageChangeES.ro,x= source,
   scale_color_brewer(palette = "Spectral") +
   scale_fill_brewer(palette = "Spectral") + 
   theme(legend.position =  'none', axis.text.y = element_text(size=8), 
-        axis.title.y = element_blank()) + ylab("Percentage change in effect sizes from original to replicaiton") +
-  ylab()
+        axis.title.y = element_blank()) + ylab("Percentage change in effect sizes from original to replicaiton")
 dev.off()
 
 
@@ -348,6 +408,10 @@ ggplot(allData,aes(y = correlationDifference.ro,x= source,
   theme(legend.position =  'none', axis.text.y = element_text(size=8), 
         axis.title.y = element_blank()) + ylab("Differences in effect size (correlations)") 
 dev.off()
+
+
+
+
 
 
 

@@ -1,88 +1,71 @@
 ---
-title: "R Notebook"
-output: html_notebook
+title: "Estimating the effect of publication and reporting bias"
+output:
+  word_document
 ---
 
 
-```{r message=FALSE, warning=FALSE, echo=FALSE}
+```{r message=FALSE, warning=FALSE, include=FALSE}
 source(file = 'Data/data_collection_cleaning.R')
-
+source(file = 'analysisScript.R')
 ```
-
 
 ## Introduction
 See word document 
 
-
 ## Methods 
 ### Data extraction
-All of the large scale replication projects that have been performed in behavioural science reserach were collected. The original source of each study, test statistics, effect sizes, sample sizes, standard errors, p-values were extracted for each original and replication study. Several of the large scale replication projects did not present the original test statistics and p values (e.g., Many labs 1 and 3). In these cases, these values were manually extracted from the original articles. When sample sizes for original studies were not avaliable they were manually extracted from original articles. When the original and replication effect sizes were not reported as Fisher Z transformed correlation coefficents, effect sizes were converted from test statistics or effect sizes for analysis. In cases where sample sizes were not reported per group, equal sample sizes among groups were assumed to be equal in these estimates. See table one for the number of valid studies extracted from each project. All results are reported in correlation coefficients following {Open Science Collaboration, 2015 #611} in order to present results in a common metric which is likely intuitivly understandable and familiar to most psychologists and behavioural reserachers. 
+All of the large scale replication projects that have been performed in behavioral science research were collected. The original source of each study, test statistics, effect sizes, sample sizes, standard errors, p-values were extracted for each original and replication study. Several of the large scale replication projects did not present the original test statistics and p values (e.g., Many labs 1 and 3). In these cases, these values were manually extracted from the original articles. When sample sizes for original studies were not available they were manually extracted from original articles. When the original and replication effect sizes were not reported as Fisher Z transformed correlation coefficients, effect sizes were converted from test statistics or effect sizes for analysis. In cases where sample sizes were not reported per group, equal sample sizes among groups were assumed to be equal in these estimates. See table one for the number of valid studies extracted from each project. All results are reported in correlation coefficients following {Open Science Collaboration, 2015 #611} in order to present results in a common metric which is likely intuitively understandable and familiar to most psychologists and behavioral researchers. 
 
-Three studies which did not report that their findings were indicitive of a true effect were excluded from {Open Science Collaboration, 2015 #611}. For the Nature Science reporducibility projects {Camerer, 2018 #967}, when multiple replciation studies were run, a fixed effects meta-analysis was performed using the metafor package {Viechtbauer, 2010 #796} for each study to estimate the true effect. P values, standard errors and ns reflect this pooled estiamte. This method leads to one study more "replicating" according to the 'statistical significance in the same direction of the original study' than was originally reported in the nature science project, where they using the largest perfored study instead of a pooled estiamte.
+Three studies which did not report that their findings were indicative of a true effect were excluded from {Open Science Collaboration, 2015 #611}. For the Nature Science reproducibility projects {Camerer, 2018 #967}, when multiple replication studies were run, a fixed effects meta-analysis was performed using the metafor package {Viechtbauer, 2010 #796} for each study to estimate the true effect. P values, standard errors and ns reflect this pooled estimate. This method leads to one study more "replicating" according to the 'statistical significance in the same direction of the original study' than was originally reported in the nature science project, where they using the largest performed study instead of a pooled estimate.
 
-In the LOOPR study CITATION, some measures used shorter form version of the original questionaire, all results presented have been disattenuated using the Spearman-Brown prediction formula and Spearman disattenuation formula to estimate the trait-outcome associations that would be expected if our outcome measure had used the same number of items as the original study (Lord & Novick, 1968). Following the other large scale replication studies, the signs of negative original correlations were set to positive (and the sign of the replicaiton sample were switched too). 
+In [LOOPR study CITATION], some measures used shorter form version of the original questionnaire, all results presented have been disattenuated using the Spearman-Brown prediction formula and Spearman disattenuation formula to estimate the trait-outcome associations that would be expected if our outcome measure had used the same number of items as the original study (Lord & Novick, 1968). Following the other large scale replication studies, the signs of negative original correlations were set to positive (and the sign of the replication sample were switched too). 
 
-The experimental philosophy reproducibility project included 2 origianl studies which were non-significant (and which were not claimed to provide evidence for the effects under test), these were removed from analysis. 
+The experimental philosophy reproducibility project included two original studies which were non-significant (and which were not claimed to provide evidence for the effects under test), these were removed from analysis. 
 
-Many labs 2 [CITATION] original p values were recalculated from summary statitsics (i.e., from Cohen's d). Four studies from this reporducibility project were removed because effect sizes could not be simply derrived (the original and replication studies examined a differnece in effect sizes seen in different conditions, and the effects were not directly tested against each other), and two additional were excluded because their effect sizes were only avalible in Cohen's q.
+Many labs 2 [CITATION] original p values were recalculated from reported summary statistics (i.e., from Cohen's d). Four studies from this reproducibility project were removed because effect sizes could not be simply derived (the original and replication studies examined a difference in effect sizes seen in different conditions, and the effects were not directly tested against each other), and two additional were excluded because their effect sizes were only available in Cohen's q.
 
 INSERT TABLE 1 HERE
 
 ### Analysis
-All analysis was perfomred in R {R Development Core Team, 2018 #314} using the Metafor package {Viechtbauer, 2010 #796}. In order to obtain a reasonable estimate of the change in effect size between original and replication studies, a multilevel random effects meta-analysis was performed on the difference in Fisher Z transformed correlations between original and replication studies. Standard errors were estiamted as $\sqrt{\frac{1}{N_{1} -3} +  \frac{1}{N_{2} -3} }$, with $N_1$ being the sample size in the original study and $N_2$ being the sample size in the replication study. Empirical Bayes estimates of the random effects were obtained following {Robinson, 1991 #999}. 
+#### Multilevel meta-analysis
+All analysis was performed in R {R Development Core Team, 2018 #314} using the Metafor package {Viechtbauer, 2010 #796}. In order to obtain a reasonable estimate of the change in effect size between original and replication studies, a multilevel random effects meta-analysis was performed on the difference in Fisher Z transformed correlations between original and replication studies. Standard errors were estimated as $\sqrt{\frac{1}{N_{1} -3} +  \frac{1}{N_{2} -3} }$, with $N_1$ being the sample size in the original study and $N_2$ being the sample size in the replication study. Empirical Bayes estimates and 95% credible intervals of the random effects were obtained following {Robinson, 1991 #999}{Morris, 1983 #1000}. 
 
-Confidence intervals around binomial proportions are 95% Wilson Score intervals. Replication Bayes factors were calculated following 
+Confidence intervals around binomial proportions are 95% Wilson Score intervals. Percentage change values were calculated using Fisher Z transformed effect sizes. All analyses were exploratory, and multiple models which were developed are not presented here, although I believe the presented results to be the best description of the data. See https://github.com/fsingletonthorn/effectSizeAdjustment for a git repository with a record of all interim models and for all model code and data, and see https://osf.io/daj8b for a preregistration of this project.
 
-### What would be a reasonable blanket rule for an effect that no longer matters?
-I.e., an effect that  is .2 of the original effect? 
+#### Accounting for null effects
+An important question in assessing the degree to which effects are attenuated in this literature is how much this effect is driven by the presence of null (or so small as to be effectivly null) effects. The average dissatenuation could be extremely high, and yet this effect be almost entierly driven by the presence of null effects. This aspect becomes especially important as the sampling of the literature is non-random, meaning it is plausible that some effects were chosen for replication to a greater or lesser extent as it was expected that they may not replicate. In order to account for this issue, the average effect size attenuation was caclulated using multiple methods of excluding original studies. 
 
-Bayesian test of r != 0 vs. r >/< 0, BF in which direction (assuming a flat or default prior)
+The first method is to only look at effects that reached statistical significance in the replication study in the same direction as the original effect. This has the issue of meaning that studies which were underpowered to detect a non-null but true effect are likely to be excluded from this analysis. Especially as in some of the replication projects the sample size in the second study, this method is likely to underestimate the amount of effect size exaggeration. Original studies which found large effects lead to follow up studies which have smaller sample sizes, and are therefore unlikely to reach statistical significance given a true but smaller effect size.
 
-All of the methods in the RPP study - original within bounds of 95% replication CI
+##### Equivilence tests
 
-EXCLUDE STUDIES - Find the smallest effect that would have been statistically significant in the original study and base the 95% CI on that. Lakens , Scheel and  Isager 2018 P 262
+A second method we use is to exlude studies from estimates of the amount of effect size decrease based on whether the results of the replication study were statistically equivalent to the null or significant in the opposite direction {Lakens, 2017 #214;Lakens, 2018 #951}. As a requirement for equivilance testing is that a minimum effect size of interest is selected, we follow one suggestion in {Lakens, 2018 #951} and use the lowest effect size that would be statistically significant to the original study as the smallest effect of interest (assuming an alpha of .05). Equivilance tests were perfomred used the Fisher Z transformed effect sizes, and approximated the standard errors of each study as $\sqrt{\frac{1}{n-3}}$, except for studies from {Camerer, 2018 #967} which had more than a single replication attempts, where standard errors are those derrived from the meta-analyses that produced the effect size estimate. Equivilence tests were performed using z tests, i.e., assuming a normal sampling distribution. As a method of testing how closely this method of approximating standard errors matches the origina replicaiton projects results, significance tests for the replication and original studies were performed using this approxiamtion. The results matched the significance or non-significance as reported in the replication projects in every single case. This method means that replication studies which found effects which were not statistically equivilant to the null were retained. However, as original sample sizes were often very small, the minimum detectable effect was occasionally quite high mean = (`r summary(minimumEffectDetectableZ,na.rm=T)`).
 
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 
-
-
-## Testing 
-
-```{r message=FALSE}
-
-ggplot(allData, aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) +  geom_point(alpha = 1, na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic()  + ylim(c(-.5, 1))+ xlim(c(-.0, 1)) + scale_shape_manual(values = c(8,16)) 
-
-# summary(abs(loopr$correlation.o))  
-mean((allData$correlation.r-allData$correlation.o)/allData$correlation.o, na.rm = T)
-mean((allData$fis.r -allData$fis.o)/allData$fis.o, na.rm = T)
-
-# cor.test(allData$correlation.r, allData$correlation.o, na.rm = T)
-
-# allData
+# This is the test that was perfomred to show that there were no differences  in the significance of the orig / rep studies
+nonMatchesStatisticalSig # i.e., sum( c(lower95.r > 0 & !allData$significantSameDirection.r,lower95.r < 0 & allData$significantSameDirection.r), na.rm = T )
 
 ```
 
+##### Bayesian analysis
 
+Three different types of Bayes factors were developed for each study following {Wetzels, 2012 #993} and {Wagenmakers, 2016 #994} using the correlation coefficients from each study. Bayes Factors express the relative evidence for one model compared to another, the degree to which a Bayesian observer should update their prior beliefs in response to the receipt of new data. Two of the developed Bayes Factors ignore the original study and exrpress the relative evidence for and against the point null entierly based on results of the replication study, using a one tailed ($BF_{0+}$) and and two tailed ($BF_{01}$) alternative hypothesis. Replication Bayes Factors ($BF_{rep1}$) were also developed, representing the relative evidence for or against the point null hypothesis as compared to the original study's reported effect size. The order of the subscripts indicate whether the Bayes Factors represtent evidence for the null ($BF_{0+}$, $BF_{01}$, $BF_{0rep}$) or for the alternative hypothesis ($BF_{+0}$, $BF_{10}$, $BF_{rep0}$). All of these Bayes factors were developed using only the transformed effect sizes and samples sizes reported in the Replication projects  {Wagenmakers, 2016 #994}. Importantly, these bayes factors differ from those that would normally be developed using the closest Bayesian equivilents to each original replicated study's analysis, and are not intended as anything more than a corse estimate of the degree of evidence provided for and against the null model. See the supplementary material [!] table [bayesFactors] for a table showing the differences between the values returned by this method compared to those reported in the Bayesian supplement to {Camerer, 2018 #967}.
 
-### Testing methods of removing originals
-
-```{r}
-# extracting just the significant ones (i.e., successful replications according to p < .05 on the replication)
-
-
-
-
-
-```
-
-###
+## Results
 
 
 
 
 
 
-
-```{r}
+```{r, echo = F}
+kable(, digits = 2, col.names = c("Included Articles", "Mean proportion change", "Mean replication ES", "Mean original studies ES", "Mean ES difference", 
+                                                   "SD difference", "Median proportion change", "Median replicaiton ES", "Median original ES", "Median difference", "n included", "n criteria calculable for", "95% CI LB Mean ES Change", "95% CI UB Mean ES Change"))
+      
+      
+     ( "Number included in model","Estimated decrease model",  "95% CI LB Mean ES change model", "95% CI UB Mean ES change model")
 
 ```
 
@@ -119,7 +102,7 @@ Bayesian modelling - compare data for and against
 
 
 ######## 
-NOTE ! ! ! - it may be important to use disattenuated values from LOOPR because they used short form analyses
+NOTE ! ! ! - it may be important to use dis-attenuated values from LOOPR because they used short form analyses
 
 
 
@@ -127,5 +110,32 @@ NOTE ! ! ! - it may be important to use disattenuated values from LOOPR because 
 
 
 
+## Supplementary material 
 
 
+
+#### Table [BayesFactors]
+One-sided and ($BF_{plus1}$) and replication ($BF_{rep1}$) Bayes Factors for as reported in {Camerer, 2018 #967} and as estimated in the current paper, along with the reported correlation coefficients and sample sizes from the original and replicaiton studies.  
+`r kable(tableBayesFactors, digits = 2)`
+
+The only large discrepancy included is seen in Balafoutas and Sutter (2012) in which the Bayes Factor reported in {Camerer, 2018 #967} was based on a hypothesis test of orderd binomial probabilities, likely accounting for the large difference. 
+
+### Plots of the relationship between original and replication correlation coefficents, removing different sets of possibly null results 
+```{r}
+plotAllData 
+
+plotNonequiv 
+
+plotSigR 
+
+plotBF10Greater3 
+
+plotBF01Lesser3
+
+plotBF0plusLesser3 
+
+plotBFPlus0Greater3
+
+plotBFRep0Lesser3
+
+```
