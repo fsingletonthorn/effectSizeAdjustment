@@ -8,6 +8,7 @@ output:
 ```{r message=FALSE, warning=FALSE, include=FALSE}
 source(file = 'Data/data_collection_cleaning.R')
 source(file = 'analysisScript.R')
+options(scipen=1, digits=2)
 ```
 
 ## Introduction
@@ -34,59 +35,100 @@ All analysis was performed in R {R Development Core Team, 2018 #314} using the M
 Confidence intervals around binomial proportions are 95% Wilson Score intervals. Percentage change values were calculated using Fisher Z transformed effect sizes. All analyses were exploratory, and multiple models which were developed are not presented here, although I believe the presented results to be the best description of the data. See https://github.com/fsingletonthorn/effectSizeAdjustment for a git repository with a record of all interim models and for all model code and data, and see https://osf.io/daj8b for a preregistration of this project.
 
 #### Accounting for null effects
-An important question in assessing the degree to which effects are attenuated in this literature is how much this effect is driven by the presence of null (or so small as to be effectivly null) effects. The average dissatenuation could be extremely high, and yet this effect be almost entierly driven by the presence of null effects. This aspect becomes especially important as the sampling of the literature is non-random, meaning it is plausible that some effects were chosen for replication to a greater or lesser extent as it was expected that they may not replicate. In order to account for this issue, the average effect size attenuation was caclulated using multiple methods of excluding original studies. 
+
+An important question in assessing the degree to which effects are attenuated in this literature is how much this effect is driven by the presence of null (or so small as to be effectivly null) effects. The average dissatenuation could be extremely high, and yet this effect be almost entierly driven by the presence of effectivly-null effects. This aspect becomes especially important as the sampling of the literature is non-random, meaning it is plausible that some effects were chosen for replication to a greater or lesser extent as it was expected that they may not replicate. In order to account for this issue, the average effect size attenuation was caclulated using multiple methods of excluding original studies. 
+
+Notably, all but the first method of removing true null effects (using statistical significance, which has its own issues detailed below) require approximations and are based on the effect sizes converted into correlation coefficents, as almost all of the replicaiton projects used to present thier results. Ideally, a full reanalysis would be performed for each original study. However, it was not feasible to extract and reperform full analyses for the over 600 total original and  replication studies. This said, these approaches taken together provide a set of heuristic tools to help estimate the degree of effect size attenuation seen in non-true-null studies. 
+
+##### Statistical significance of the replication study
 
 The first method is to only look at effects that reached statistical significance in the replication study in the same direction as the original effect. This has the issue of meaning that studies which were underpowered to detect a non-null but true effect are likely to be excluded from this analysis. Especially as in some of the replication projects the sample size in the second study, this method is likely to underestimate the amount of effect size exaggeration. Original studies which found large effects lead to follow up studies which have smaller sample sizes, and are therefore unlikely to reach statistical significance given a true but smaller effect size.
 
 ##### Equivilence tests
 
-A second method we use is to exlude studies from estimates of the amount of effect size decrease based on whether the results of the replication study were statistically equivalent to the null or significant in the opposite direction {Lakens, 2017 #214;Lakens, 2018 #951}. As a requirement for equivilance testing is that a minimum effect size of interest is selected, we follow one suggestion in {Lakens, 2018 #951} and use the lowest effect size that would be statistically significant to the original study as the smallest effect of interest (assuming an alpha of .05). Equivilance tests were perfomred used the Fisher Z transformed effect sizes, and approximated the standard errors of each study as $\sqrt{\frac{1}{n-3}}$, except for studies from {Camerer, 2018 #967} which had more than a single replication attempts, where standard errors are those derrived from the meta-analyses that produced the effect size estimate. Equivilence tests were performed using z tests, i.e., assuming a normal sampling distribution. As a method of testing how closely this method of approximating standard errors matches the origina replicaiton projects results, significance tests for the replication and original studies were performed using this approxiamtion. The results matched the significance or non-significance as reported in the replication projects in every single case. This method means that replication studies which found effects which were not statistically equivilant to the null were retained. However, as original sample sizes were often very small, the minimum detectable effect was occasionally quite high mean = (`r summary(minimumEffectDetectableZ,na.rm=T)`).
+A second method we use is to exclude studies from estimates of the amount of effect size decrease based on whether the results of the replication study were statistically equivalent to the null or significant in the opposite direction {Lakens, 2017 #214;Lakens, 2018 #951}. As a requirement for equivalence testing is that a minimum effect size of interest is selected, we follow one suggestion in {Lakens, 2018 #951} and use the lowest effect size that would be statistically significant to the original study as the smallest effect of interest (assuming an alpha of .05). Equivalence tests were performed used the Fisher Z transformed effect sizes, and approximated the standard errors of each study as $\sqrt{\frac{1}{n-3}}$, except for studies from {Camerer, 2018 #967} which had more than a single replication attempts, where standard errors are those derived from the meta-analyses that produced the effect size estimate. Equivalence tests were performed using z tests, i.e., assuming a normal sampling distribution. As a method of testing how closely this method of approximating standard errors matches the original replication projects results, significance tests for the replication and original studies were performed using this approximation. The results matched the significance or non-significance as reported in the replication projects in every single case. This method means that replication studies which found effects which were not statistically equivalent to the null were retained. However, as original sample sizes were often very small, the minimum detectable effect was occasionally quite high (mean = `r mean(minimumEffectDetectableZ,na.rm=T)`, SD =  `r sd(minimumEffectDetectableZ,na.rm=T)`, quintiles = [`r quantile(minimumEffectDetectableZ,na.rm=T)`]).
 
 ```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 
 # This is the test that was perfomred to show that there were no differences  in the significance of the orig / rep studies
-nonMatchesStatisticalSig # i.e., sum( c(lower95.r > 0 & !allData$significantSameDirection.r,lower95.r < 0 & allData$significantSameDirection.r), na.rm = T )
+nonMatchesStatisticalSig # sum( c(lower95.r > 0 & !allData$significantSameDirection.r), na.rm = T )
+
+
+
 
 ```
 
 ##### Bayesian analysis
 
-Three different types of Bayes factors were developed for each study following {Wetzels, 2012 #993} and {Wagenmakers, 2016 #994} using the correlation coefficients from each study. Bayes Factors express the relative evidence for one model compared to another, the degree to which a Bayesian observer should update their prior beliefs in response to the receipt of new data. Two of the developed Bayes Factors ignore the original study and exrpress the relative evidence for and against the point null entierly based on results of the replication study, using a one tailed ($BF_{0+}$) and and two tailed ($BF_{01}$) alternative hypothesis. Replication Bayes Factors ($BF_{rep1}$) were also developed, representing the relative evidence for or against the point null hypothesis as compared to the original study's reported effect size. The order of the subscripts indicate whether the Bayes Factors represtent evidence for the null ($BF_{0+}$, $BF_{01}$, $BF_{0rep}$) or for the alternative hypothesis ($BF_{+0}$, $BF_{10}$, $BF_{rep0}$). All of these Bayes factors were developed using only the transformed effect sizes and samples sizes reported in the Replication projects  {Wagenmakers, 2016 #994}. Importantly, these bayes factors differ from those that would normally be developed using the closest Bayesian equivilents to each original replicated study's analysis, and are not intended as anything more than a corse estimate of the degree of evidence provided for and against the null model. See the supplementary material [!] table [bayesFactors] for a table showing the differences between the values returned by this method compared to those reported in the Bayesian supplement to {Camerer, 2018 #967}.
+Three different types of Bayes factors were developed for each study using defaut priors following {Wagenmakers, 2016 #994} using the effect sizes converted into correlation coefficients from each study. Bayes Factors express the relative evidence for the null hypothesis compared to an alternative model, or equivalently the degree to which a Bayesian observer should update their prior beliefs in response to the receipt of new data. If a Bayes factor is greater than one the data is more likely under the alternative hypothesis than under the null hypothesis, and the opposite is true when a Bayes factor is below one. Conventional labels have been proposed, suggesting that Bayesfactors between 1 and 3 provide little to no evidence and Bayes factors from 3-10 provide "substantial" evidence {Jeﬀreys, 1961 #1001}.
+
+Two of the developed Bayes Factors ignore the original study and express the relative evidence for and against the point null entirely based on results of the replication study, using a one tailed ($BF_{0+}$) and and two tailed ($BF_{01}$) alternative hypothesis. Replication Bayes Factors ($BF_{rep1}$) were also developed, in which the prior for the replication correlation coefficient is the posterior based on the original research {Wagenmakers, 2016 #994}. This papers follows the typical notation where the order of the subscripts indicate whether a Bayes Factor represent evidence for the null ($BF_{0+}$, $BF_{01}$, $BF_{0rep}$) or for the alternative hypothesis ($BF_{+0}$, $BF_{10}$, $BF_{rep0}$). All of these Bayes factors were developed using only the transformed effect sizes and samples sizes reported in the Replication projects  {Wagenmakers, 2016 #994}. Importantly, these Bayes factors differ from those that would normally be developed using the closest Bayesian equivalents to each original replicated study's analysis, and are not intended as anything more than a coarse estimate of the degree of evidence provided for and against the null model. See the supplementary material [ ! ] table [bayesFactors] for a table showing the differences between the values returned by this method compared to those reported in the Bayesian supplement to which were more appropriatly calculated {Camerer, 2018 #967}.
+
+### Sensativity analysis 
+
+In order to assess whether the main results of this study are sensative to the inclusion of each of the replication projects, the models were rerun using leave one out cross validation, excluding both the individual replicaiton attempts and the replication projects one at a time. 
+
+### 
+
 
 ## Results
 
+In the following I outline the raw decreases that are seen looking at all articles, the results of the methods of removing the null results from these raw figures, and finally the results of the multilevel models. The best estimates of the amount of effect size decrease that should be expected are developed from the multilevel models. 
 
+### Raw decreases ignoring grouping
 
+Looking at the `r tableReductions["Overall", "n included"]` replications for which both original and replication effect sizes were avaliable, the average effect for original studies was `r tableReductions["Overall", "Mean original ES"]`, and the mean effect size for replication studies was `r tableReductions["Overall", "Mean replication ES"]`. There was an average decrease of r = `r tableReductions["Overall", "Mean ES difference"]` (naive 95% CI [`r as.numeric(tableReductions["Overall", c("95% CI LB Mean ES Change", "95% CI UB Mean ES Change")])`]). Notably, this represents an average decrease in effect sizes from the original to the replication study of  `r tableReductions["Overall", "Mean proportion change"]*100`%. See Table 2 for a more comprehensive list of descriptives on the effect size differences seen, and figure 1 for a scatterplot of the replication effect sizes plotted against the original studies'.
 
+`r plotAllData`
+Figure 1. A scatterplot of replication study effect sizes (in correlation coefficients) plotted against original study effect sizes. Points which fall on the the solid, diagonal line represent replication effect sizes equal to the original effect sizes. Point size represennts (the log) of the number of participants in the replication study, and the colour of the points shows which replication project each effect size pair was from. 
 
+Table 2. 
+Differences between original and replication studies. All calculations were performed on Fisher's Z transformed correlations and back-transformed into correlation coefficients for interpretability.
 
 ```{r, echo = F}
-kable(, digits = 2, col.names = c("Included Articles", "Mean proportion change", "Mean replication ES", "Mean original studies ES", "Mean ES difference", 
-                                                   "SD difference", "Median proportion change", "Median replicaiton ES", "Median original ES", "Median difference", "n included", "n criteria calculable for", "95% CI LB Mean ES Change", "95% CI UB Mean ES Change"))
+kable(tableReductions, digits = 2)
       
       
-     ( "Number included in model","Estimated decrease model",  "95% CI LB Mean ES change model", "95% CI UB Mean ES change model")
+   #   ( "Number included in model","Estimated decrease model",  "95% CI LB Mean ES change model", "95% CI UB Mean ES change model")
+
+t.test(-0.11443555, sd = 0.2507353, -0.03997868, 	0.2007623)
 
 ```
 
+The same pattern of results are seen in every 
+
+
+### Examining only the statistically significant studies
+
+Looking at the `r tableReductions["StatisticalSignificance", "n included"]` replications in which the replicaiton study was statistically significant, the average effect for original studies was `r tableReductions["StatisticalSignificance", "Mean original ES"]`, and the mean effect size for replication studies was `r tableReductions["StatisticalSignificance", "Mean replication ES"]`. There was an average decrease of r = `r tableReductions["StatisticalSignificance", "Mean ES difference"]` (naive 95% CI [`r as.numeric(tableReductions["StatisticalSignificance", c("95% CI LB Mean ES Change", "95% CI UB Mean ES Change")])`, an average decrease of  `r tableReductions["StatisticalSignificance", "Mean proportion change"]*100`%. Removing studies which are not statistically significant, the average effect size decrease is of a smaller magnitude. 
+
+Of course, using this rule for exluding studies is likely to lead to a underexaggeration of the issue, as this exlusion rule will lead to the exclusion of underpowered replicaiton studies as well as studies which are likely to be true null effects.
 
 
 
 
 
 
+### Equivilence tests 
+
+### BFs 
+#### $BF_{01}$
+
+Excluding just those studies which provide at least moderate evidence for the null paints a similar picture, 
+
+#### $BF_{0+}$
+
+#### $BF_{0rep}$
 
 
 
 
 
 
+### Multilevel models
 
 
-TOST - 
-Exclude inconclusive ones - 
 
-Bayesian modelling - compare data for and against 
 
 
 

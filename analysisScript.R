@@ -12,10 +12,13 @@ library(RColorBrewer)
 library(reshape2)
 source("https://gist.githubusercontent.com/benmarwick/2a1bb0133ff568cbe28d/raw/fb53bd97121f7f9ce947837ef1a4c65a73bffb3f/geom_flat_violin.R")
 
-
 sumStats <- function(x, na.rm = T){
 return(list(mean = mean(x, na.rm = na.rm), sd = sd(x, na.rm = na.rm), median = median(x, na.rm = na.rm) , quantile = quantile(x, na.rm = na.rm), n = sum(!is.na(x)), nNA = sum(is.na(x))))
 }
+
+tableAverageDecrease <- allData %>%
+  group_by(source) %>%
+  dplyr::summarise(mean=mean(fisherZDiff, na.rm=T), sd=sd(fisherZDiff, na.rm=T))
 
 # Could approximate SEs using: # Not valid for F stats w/ df1 > 2 / chi square tests
 allData$seFishAprox.r  <- ifelse( is.na(allData$seFish.r ), sqrt(1/(allData$n.r-3)), allData$seFish.r)
@@ -95,7 +98,12 @@ allData$bf0plus <- 1/allData$bfplus0
 allData$bfRep0 <- apply(data.frame(allData$correlation.o, allData$n.o, allData$correlation.r, allData$n.r), MARGIN = 1, FUN = bfapplyRep0) 
 allData$bf0Rep <- 1/allData$bfRep0
 
-## Finding minimium effect that would have been significant in the original study - 
+allData$bf10.o <-  apply(data.frame(allData$correlation.o, allData$n.o), MARGIN = 1, FUN = bfapply10)
+allData$bfRep0_updated <-  allData$bf10.o * allData$bf10
+
+# mean(allData$bfRep0_updated - allData$bfRep0, na.rm =T)
+# plot(log(allData$bfRep0_updated), log(allData$bfRep0))
+# ## Finding minimium effect that would have been significant in the original study - 
 minimumEffectDetectableZ <- qnorm(.05, mean = 0, sd = allData$seFishAprox.o, lower.tail = FALSE)
 CIs90UB <-   allData$fis.r + (qnorm(0.95)*allData$seFishAprox.r)
 CIs90LB <-   allData$fis.r - (qnorm(0.95)*allData$seFishAprox.r)
@@ -202,11 +210,22 @@ reductionEquiv <- allData %>%
 
 # Bringing all of the above together:
 tableReductions <- rbind(Overall = reductionAllData, StatisticalSignificance = reductionSignifcantR, Nonequivalence = reductionEquiv, BF0RepBelow3 = reductionSbf0RepLessThan3 , BFRep0Above3 = reductionSbfRep0MoreThan3,  BF01Below3 = reductionSbf01LessThan3 , BF10Above3 = reductionSbf10MoreThan3, BF0PBelow3 = reductionSbf0PlusLessThan3, BFP0Above3 = reductionSbfPlus0MoreThan3)
- # tableReductions$Category <- row.names(tableReductions)
+
 # Calculating naive CIs around mean differences 
 boundDist <- qt(0.975, df = tableReductions$nTrue - 1)*tableReductions$sdDiff/sqrt(tableReductions$nTrue)
 tableReductions$lbMeanDiff <- tableReductions$meanDiff - boundDist
 tableReductions$ubMeanDiff <- tableReductions$meanDiff + boundDist
+
+# Converting into Rs 
+tableReductions[,-which(str_detect(names(tableReductions), "Prop|nTrue|nValid"))] <- ztor(tableReductions[,-which(str_detect(names(tableReductions), "Prop|nTrue|nValid"))])
+# Renaming 
+names(tableReductions) <- c("Mean proportion change", "Mean replication ES", "Mean original ES", "Mean ES difference", 
+  "SD difference", "Median proportion change", "Median replicaiton ES", "Median original ES", "Median ES difference",
+  "n included", "n criteria calculable for", "95% CI LB Mean ES Change", "95% CI UB Mean ES Change")
+
+# Reordering cols
+tableReductions <- tableReductions[c("n included", "n criteria calculable for",  "Mean original ES", "Median original ES",  "Mean replication ES", "Median replicaiton ES", 
+                  "Mean ES difference",  "95% CI LB Mean ES Change", "95% CI UB Mean ES Change",  "Median ES difference", "SD difference", "Mean proportion change", "Median proportion change")]
 
 kableReductions <- kable(tableReductions, digits = 2)
 
@@ -215,28 +234,28 @@ kableReductions <- kable(tableReductions, digits = 2)
 #########################################################
 
 # Plotting effects on each other 
-plotAllData <- ggplot(allData, aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("All data")
+plotAllData <- ggplot(allData, aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T, alpha = .5)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("All data")
 
 # Plotting only non-equivalent studies  
-plotNonequiv <- ggplot(allData[!allData$statisticallyEquiv.ro,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Non-equivalent studies")
+plotNonequiv <- ggplot(allData[!allData$statisticallyEquiv.ro,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T, alpha = .5)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Non-equivalent studies")
 
 # Plotting just significant studies (sig and in same direction)
-plotSigR <- ggplot(allData[allData$significantSameDirection.r==TRUE,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source)))+ geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Significant replications in the same direction only")
+plotSigR <- ggplot(allData[allData$significantSameDirection.r==TRUE,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source)))+ geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T, alpha = .5)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Significant replications in the same direction only")
 
 # two sided test, Exluding studies with BF10 lower than 3, i.e., without evidence moderate or greater for the alternative
-plotBF10Greater3 <- ggplot(allData[(allData$bf10>3),], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source)))+ geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF10 lower than 3")
+plotBF10Greater3 <- ggplot(allData[(allData$bf10>3),], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source)))+ geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T, alpha = .5)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF10 lower than 3")
 
 # two sided test, excluding those with evidence for null > 3
-plotBF01Lesser3 <- ggplot(allData[(allData$bf01<3) & (sign(allData$correlation.o) == sign(allData$correlation.r)),], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0)+  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF01 greater than 3")
+plotBF01Lesser3 <- ggplot(allData[(allData$bf01<3) & (sign(allData$correlation.o) == sign(allData$correlation.r)),], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0)+  geom_point(na.rm = T, alpha = .5)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF01 greater than 3")
 
 # One sided default bayes factor, excluding studies with ev for null > 3
-plotBF0plusLesser3 <- ggplot(allData[allData$bf0plus<3,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0)+  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF0+ (one sided) greater than 3")
+plotBF0plusLesser3 <- ggplot(allData[allData$bf0plus<3,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0)+  geom_point(na.rm = T, alpha = .5)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF0+ (one sided) greater than 3")
 
 # One sided default bayes factor, including only studies with ev for alternative > 3
-plotBFPlus0Greater3 <- ggplot(allData[allData$bfplus0>3,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0)+  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF+0 less than than 3")
+plotBFPlus0Greater3 <- ggplot(allData[allData$bfplus0>3,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0)+  geom_point(na.rm = T, alpha = .5)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF+0 less than than 3")
 
 # Replication bayes factor, including only studies *without* evidence for the null vs the original effect over 3
-plotBFRep0Lesser3 <- ggplot(allData[allData$bf0Rep <3,], aes(correlation.o, correlation.r, size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0)+  geom_point(na.rm = T)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF0Rep greater than than 3")
+plotBFRep0Lesser3 <- ggplot(allData[allData$bf0Rep <3,], aes(correlation.o, correlation.r, size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0)+  geom_point(na.rm = T, alpha = .5)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF0Rep greater than than 3")
 
 
 ### Descriptives
@@ -307,47 +326,58 @@ tableAllEstimates <- merge.data.frame(tableReductions, modSumaries, by = "row.na
 #### Leave one out cross validation for main model, excluding first each source
 LOOTracking <- list()
 
-# for(i in 1:length(unique(allData$source))) {
-#   # exlude <- unique(allData$source)[i]
-#   tempData <- allData[-which(allData$source == unique(allData$source)[i]),]
-#   LOOTracking[[i]] <- rma.mv(yi = tempData$fisherZDiff, V = tempData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = tempData)
-# }
+ for(i in 1:length(unique(allData$source))) {
+   # exlude <- unique(allData$source)[i]
+   tempData <- allData[-which(allData$source == unique(allData$source)[i]),]
+#   LOOTracking[[i]] <-  rma.mv(yi = tempData$fisherZDiff, V = tempData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = tempData)
+#   LOOTracking[[i+length(unique(allData$source))]] <-  rma.mv(yi = tempData$fisherZDiff, V = tempData[tempData$significantSameDirection.r==TRUE,]$seDifference.ro^2, random =  ~ 1|tempData[tempData$significantSameDirection.r==TRUE,]$source/tempData[tempData$significantSameDirection.r==TRUE,]$authorsTitle.o, data = tempData[tempData$significantSameDirection.r==TRUE & !is.na(tempData$significantSameDirection.r==TRUE),])
+#   LOOTracking[[i+2*length(unique(allData$source))]] <-  rma.mv(yi = tempData$fisherZDiff, V = tempData[tempData$bf0plus < 3 & !is.na(tempData$bf0plus < 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = tempData[tempData$bf0plus < 3 & !is.na(tempData$bf0plus > 3)])
+#   LOOTracking[[i+3*length(unique(allData$source))]] <-  rma.mv(yi = tempData$fisherZDiff, V = tempData[tempData$bfplus0 > 3 & !is.na(tempData$bfplus0 > 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = tempData[tempData$bfplus0 > 3 & !is.na(tempData$bfplus0 > 3),])
+#   LOOTracking[[i+4*length(unique(allData$source))]] <-  rma.mv(yi = tempData$fisherZDiff, V = tempData[tempData$bf01 < 3 & !is.na(tempData$bf01 < 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = tempData[tempData$bf01 < 3 & !is.na(tempData$bf01 > 3),])
+#   LOOTracking[[i+5*length(unique(allData$source))]] <-  rma.mv(yi = tempData$fisherZDiff, V = tempData[tempData$bf10 > 3 & !is.na(tempData$bf10 > 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = tempData[tempData$bf10 > 3 & !is.na(tempData$bf10 > 3),])
+#   LOOTracking[[i+6*length(unique(allData$source))]] <-  rma.mv(yi = tempData$fisherZDiff, V = tempData[tempData$bf0Rep < 3 & !is.na(tempData$bf0Rep < 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = tempData[tempData$bf0Rep < 3 & !is.na(tempData$bf0Rep < 3),])
+#   LOOTracking[[i+7*length(unique(allData$source))]] <-  rma.mv(yi = tempData$fisherZDiff, V = tempData[tempData$bfRep0 > 3 & !is.na(tempData$bfRep0 > 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data =  tempData[tempData$bfRep0 > 3 & !is.na(tempData$bfRep0 > 3),])
+}
+ # extrating estiamtes from list
+LOOProject <- sapply(LOOTracking, function(m) m[c(1,5, 105)], simplify = T)
+LOOProject <- as.data.frame(t(LOOStudy))
 
-# extrating estiamtes from list
-#estimatesLOOSource <- sapply(LOOTracking, function(m) m[1], simplify = T)
-#pvaluesLOOSource <- sapply(LOOTracking, function(m) m[5], simplify = T)
-#
-## Checking that none go below sig 
-## pvaluesLOOSource < .05
-#
-#maximumSourceDif <-  (as.numeric(estimatesLOOSource)- as.numeric(REMod[1]))
-# unique(allData$source)[which(as.numeric(REMod[1]) - as.numeric(estimatesLOOSource) ==(max(as.numeric(REMod[1]) - as.numeric(estimatesLOOSource))))]
-#
-#
-### LOO removing studies
-#for(i in 1:length(unique(allData$authorsTitle.o))) {
-#  # exlude <- unique(allData$source)[i]
-#  tempData <- allData[-which(allData$authorsTitle.o == unique(allData$authorsTitle.o)[i]),]
-#  LOOTracking[[i]] <- rma.mv(yi = tempData$fisherZDiff, V = tempData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = tempData)
-#}
-#
-#estimatesLOOStudy <- sapply(LOOTracking, function(m) m[1], simplify = T)
-#pvaluesLOOStudy <- sapply(LOOTracking, function(m) m[5], simplify = T)
-#
-#estimatesLOOStudy 
+# Checking that none go below sig 
+# mean(pvaluesLOOSource < .05)
 
-# No changes in significance
-# sum(as.numeric(pvaluesLOOStudy) > .05)
-# And no large changes in intercept 
-#  maximumStudyDif <- max(as.numeric(REMod[1]) - as.numeric(estimatesLOOStudy))
-#  
-#  LOOTracking <- list()
-#  
-#  for(i in 1:length(unique(allData$source))) {
-#    # exlude <- unique(allData$source)[i]
-#    tempData <- allData[-which(allData$source == unique(allData$source)[i]),]
-#    LOOTracking[[i]] <- rma.mv(yi = tempData$fisherZDiff, V = tempData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = tempData)
-#  }
+maximumSourceDif <-  (as.numeric(estimatesLOOSource)- as.numeric(REMod[1]))
+ unique(allData$source)[which(as.numeric(REMod[1]) - as.numeric(estimatesLOOSource) ==(max(as.numeric(REMod[1]) - as.numeric(estimatesLOOSource))))]
+
+
+## LOO removing studies
+for(i in 1:length(unique(allData$authorsTitle.o))) {
+  # exlude <- unique(allData$source)[i]
+  tempData <- allData[-which(allData$authorsTitle.o == unique(allData$authorsTitle.o)[i]),]
+  LOOTracking[[i]] <- rma.mv(yi = tempData$fisherZDiff, V = tempData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = tempData)
+  LOOTracking[[i+length(unique(allData$authorsTitle.o))]] <-  rma.mv(yi = fisherZDiff, V = tempData[tempData$significantSameDirection.r==TRUE,]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = tempData[tempData$significantSameDirection.r==TRUE,])
+  LOOTracking[[i+ (2*length(unique(allData$authorsTitle.o)))]] <-  rma.mv(yi = fisherZDiff, V = tempData[tempData$bf0plus < 3 & !is.na(tempData$bf0plus < 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = tempData[tempData$bf0plus < 3 & !is.na(tempData$bf0plus > 3)])
+  LOOTracking[[i+ (3*length(unique(allData$authorsTitle.o)))]] <-  rma.mv(yi = fisherZDiff, V = tempData[tempData$bfplus0 > 3 & !is.na(tempData$bfplus0 > 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = tempData[tempData$bfplus0 > 3 & !is.na(tempData$bfplus0 > 3),])
+  LOOTracking[[i+ (4*length(unique(allData$authorsTitle.o)))]] <-  rma.mv(yi = fisherZDiff, V = tempData[tempData$bf01 < 3 & !is.na(tempData$bf01 < 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = tempData[tempData$bf01 < 3 & !is.na(tempData$bf01 > 3),])
+  LOOTracking[[i+ (5*length(unique(allData$authorsTitle.o)))]] <-  rma.mv(yi = fisherZDiff, V = tempData[tempData$bf10 > 3 & !is.na(tempData$bf10 > 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = tempData[tempData$bf10 > 3 & !is.na(tempData$bf10 > 3),])
+  LOOTracking[[i+ (6*length(unique(allData$authorsTitle.o)))]] <-  rma.mv(yi = fisherZDiff, V = tempData[tempData$bf0Rep < 3 & !is.na(tempData$bf0Rep < 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = tempData[tempData$bf0Rep < 3 & !is.na(tempData$bf0Rep < 3),])
+  LOOTracking[[i+ (7*length(unique(allData$authorsTitle.o)))]] <-  rma.mv(yi = fisherZDiff, V = tempData[tempData$bfRep0 > 3 & !is.na(tempData$bfRep0 > 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data =  tempData[tempData$bfRep0 > 3 & !is.na(tempData$bfRep0 > 3),])
+}
+
+LOOStudy <- sapply(LOOTracking, function(m) m[c(1,5, 105)], simplify = T)
+LOOStudy <- as.data.frame(t(LOOStudy))
+
+ #No changes in significance
+ sum(as.numeric(pvaluesLOOStudy) > .05)
+ #And no large changes in intercept 
+  maximumStudyDif <- max(as.numeric(REMod[1]) - as.numeric(estimatesLOOStudy))
+  
+  LOOTracking <- list()
+  
+  for(i in 1:length(unique(allData$source))) {
+    # exlude <- unique(allData$source)[i]
+    tempData <- allData[-which(allData$source == unique(allData$source)[i]),]
+    LOOTracking[[i]] <- rma.mv(yi = tempData$fisherZDiff, V = tempData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = tempData)
+  }
 
 #####################
 ###### Figures ######

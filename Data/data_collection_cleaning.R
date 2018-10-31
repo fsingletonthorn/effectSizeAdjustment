@@ -436,6 +436,10 @@ xPhi$pVal.r <- pvalues.r
 es.r$seFish[grepl(x =  xPhi$OriginalANALYSIS, pattern = "χ|X2|F\\(2,|F \\(2")] <- NA
 es.o$seFish[grepl(x =  xPhi$OriginalANALYSIS, pattern = "χ|X2|F\\(2,|F \\(2")] <- NA
 
+
+xPhi$pVal.r[str_detect(xPhi$pVal.r, "20.007")] <- 0.092
+
+
 # EXCLUDING STUDIES WHICH WERE NOT SIGNIFICANT 
 data.frame(xPhi$pVal.o,  as.numeric(xPhi$pVal.o) > .05 & !is.na(as.numeric(xPhi$pVal.o)))
 
@@ -457,6 +461,7 @@ data6 <- data.frame(authorsTitle.o = xPhi$PAPER_ID,
                     n.r = xPhi$ReplicationN_Effect,
                     pVal.r =  xPhi$pVal.r,
                     seDifference.ro = NA)
+
 
 data6$source <- as.character(projectNames[6,1])
   #"Cova, et al. (2018), Experimental Philosophy"
