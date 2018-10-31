@@ -66,7 +66,7 @@ Two of the developed Bayes Factors ignore the original study and express the rel
 
 ### Sensativity analysis 
 
-In order to assess whether the main results of this study are sensative to the inclusion of each of the replication projects, the models were rerun using leave one out cross validation, excluding both the individual replicaiton attempts and the replication projects one at a time. 
+In order to assess whether the main results of this study are sensative to the inclusion of each of the replication projects and individual findnigs within each replication project, the models were rerun using leave one out cross validation, excluding both the individual replicaiton attempts and the replication projects one at a time. In two models, the statistical signifiance changes based on the exlusion of original studies which had been replicated (i.e., the model exluding based on statistical significance and examining bfRep0>3), although no point estimates changed by more than a Fisher z sore of `r maxDiffLOOStudy`. See supplementary material for a table of the LOO sample ...
 
 ### 
 
@@ -131,6 +131,15 @@ Excluding just those studies which provide at least moderate evidence for the nu
 
 
 
+## Results
+
+
+#### Limitiations: 
+None of the projects included in this analysis were true random selections from the literature, and it is possible that the pattern in the selected sample may be different that that which would be seen in the literature overall.
+
+All of the methods that were used to the replication studies which were null-or-effectivly were bound to decrease the amount of effect size decrease that is seen. At worst, they could be seen as just removing the studies which happened to find low effects as opposed to removing all the true null hypotheses. However, this preliminary analysis does provide suggestive evidence that the degree of effect size attenuation that is seen may be largely att
+
+
 
 
 
@@ -179,5 +188,8 @@ plotBF0plusLesser3
 plotBFPlus0Greater3
 
 plotBFRep0Lesser3
+
+kableReductions
+
 
 ```

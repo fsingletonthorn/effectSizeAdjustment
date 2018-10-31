@@ -4,7 +4,7 @@ library(brms)
 # https://osf.io/xhj4d/  - Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., . . . Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637-644. doi:10.1038/s41562-018-0399-z
 # Getting rid of missing data
 jagData <- allData[ !is.na(allData$fis.o) & !is.na(allData$fis.r)  & !is.na(allData$n.o)  & !is.na(allData$n.r) ,]  #& (allData$abrev == "natSci"),] 
-View(allData[allData$abrev == "natSci",])
+#View(allData[allData$abrev == "natSci",])
 nrow(jagData)
 ## ADDING IN MISSING DATA 
 # jagData <- allData[ !is.na(allData$fis.o) & !is.na(allData$n.o) & !is.na(allData$n.r) & !is.na(allData$fis.r),] 
@@ -19,10 +19,13 @@ jagMod <- jags.model(file = 'Analysis/BMWMod.R',
                      n.chains=4)
 
 # Parameters to keep
-params <- c("clust",
-  #"trueRepEffect",
-  #"trueOrgEffect"
-  "alpha")
+params <- c("mu_source_rep","mu_source_ori",
+            "clust",
+            "orgEffect_FT" ,
+            "trueOrgEffect",
+            "repEffect_FT" ,
+            "trueRepEffect",
+            "alpha")
 
 # Running model and summarising 
 samples <- coda.samples(jagMod,params,n.iter = 10000)

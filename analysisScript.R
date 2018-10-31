@@ -255,7 +255,11 @@ plotBF0plusLesser3 <- ggplot(allData[allData$bf0plus<3,], aes(correlation.o, cor
 plotBFPlus0Greater3 <- ggplot(allData[allData$bfplus0>3,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0)+  geom_point(na.rm = T, alpha = .5)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF+0 less than than 3")
 
 # Replication bayes factor, including only studies *without* evidence for the null vs the original effect over 3
-plotBFRep0Lesser3 <- ggplot(allData[allData$bf0Rep <3,], aes(correlation.o, correlation.r, size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0)+  geom_point(na.rm = T, alpha = .5)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF0Rep greater than than 3")
+plotBF0RepLesser3 <- ggplot(allData[allData$bf0Rep <3,], aes(correlation.o, correlation.r, size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0)+  geom_point(na.rm = T, alpha = .5)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17))+ ggtitle("Exluding studies with BF0Rep greater than than 3")
+
+# Replication bayes factor, including only studies with evidence for the alternative of greater than 3
+plotBFRep0Lesser3 <- ggplot(allData[allData$bfRep0>3,], aes(correlation.o, correlation.r, size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0)+  geom_point(na.rm = T, alpha = .5)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BFRep0 less than than 3")
+
 
 
 ### Descriptives
@@ -349,35 +353,38 @@ maximumSourceDif <-  (as.numeric(estimatesLOOSource)- as.numeric(REMod[1]))
  unique(allData$source)[which(as.numeric(REMod[1]) - as.numeric(estimatesLOOSource) ==(max(as.numeric(REMod[1]) - as.numeric(estimatesLOOSource))))]
 
 
-## LOO removing studies
-for(i in 1:length(unique(allData$authorsTitle.o))) {
-  # exlude <- unique(allData$source)[i]
-  tempData <- allData[-which(allData$authorsTitle.o == unique(allData$authorsTitle.o)[i]),]
-  LOOTracking[[i]] <- rma.mv(yi = tempData$fisherZDiff, V = tempData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = tempData)
-  LOOTracking[[i+length(unique(allData$authorsTitle.o))]] <-  rma.mv(yi = fisherZDiff, V = tempData[tempData$significantSameDirection.r==TRUE,]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = tempData[tempData$significantSameDirection.r==TRUE,])
-  LOOTracking[[i+ (2*length(unique(allData$authorsTitle.o)))]] <-  rma.mv(yi = fisherZDiff, V = tempData[tempData$bf0plus < 3 & !is.na(tempData$bf0plus < 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = tempData[tempData$bf0plus < 3 & !is.na(tempData$bf0plus > 3)])
-  LOOTracking[[i+ (3*length(unique(allData$authorsTitle.o)))]] <-  rma.mv(yi = fisherZDiff, V = tempData[tempData$bfplus0 > 3 & !is.na(tempData$bfplus0 > 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = tempData[tempData$bfplus0 > 3 & !is.na(tempData$bfplus0 > 3),])
-  LOOTracking[[i+ (4*length(unique(allData$authorsTitle.o)))]] <-  rma.mv(yi = fisherZDiff, V = tempData[tempData$bf01 < 3 & !is.na(tempData$bf01 < 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = tempData[tempData$bf01 < 3 & !is.na(tempData$bf01 > 3),])
-  LOOTracking[[i+ (5*length(unique(allData$authorsTitle.o)))]] <-  rma.mv(yi = fisherZDiff, V = tempData[tempData$bf10 > 3 & !is.na(tempData$bf10 > 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = tempData[tempData$bf10 > 3 & !is.na(tempData$bf10 > 3),])
-  LOOTracking[[i+ (6*length(unique(allData$authorsTitle.o)))]] <-  rma.mv(yi = fisherZDiff, V = tempData[tempData$bf0Rep < 3 & !is.na(tempData$bf0Rep < 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = tempData[tempData$bf0Rep < 3 & !is.na(tempData$bf0Rep < 3),])
-  LOOTracking[[i+ (7*length(unique(allData$authorsTitle.o)))]] <-  rma.mv(yi = fisherZDiff, V = tempData[tempData$bfRep0 > 3 & !is.na(tempData$bfRep0 > 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data =  tempData[tempData$bfRep0 > 3 & !is.na(tempData$bfRep0 > 3),])
-}
+## LOO removing studies - this takes ~ 20 mins to run, run once and then saved 
+#  for(i in 1:length(unique(allData$authorsTitle.o))) {
+#    # exlude <- unique(allData$source)[i]
+#    tempData <- allData[-which(allData$authorsTitle.o == unique(allData$authorsTitle.o)[i]),]
+#    LOOTracking[[i]] <- rma.mv(yi = tempData$fisherZDiff, V = tempData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = tempData)
+#    LOOTracking[[i+length(unique(allData$authorsTitle.o))]] <-  rma.mv(yi = fisherZDiff, V = tempData[tempData$significantSameDirection.r==TRUE,]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = tempData[tempData$significantSameDirection.r==TRUE,])
+#    LOOTracking[[i+ (2*length(unique(allData$authorsTitle.o)))]] <-  rma.mv(yi = fisherZDiff, V = tempData[tempData$bf0plus < 3 & !is.na(tempData$bf0plus < 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = tempData[tempData$bf0plus < 3 & !is.na(tempData$bf0plus > 3),])
+#    LOOTracking[[i+ (3*length(unique(allData$authorsTitle.o)))]] <-  rma.mv(yi = fisherZDiff, V = tempData[tempData$bfplus0 > 3 & !is.na(tempData$bfplus0 > 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = tempData[tempData$bfplus0 > 3 & !is.na(tempData$bfplus0 > 3),])
+#    LOOTracking[[i+ (4*length(unique(allData$authorsTitle.o)))]] <-  rma.mv(yi = fisherZDiff, V = tempData[tempData$bf01 < 3 & !is.na(tempData$bf01 < 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = tempData[tempData$bf01 < 3 & !is.na(tempData$bf01 > 3),])
+#    LOOTracking[[i+ (5*length(unique(allData$authorsTitle.o)))]] <-  rma.mv(yi = fisherZDiff, V = tempData[tempData$bf10 > 3 & !is.na(tempData$bf10 > 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = tempData[tempData$bf10 > 3 & !is.na(tempData$bf10 > 3),])
+#    LOOTracking[[i+ (6*length(unique(allData$authorsTitle.o)))]] <-  rma.mv(yi = fisherZDiff, V = tempData[tempData$bf0Rep < 3 & !is.na(tempData$bf0Rep < 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = tempData[tempData$bf0Rep < 3 & !is.na(tempData$bf0Rep < 3),])
+#    LOOTracking[[i+ (7*length(unique(allData$authorsTitle.o)))]] <-  rma.mv(yi = fisherZDiff, V = tempData[tempData$bfRep0 > 3 & !is.na(tempData$bfRep0 > 3),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data =  tempData[tempData$bfRep0 > 3 & !is.na(tempData$bfRep0 > 3),])
+#  }
 
-LOOStudy <- sapply(LOOTracking, function(m) m[c(1,5, 105)], simplify = T)
-LOOStudy <- as.data.frame(t(LOOStudy))
+#LOOStudy <- sapply(LOOTracking, function(m) m[c(1,5, 105)], simplify = T)
+#LOOStudyDF <- data.frame(as.data.frame(t(LOOStudy)))
+#LOOStudyDF <- data.frame(b = as.numeric(LOOStudyDF$b), p = as.numeric(LOOStudyDF$pval), call = as.character(LOOStudyDF$call))
 
- #No changes in significance
+ LOOStudyDF <- read_csv("Data/LOOStudyDF.csv")
+ 
+LOOStudyDFSum <- LOOStudyDF %>%
+  group_by(call) %>%
+  dplyr::summarise('proporiton significant'= mean(p<.05), 'Minimum b' = quantile(b)[1], 'Quantile b 25%' = quantile(b)[2], 'Median b' = quantile(b)[3], 'Quantile b 75%' = quantile(b)[4], 'Maximum b' = quantile(b)[5])
+
+maxDiffLOOStudy <- max(LOOStudyDFSum[,7] - LOOStudyDFSum[,3])
+
+
+#No changes in significance
  sum(as.numeric(pvaluesLOOStudy) > .05)
  #And no large changes in intercept 
   maximumStudyDif <- max(as.numeric(REMod[1]) - as.numeric(estimatesLOOStudy))
   
-  LOOTracking <- list()
-  
-  for(i in 1:length(unique(allData$source))) {
-    # exlude <- unique(allData$source)[i]
-    tempData <- allData[-which(allData$source == unique(allData$source)[i]),]
-    LOOTracking[[i]] <- rma.mv(yi = tempData$fisherZDiff, V = tempData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = tempData)
-  }
 
 #####################
 ###### Figures ######
