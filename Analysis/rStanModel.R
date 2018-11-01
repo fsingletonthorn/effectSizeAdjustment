@@ -14,11 +14,9 @@ mod <- brm(fisherZDiff | se(seDifference.ro) ~ 1 + (1|source/study), data = allD
 summary(mod)
 REsMod <- ranef(mod)
 
+pairs(mod)
 
-
- pairs(mod)
-
- stancode(mod)
+stancode(mod)
  
 modFixed <- brm(fisherZDiff | se(seDifference.ro) ~ 1 + source + (1|study), data = allData[!is.na(allData$seDifference.ro) & !is.na(allData$fisherZDiff),], cores = 4, 
            control =list(adapt_delta = .999, max_treedepth = 30), warmup = 500, iter = 1500)

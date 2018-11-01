@@ -1,0 +1,32 @@
+---
+title: "SimulationOutcomes"
+author: "Felix Singleton Thorn"
+date: "1 November 2018"
+output: html_document
+---
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+source(file = 'Data/data_collection_cleaning.R')
+source(file = 'analysisScript.R')
+options(scipen=1, digits=2)
+read_csv()
+```
+
+## Simulation output
+
+In order to assess whether the simulatio
+
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
