@@ -568,7 +568,6 @@ data8$source <- as.character(projectNames[8,1])
   #"Klein et al. (2018), Many Labs 2"
 data8$abrev <- "ML2"
 
-
 # Checking that NA p values are significant 
 # data8$pVal.r[is.na(as.numeric(as.character(data8$pVal.r)))]
 

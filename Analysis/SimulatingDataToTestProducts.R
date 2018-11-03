@@ -2,6 +2,7 @@ simData <- allData[c("correlation.o", "fis.o", "n.o", "n.r","seFishAprox.o" ,"se
 
 # Must run data cleaning and analysis scripts before this one 
 nSim <- 100
+
 # Tracking vectors
 simEquivProp  <- rep(NA, length(nSim))
 simPropTrueEffect <- rep(NA, length(nSim))
@@ -13,6 +14,7 @@ descriptivesTrackingSim <- data.frame(means=rep(NA, length(tableReductions$`n in
 
 # This controls whether you are adding or starting over again in the simulation - THIS HAS TO BE FALSE FOR THE FIRST ROUND 
 add <- TRUE
+
 
 for(i in 1:nSim) {
   propNull <- sample(x = seq(0,1,by=.1), 1)
@@ -28,6 +30,10 @@ simData$fis.r <- simData$simulatedFish.true + (rnorm(nrow(simData), 0, ifelse(!i
 
 # calculating differences
 simData$fisherZDiffSim <- simData$fis.r - simData$fis.o
+
+trueMeanDiff <- mean(simData$simulatedFish.true - simData$fis.r, na.rm = T)
+
+trueMeanDiffNo0s <- mean(simData$simulatedFish.true[simData$simulatedFish.true!=0&!is.na(simData$simulatedFish.true)] - simData$fis.r[simData$simulatedFish.true!=0&!is.na(simData$simulatedFish.true)] )
 
 simData$p.r <- pnorm(q = simData$fis.r, mean = 0, sd = simData$seFishAprox.r, lower.tail = F)
 
@@ -141,32 +147,34 @@ tableReductionsSim <- rbind(Overall = reductionsimData, StatisticalSignificance 
 ######################################
 ###### Multilevel meta-analysis ######
 ######################################
+# Placeholder for error catching 
+errorDF <- data.frame(k = NA, b = NA, ci.lb = NA, ci.ub = NA)
 
 # Random effects model with random effects for authors nested within source
-REMod <- rma.mv(yi = fisherZDiffSim, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = simData)
+REMod <- tryCatch(rma.mv(yi = fisherZDiffSim, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = simData), error = function(e) errorDF)
 # The first model but with only significant replications
-REModOnlySigR <- rma.mv(yi = fisherZDiffSim, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = simData[simData$significantSameDirection.r==TRUE & !is.na(simData$significantSameDirection.r),])
+REModOnlySigR <- tryCatch(rma.mv(yi = fisherZDiffSim, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = simData[simData$significantSameDirection.r==TRUE & !is.na(simData$significantSameDirection.r),]), error = function(e) errorDF)
 
 # the first model removing all studies with BFs0Plus > 3 (i.e., moderate evidence for a null)
-REModbf0plusSimGreaterThan3Excluded <- rma.mv(yi = fisherZDiffSim, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = simData[simData$bf0plusSim < 3 & !is.na(simData$bf0plusSim > 3),])
+REModbf0plusSimGreaterThan3Excluded <- tryCatch(rma.mv(yi = fisherZDiffSim, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = simData[simData$bf0plusSim < 3 & !is.na(simData$bf0plusSim > 3),]), error = function(e) errorDF)
 
 # the first model removing all studies with BFsPlus0 < 3 (i.e., those without evidence for the alternative)
-REModbfplus0SimLessThan3Excluded <- rma.mv(yi = fisherZDiffSim, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = simData[simData$bfplus0Sim > 3 & !is.na(simData$bfplus0Sim > 3),])
+REModbfplus0SimLessThan3Excluded <- tryCatch(rma.mv(yi = fisherZDiffSim, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = simData[simData$bfplus0Sim > 3 & !is.na(simData$bfplus0Sim > 3),]), error = function(e) errorDF)
 
 # the first model removing all studies with BFs01 > 3 (i.e., moderate evidence for a null)
-REModBF01GreaterThan3Excluded <- rma.mv(yi = fisherZDiffSim, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = simData[simData$bf01Sim < 3 & !is.na(simData$bf01Sim > 3),])
+REModBF01GreaterThan3Excluded <- tryCatch(rma.mv(yi = fisherZDiffSim, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = simData[simData$bf01Sim < 3 & !is.na(simData$bf01Sim > 3),]), error = function(e) errorDF)
 
 # the first model removing all studies with BFs10 < 3 (i.e., those without evidence for the alternative)
-REModbf10SimLessThan3Excluded <- rma.mv(yi = fisherZDiffSim, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = simData[simData$bf10Sim > 3 & !is.na(simData$bf10Sim > 3),])
+REModbf10SimLessThan3Excluded <- tryCatch(rma.mv(yi = fisherZDiffSim, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = simData[simData$bf10Sim > 3 & !is.na(simData$bf10Sim > 3),]), error = function(e) errorDF)
 
 # the first model removing all studies with BFs0Rep < 3 (i.e., those without evidence for the for the null vs. origianl greater than 3)
-REModbf0repSimGreaterThan3Excluded <-  rma.mv(yi = fisherZDiffSim, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = simData[simData$bf0repSim < 3 & !is.na(simData$bf0repSim < 3),])
+REModbf0repSimGreaterThan3Excluded <-  tryCatch(rma.mv(yi = fisherZDiffSim, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = simData[simData$bf0repSim < 3 & !is.na(simData$bf0repSim < 3),]), error = function(e) errorDF)
 
 # the first model removing all studies with BFs0Rep < 3 (i.e., those without evidence for the for the null vs. origianl greater than 3)
-REModbfrep0SimLessThan3Excluded <- rma.mv(yi = fisherZDiffSim, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data =  simData[simData$bfrep0Sim > 3 & !is.na(simData$bfrep0Sim > 3),])
+REModbfrep0SimLessThan3Excluded <- tryCatch(rma.mv(yi = fisherZDiffSim, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data =  simData[simData$bfrep0Sim > 3 & !is.na(simData$bfrep0Sim > 3),]), error = function(e) errorDF)
 
 # The first model but with only non-equiv 
-REModNonequiv <- rma.mv(yi = fisherZDiffSim, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = simData[simData$simStatisticallyEquiv.ro==FALSE & !is.na(simData$simStatisticallyEquiv.ro==FALSE),])
+REModNonequiv <- tryCatch(rma.mv(yi = fisherZDiffSim, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = simData[simData$simStatisticallyEquiv.ro==FALSE & !is.na(simData$simStatisticallyEquiv.ro==FALSE),]), error = function(e) errorDF)
 
 modResSim <- data.frame( modelN = REMod$k, modelEstimate = REMod$b, MLM95lb = REMod$ci.lb, MLM95ub = REMod$ci.ub, row.names = "Overall")
 modResSim1 <- data.frame(modelN = REModOnlySigR$k, modelEstimate = REModOnlySigR$b, MLM95lb = REModOnlySigR$ci.lb, MLM95ub = REModOnlySigR$ci.ub, row.names = "StatisticalSignificance")
@@ -183,6 +191,8 @@ modSumariesSim <- rbind(modResSim, modResSim1, modResSim2, modResSim3, modResSim
 modSumariesSim$simNum <- i
 modSumariesSim$propNull <- propNull
 modSumariesSim$propAttenuation <- propAttenuation
+modSumariesSim$trueMeanDifference <- trueMeanDiff
+modSumariesSim$trueMeanDifferenceNo0s <- trueMeanDiffNo0s
 
 
 if(i == 1 && add == FALSE) {
@@ -200,15 +210,12 @@ tableAllEstimatesSim$absoluteError <- abs(-tableAllEstimatesSim$propAttenuation-
 
 simulationSum <-as.tibble(tableAllEstimatesSim) %>%
 group_by(propNull, propAttenuation, Row.names) %>%
-  dplyr::summarise(meanMeanPropChange = mean(meanPropChange), sdMeanPropChange = sd(meanPropChange), 
+  dplyr::summarise(meanMeanPropChange = mean(meanPropChange), sdMeanPropChange = sd(meanPropChange), meanChange = mean(meanDiff), 
                    meanModelEstimate = mean(modelEstimate), sdModelEstimate = sd(modelEstimate),  nSims = n(), MSE = mean(squaredError), 
-                   RMSE = sqrt(mean(squaredError)),  MAE = mean(absoluteError))
+                   RMSE = sqrt(mean(squaredError)),  MAE = mean(absoluteError), meanTrueDiff = mean(trueMeanDifference, na.rm = T),
+                   meanTrueDiff = mean(trueMeanDifferenceNo0s, na.rm = T), errorMeanPropReduction = mean(-propAttenuation - meanPropChange))
 
 vis <- simulationSum 
-
-vis$errorMeanPropReduction <- vis$propAttenuation - vis$meanMeanPropChange
-
-
 
 # Plotting distance between estimated mean change and true prop
 ggplot(vis, aes(x = propAttenuation, y = propNull)) +
@@ -236,10 +243,20 @@ ggplot(vis, aes(x = propAttenuation, y = propNull)) +
 
 simulationSumByType <- as.tibble(tableAllEstimatesSim) %>%
   group_by(Row.names) %>%
-  dplyr::summarise(meanMeanPropChange = mean(meanPropChange), sdMeanPropChange = sd(meanPropChange), 
-                   meanModelEstimate = mean(modelEstimate), sdModelEstimate = sd(modelEstimate),  nSims = n(), MSE = mean(squaredError), 
-                   RMSE = sqrt(mean(squaredError)),  MAE = mean(absoluteError))
+  dplyr::summarise(meanMeanPropChange = mean(meanPropChange, na.rm = T), sdMeanPropChange = sd(meanPropChange, na.rm = T), 
+                   meanModelEstimate = mean(modelEstimate, na.rm = T), sdModelEstimate = sd(modelEstimate, na.rm = T),  nSims = n(), MSE = mean(squaredError, na.rm = T), 
+                   RMSE = sqrt(mean(squaredError, na.rm = T)),  MAE = mean(absoluteError, na.rm = T))
 View(simulationSumByType)
+
+
+
+simulationSumByTypeLessThan75 <- as.tibble(tableAllEstimatesSim) %>%
+  group_by(Row.names, below.8s = propNull < .8 & propAttenuation < .8) %>%
+  dplyr::summarise(meanMeanPropChange = mean(meanPropChange, na.rm = T), sdMeanPropChange = sd(meanPropChange, na.rm = T), 
+                   meanModelEstimate = mean(modelEstimate, na.rm = T), sdModelEstimate = sd(modelEstimate, na.rm = T),  nSims = n(), MSE = mean(squaredError, na.rm = T), 
+                   RMSE = sqrt(mean(squaredError, na.rm = T)),  MAE = mean(absoluteError, na.rm = T))
+View(simulationSumByTypeLessThan75[simulationSumByTypeLessThan75$`propNull < 0.8 & propAttenuation < 0.8`==T,])
+View(simulationSumByTypeLessThan75)
 
 
 # Plotting mean distance between estimated mean change and true prop
@@ -249,9 +266,9 @@ ggplot(vis, aes(x = propAttenuation, y = propNull)) +
                        midpoint=0)+ facet_wrap(~ Row.names) + theme_bw()
 
 
-tableAllEstimatesSim
-  range(vis$meanMeanPropChange)
+# Plotting mean distance between estimated mean change and true prop
+ggplot(vis, aes(x = propAttenuation, y = propNull)) +
+  geom_raster(aes(fill = meanMeanPropChange), interpolate=F)  +
+  scale_fill_gradient2(low="navy", mid="white", high="red", 
+                       midpoint=0, limits = c(-1,0))+ facet_wrap(~ Row.names) + theme_bw()
 
-    theme_classic()
-
-View(simulationSum)

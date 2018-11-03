@@ -265,7 +265,6 @@ plotBFRep0Lesser3 <- ggplot(allData[allData$bfRep0>3,], aes(correlation.o, corre
 ### Descriptives
 nNotSig.r <- sum(allData$significant.r)
 
-sum(allData$bf0plus<1, na.rm=T)/sum(!is.na(allData$bf0plus))
 
 ######################################
 ###### Multilevel meta-analysis ######
@@ -273,20 +272,32 @@ sum(allData$bf0plus<1, na.rm=T)/sum(!is.na(allData$bf0plus))
 
 # Random effects model with random effects for authors nested within source
 REMod <- rma.mv(yi = allData$fisherZDiff, V = allData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = allData)
-summary(REMod)
+ # cdREMOD <- cooks.distance(REMod, parallel = "snow", ncpus = parallel::detectCores())
 
 # Empirical Bayes estimates for random Effects 
-ranef(REMod)
 
-# Converting results into an understandable format:
+
+# Model output summary function plus converting results into an understandable format function. 
+modelOutputSummary <- function(REMod) {
+zDecrease <- as.numeric(REMod[1])
+zDecreaseCILB <- as.numeric(REMod[6])
+zDecreaseCIUB <- as.numeric(REMod[7])
 rDecrease <- ztor(as.numeric(REMod[1]))
 rDecreaseCILB <- ztor(as.numeric(REMod[6]))
 rDecreaseCIUB <- ztor(as.numeric(REMod[7]))
-cDcreaseCIs <- c(rDecrease, rDecreaseCILB, rDecreaseCIUB)
+cDcreaseCIs <- c(rDecreaseCILB, rDecreaseCIUB)
 # And in cohen's d: 
-dDecrease <- (2*cDcreaseCIs) / sqrt(1-cDcreaseCIs^2)
+dDecrease <- (2*rDecrease) / sqrt(1-rDecrease^2)
+dDecreaseCIs <- (2*cDcreaseCIs) / sqrt(1-cDcreaseCIs^2)
+randEffREModSource <- ranef(REMod)[1]
+list(estimate_Z = zDecrease, CI95_Z = c(zDecreaseCILB, zDecreaseCIUB) , 
+     estimate_Cor = rDecrease, CI95_Cor = c(rDecreaseCILB, rDecreaseCIUB), 
+     estimate_D = dDecrease, CI95_d = dDecreaseCIs, 
+     sourceEstimate = randEffREModSource)
+}
 
-
+REModSum <- modelOutputSummary(REMod)
+  
 # The first model but with only significant replications
 REModOnlySigR <- rma.mv(yi = fisherZDiff, V = allData[allData$significantSameDirection.r==TRUE,]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = allData[allData$significantSameDirection.r==TRUE,])
 
@@ -390,7 +401,7 @@ maxDiffLOOProject <- max(LOOProjectDFSum[,7] - LOOProjectDFSum[,3])
 #LOOStudyDF <- data.frame(as.data.frame(t(LOOStudy)))
 #LOOStudyDF <- data.frame(b = as.numeric(LOOStudyDF$b), p = as.numeric(LOOStudyDF$pval), call = as.character(LOOStudyDF$call))
 
- LOOStudyDF <- read_csv("Data/LOOStudyDF.csv")
+ LOOStudyDF <- read.csv("Data/LOOStudyDF.csv")
  
 LOOStudyDFSum <- LOOStudyDF %>%
   group_by(call) %>%
@@ -398,12 +409,9 @@ LOOStudyDFSum <- LOOStudyDF %>%
 
 maxDiffLOOStudy <- max(LOOStudyDFSum[,7] - LOOStudyDFSum[,3])
 
-
-#No changes in significance
- sum(as.numeric(pvaluesLOOStudy) > .05)
- #And no large changes in intercept 
-  maximumStudyDif <- max(as.numeric(REMod[1]) - as.numeric(estimatesLOOStudy))
+  maximumStudyDif <- max(as.numeric(REMod[1]) - LOOStudyDF[1])
   
+# inf <- cooks.distance.rma.mv(REModBF01GreaterThan3Excluded)
 
 #####################
 ###### Figures ######
@@ -468,8 +476,75 @@ dev.off()
 
 
 
+###### Simulation data analysis #######
+tableAllEstimatesSim <- read.csv(file = "Data/SimulationModelOutput.csv")
 
+tableAllEstimatesSim$squaredError <- (-tableAllEstimatesSim$propAttenuation-tableAllEstimatesSim$meanPropChange)^2
+tableAllEstimatesSim$absoluteError <- abs(-tableAllEstimatesSim$propAttenuation-tableAllEstimatesSim$meanPropChange)
 
+simulationSum <-as.tibble(tableAllEstimatesSim) %>%
+  group_by(propNull, propAttenuation, Row.names) %>%
+  dplyr::summarise(meanMeanPropChange = mean(meanPropChange), sdMeanPropChange = sd(meanPropChange), meanChange = mean(meanDiff), 
+                   meanModelEstimate = mean(modelEstimate), sdModelEstimate = sd(modelEstimate),  nSims = n(), MSE = mean(squaredError), 
+                   RMSE = sqrt(mean(squaredError)),  MAE = mean(absoluteError), meanTrueDiff = mean(trueMeanDifference, na.rm = T),
+                   meanTrueDiff = mean(trueMeanDifferenceNo0s, na.rm = T), errorMeanPropReduction = mean(-propAttenuation - meanPropChange))
 
+vis <- simulationSum 
 
+# # Plotting distance between estimated mean change and true prop
+# ggplot(vis, aes(x = propAttenuation, y = propNull)) +
+#   geom_raster(aes(fill = errorMeanPropReduction), interpolate=F)  +
+#   scale_fill_gradient2(low="navy", mid="white", high="red", 
+#                        midpoint=0)+ facet_wrap(~ Row.names) + theme_bw()
+# 
+# # Plotting SD by method at different values 
+# ggplot(vis, aes(x = propAttenuation, y = propNull)) +
+#   geom_raster(aes(fill = sdMeanPropChange), interpolate=F)  +
+#   scale_fill_gradient2(low="navy", mid="white", high="red", 
+#                        midpoint=0)+ facet_wrap(~ Row.names) + theme_bw()
+# 
+# # Plotting MSE by method at different values 
+# ggplot(vis, aes(x = propAttenuation, y = propNull)) +
+#   geom_raster(aes(fill = MSE), interpolate=F)  +
+#   scale_fill_gradient2(low="navy", mid="white", high="red", 
+#                        midpoint=0)+ facet_wrap(~ Row.names) + theme_bw()
+# 
+# # Plotting MAE by method at different values 
+# ggplot(vis, aes(x = propAttenuation, y = propNull)) +
+#   geom_raster(aes(fill = MAE), interpolate=F)  +
+#   scale_fill_gradient2(low="navy", mid="white", high="red", 
+#                        midpoint=0)+ facet_wrap(~ Row.names) + theme_bw()
+#
+simulationSumByType <- as.tibble(tableAllEstimatesSim) %>%
+  group_by(Row.names) %>%
+  dplyr::summarise(meanMeanPropChange = mean(meanPropChange, na.rm = T), sdMeanPropChange = sd(meanPropChange, na.rm = T), 
+                   meanModelEstimate = mean(modelEstimate, na.rm = T), sdModelEstimate = sd(modelEstimate, na.rm = T),  nSims = n(), MSE = mean(squaredError, na.rm = T), 
+                   RMSE = sqrt(mean(squaredError, na.rm = T)),  MAE = mean(absoluteError, na.rm = T))
+#View(simulationSumByType)
+#
+#
+#
+simulationSumByTypeLessThan75 <- as.tibble(tableAllEstimatesSim) %>%
+  group_by(Row.names, below.8s = propNull < .8 & propAttenuation < .8) %>%
+  dplyr::summarise(meanMeanPropChange = mean(meanPropChange, na.rm = T), sdMeanPropChange = sd(meanPropChange, na.rm = T), 
+                   meanModelEstimate = mean(modelEstimate, na.rm = T), sdModelEstimate = sd(modelEstimate, na.rm = T),  nSims = n(), MSE = mean(squaredError, na.rm = T), 
+                   RMSE = sqrt(mean(squaredError, na.rm = T)),  MAE = mean(absoluteError, na.rm = T))
+#View(simulationSumByTypeLessThan75[simulationSumByTypeLessThan75$`propNull < 0.8 & propAttenuation < 0.8`==T,])
+#View(simulationSumByTypeLessThan75)
+#
+#
+## Plotting mean distance between estimated mean change and true prop
+#ggplot(vis, aes(x = propAttenuation, y = propNull)) +
+#  geom_raster(aes(fill = meanModelEstimate/mean(allData$fis.o, na.rm =T)), interpolate=F)  +
+#  scale_fill_gradient2(low="navy", mid="white", high="red", 
+#                       midpoint=0)+ facet_wrap(~ Row.names) + theme_bw()
+#
+#
+## Plotting mean distance between estimated mean change and true prop
+#ggplot(vis, aes(x = propAttenuation, y = propNull)) +
+#  geom_raster(aes(fill = meanMeanPropChange), interpolate=F)  +
+#  scale_fill_gradient2(low="navy", mid="white", high="red", 
+#                       midpoint=0, limits = c(-1,0))+ facet_wrap(~ Row.names) + theme_bw()
+#
+#
 
