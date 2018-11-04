@@ -12,8 +12,6 @@ options(scipen=1, digits=2)
 ```
 
 
-ADD IN BFs > 10 and Equivalence test < .1
-
 ## Introduction
 See word document 
 
@@ -35,7 +33,7 @@ Confidence intervals around binomial proportions are 95% Wilson Score intervals.
 
 #### Accounting for null effects
 
-An important question in assessing the degree to which effects are attenuated in this literature is how much this effect is driven by the presence of null effects (or effects so small as to be effectively null). The average disattenuation could be extremely high, and yet this effect be almost entirely driven by the presence of effectively-null effects. This aspect becomes especially important as the sampling of the literature is non-random, meaning it is plausible that some effects were chosen for replication to a greater or lesser extent as it was expected that they may not replicate. In order to account for this issue, the average effect size attenuation was calculated using multiple methods of excluding original studies. Two methods are presented here, using equivalence testing and using the statistical significance of the replication study. 
+An important question in assessing the degree to which effects are attenuated in this literature is how much this effect is driven by the presence of null effects (or effects so small as to be effectively null). The average disattenuation could be extremely high, and yet this effect be almost entirely driven by the presence of effectively-null effects. This aspect becomes especially important as the sampling of the literature is non-random, meaning it is plausible that some effects were chosen for replication to a greater or lesser extent as it was expected that they may not replicate. In order to account for this issue, the average effect size attenuation was calculated using multiple methods of excluding original studies. Two methods are presented here, using equivalence testing and using the statistical significance of the replication study. These methods are intented to be descriptive, and the difficulty of justifiably removing a subset of the items under study without notably biasing the estimates is considerable. 
 
 ##### Statistical significance of the replication study
 

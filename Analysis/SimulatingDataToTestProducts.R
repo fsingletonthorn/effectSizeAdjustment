@@ -1,8 +1,7 @@
-
 simData <- allData[c("correlation.o", "fis.o", "n.o", "n.r","seFishAprox.o" ,"seFish.o", "seFish.r" ,"seFishAprox.r", "seDifference.ro", "pVal.o", "source", "authorsTitle.o")]
 
 # Must run data cleaning and analysis scripts before this one 
-nSim <- 100
+nSim <- 10000
 
 # Tracking vectors
 simEquivProp  <- rep(NA, length(nSim))
@@ -16,15 +15,12 @@ descriptivesTrackingSim <- data.frame(means=rep(NA, length(tableReductions$`n in
 # This controls whether you are adding or starting over again in the simulation - THIS HAS TO BE FALSE FOR THE FIRST ROUND 
 add <- TRUE
 
-
 for(i in 1:nSim) {
-  if(!exists("tableAllEstimatesSim")){return(print("STOP - previous estimates not found"))}
   propNull <- sample(x = seq(0,1,by=.1), 1)
   propAttenuation <- sample(x = seq(0,1,by=.1), 1)
 # Simulating selection from the true effect - i.e., adding random variability as the se of the original (i.e. finding the "true" effect) and replciation studies, 
 # this value assumes that if there were no Ns reported, the SE was actually the mean of all of the standard errors
 
-  
 simData$simulatedFish.true <- (rnorm(nrow(simData), simData$fis.o, ifelse(!is.na(simData$seFish.o),simData$seFish.o, mean(simData$seFish.o, na.rm = T) ))) * (1- propAttenuation)
 
 simData$simulatedFish.true[!is.na(simData$simulatedFish.true)][sample(x = 1:sum(!is.na(simData$simulatedFish.true)), 
@@ -81,6 +77,13 @@ reductionsimData <- simData %>%
             nTrue = sum(!is.na(fisherZDiffSim)), nValid = sum(!is.na(simData$fis.r - simData$fis.o)))
 # extracting amount of change in subsets
 # Sig results replication only (same direction)
+reductionSignifcantR <- simData %>% 
+  filter(significantSameDirection.r & !is.na(significantSameDirection.r)) %>% 
+  summarise(meanPropChange = mean((fisherZDiffSim)/fis.o, na.rm = TRUE), mean.r = mean(fis.r, na.rm = T) , mean.o = mean(fis.o, na.rm = T), 
+            meanDiff = mean(fisherZDiffSim, na.rm = T), sdDiff = sd(fisherZDiffSim, na.rm = T),    
+            medianPropChange = median((fisherZDiffSim)/fis.o, na.rm = TRUE), median.r = median(fis.r, na.rm = T) , median.o = median(fis.o, na.rm = T) ,
+            medianDiff = median(fisherZDiffSim, na.rm = T),
+            nTrue = sum(!is.na(significantSameDirection.r)), nValid = sum(!is.na(simData$significantSameDirection.r) & !is.na(simData$fis.r - simData$fis.o)))
 # BF01 < 3 (exclude those with moderate or greater evidence for the null)
 reductionSbf01LessThan3 <- simData %>% 
   filter(bf01Sim<3) %>% 
@@ -128,43 +131,7 @@ reductionSbfrep0SimMoreThan3 <- simData %>%
             meanDiff = mean(fisherZDiffSim, na.rm = T), sdDiff = sd(fisherZDiffSim, na.rm = T),  
             medianPropChange = median((fisherZDiffSim)/fis.o, na.rm = TRUE), median.r = median(fis.r, na.rm = T) , median.o = median(fis.o, na.rm = T) ,
             medianDiff = median(fisherZDiffSim, na.rm = T),
-            nTrue = sum(!is.na(bfrep0Sim)), nValid = sum(!is.na(simData$bfrep0Sim) & !is.na(simData$fis.r - simData$fis.o)))
-
-
-# Bringing all of the above together:
-tableReductionsSim <- rbind(bf0repSimBelow3 = reductionSbf0repSimLessThan3 , bfrep0SimAbove3 = reductionSbfrep0SimMoreThan3,  BF01Below3 = reductionSbf01LessThan3 , bf10SimAbove3 = reductionSbf10SimMoreThan3, BF0PBelow3 = reductionSbf0plusSimLessThan3, BFP0Above3 = reductionSbfplus0SimMoreThan3)
-
-
-##### DELETE SECTION  to return to old method
-if(i == 1 && add == FALSE) {
-  tableAllEstimatesSim <- merge.data.frame(tableReductionsSim, modSumariesSim, by = "row.names", sort = F)
-} else{
-  simOutput <-  merge.data.frame(tableReductionsSim, modSumariesSim, by = "row.names", sort = F)
-  tableAllEstimatesSim <- data.table::rbindlist(list(tableAllEstimatesSim, simOutput), use.names = T, fill = T , idcol = FALSE)
-  print(paste(i, "out of", nSim))
-}
-}
-
-
-write.csv(tableAllEstimatesSim, file = "Data/SimulationModelOutput.csv")
-
-########## DELETE SECTION  END 
-
-tableReductionsSim <- rbind(Overall = reductionsimData, StatisticalSignificance = reductionSignifcantR, Nonequivalence = reductionEquiv, bf0repSimBelow3 = reductionSbf0repSimLessThan3 , bfrep0SimAbove3 = reductionSbfrep0SimMoreThan3,  BF01Below3 = reductionSbf01LessThan3 , bf10SimAbove3 = reductionSbf10SimMoreThan3, BF0PBelow3 = reductionSbf0plusSimLessThan3, BFP0Above3 = reductionSbfplus0SimMoreThan3)
-
-
-
-#### MOVE THESE ABOVE TO MAKE WORK 
-
-reductionSignifcantR <- simData %>% 
-  filter(significantSameDirection.r & !is.na(significantSameDirection.r)) %>% 
-  summarise(meanPropChange = mean((fisherZDiffSim)/fis.o, na.rm = TRUE), mean.r = mean(fis.r, na.rm = T) , mean.o = mean(fis.o, na.rm = T), 
-            meanDiff = mean(fisherZDiffSim, na.rm = T), sdDiff = sd(fisherZDiffSim, na.rm = T),    
-            medianPropChange = median((fisherZDiffSim)/fis.o, na.rm = TRUE), median.r = median(fis.r, na.rm = T) , median.o = median(fis.o, na.rm = T) ,
-            medianDiff = median(fisherZDiffSim, na.rm = T),
-            nTrue = sum(!is.na(significantSameDirection.r)), nValid = sum(!is.na(simData$significantSameDirection.r) & !is.na(simData$fis.r - simData$fis.o)))
-
-
+            nTrue = sum(!is.na(bfrep0Sim>3)), nValid = sum(!is.na(simData$bfrep0Sim) & !is.na(simData$fis.r - simData$fis.o)))
 # Significant TOST (Exclude those without moderate evidence for the one sided alternative)
 reductionEquiv <- simData %>% 
   filter(!simStatisticallyEquiv.ro) %>%
@@ -173,6 +140,10 @@ reductionEquiv <- simData %>%
             medianPropChange = median((fisherZDiffSim)/fis.o, na.rm = TRUE), median.r = median(fis.r, na.rm = T) , median.o = median(fis.o, na.rm = T) ,
             medianDiff = median(fisherZDiffSim, na.rm = T),
             nTrue = sum(!is.na(simStatisticallyEquiv.ro)), nValid = sum(!is.na(simData$simStatisticallyEquiv.ro)& !is.na(simData$fis.r - simData$fis.o)))
+
+
+# Bringing all of the above together:
+tableReductionsSim <- rbind(Overall = reductionsimData, StatisticalSignificance = reductionSignifcantR, Nonequivalence = reductionEquiv, bf0repSimBelow3 = reductionSbf0repSimLessThan3 , bfrep0SimAbove3 = reductionSbfrep0SimMoreThan3,  BF01Below3 = reductionSbf01LessThan3 , bf10SimAbove3 = reductionSbf10SimMoreThan3, BF0PBelow3 = reductionSbf0plusSimLessThan3, BFP0Above3 = reductionSbfplus0SimMoreThan3)
 
 ######################################
 ###### Multilevel meta-analysis ######
@@ -233,7 +204,7 @@ tableAllEstimatesSim <- data.table::rbindlist(list(tableAllEstimatesSim, simOutp
 print(paste(i, "out of", nSim))
 }
 }
-write.csv(tableAllEstimatesSim, file = "Data/SimulationModelOutput.csv")
+write.csv(tableAllEstimatesSim, file = "Data/SimulationModelOutput.csv", row.names = FALSE)
 
 tableAllEstimatesSim$squaredError <- (-tableAllEstimatesSim$propAttenuation-tableAllEstimatesSim$meanPropChange)^2
 tableAllEstimatesSim$absoluteError <- abs(-tableAllEstimatesSim$propAttenuation-tableAllEstimatesSim$meanPropChange)
@@ -275,7 +246,7 @@ simulationSumByType <- as.tibble(tableAllEstimatesSim) %>%
   group_by(Row.names) %>%
   dplyr::summarise(meanMeanPropChange = mean(meanPropChange, na.rm = T), sdMeanPropChange = sd(meanPropChange, na.rm = T), 
                    meanModelEstimate = mean(modelEstimate, na.rm = T), sdModelEstimate = sd(modelEstimate, na.rm = T),  nSims = n(), MSE = mean(squaredError, na.rm = T), 
-                   RMSE = sqrt(mean(squaredError, na.rm = T)),  MAE = mean(absoluteError, na.rm = T))
+                   RMSE = sqrt(mean(squaredError, na.rm = T)),  MAE = mean(absoluteError, na.rm = T), AE_SD = sd(absoluteError, na.rm = T), Error_SD = sd(-propAttenuation - meanPropChange, na.rm = T))
 View(simulationSumByType)
 
 
@@ -284,8 +255,7 @@ simulationSumByTypeLessThan75 <- as.tibble(tableAllEstimatesSim) %>%
   group_by(Row.names, below.8s = propNull < .8 & propAttenuation < .8) %>%
   dplyr::summarise(meanMeanPropChange = mean(meanPropChange, na.rm = T), sdMeanPropChange = sd(meanPropChange, na.rm = T), 
                    meanModelEstimate = mean(modelEstimate, na.rm = T), sdModelEstimate = sd(modelEstimate, na.rm = T),  nSims = n(), MSE = mean(squaredError, na.rm = T), 
-                   RMSE = sqrt(mean(squaredError, na.rm = T)),  MAE = mean(absoluteError, na.rm = T))
-View(simulationSumByTypeLessThan75[simulationSumByTypeLessThan75$`propNull < 0.8 & propAttenuation < 0.8`==T,])
+                   RMSE = sqrt(mean(squaredError, na.rm = T)),  MAE = mean(absoluteError, na.rm = T), AE_SD = sd(absoluteError, na.rm = T), Error_SD = sd(-propAttenuation - meanPropChange, na.rm = T))
 View(simulationSumByTypeLessThan75)
 
 
