@@ -212,7 +212,7 @@ print(paste(i, "out of", nSim))
 simData <- allData[c("correlation.o", "fis.o", "n.o", "n.r","seFishAprox.o" ,"seFish.o", "seFish.r" ,"seFishAprox.r", "seDifference.ro", "pVal.o", "source", "authorsTitle.o")]
 
 # Must run data cleaning and analysis scripts before this one 
-nSim <- 100
+nSim <- 10000
 
 # This controls whether you are adding or starting over again in the simulation - THIS HAS TO BE FALSE FOR THE FIRST ROUND 
 add <- TRUE 
@@ -276,15 +276,49 @@ for(i in 1:nSim) {
   accuracy$StatisticallyEquiv[i] <- mean(simData$simStatisticallyEquiv.ro == (simData$simulatedFish.true<minimumEffectDetectableZ), na.rm = T)
   accuracy$StatisticalSig[i] <- mean(simData$significantSameDirection.r == truePosEffects, na.rm = T)
   accuracy$BF01[i]            <- mean(na.rm = T, x = (simData$bf01Sim < 3) == truePosEffects)
+  accuracy$BF10[i]            <- mean(na.rm = T, x = (simData$bf10Sim > 3) == truePosEffects)
   accuracy$BFplus0[i] <- mean(na.rm = T, x = (simData$bfplus0Sim > 3) == truePosEffects)
   accuracy$BF0plus[i] <- mean(na.rm = T, x = (simData$bf0plusSim< 3) == truePosEffects)
   accuracy$BFrep0[i] <- mean(na.rm = T, x = (simData$bfrep0Sim >3) == truePosEffects)
   accuracy$BF0rep[i] <- mean(na.rm = T, x = (simData$bf0repSim < 3) == truePosEffects)
-
-  
  
  print(paste(i, "of", nSim))
 }
 
-accuracyOutput <-  merge.data.frame(accuracyOutput, accuracy, by = "row.names", sort = F)
+accuracyOutput <-  rbind(accuracyOutput, accuracy[1:6958,])
+
 write.csv(accuracyOutput, file = "Data/SimulationAccuracyCriteria.csv", row.names = FALSE)
+
+simulationAccuracy  <- as.tibble(accuracyOutput) %>%
+  group_by(propNull, propAttenuation) %>%
+  dplyr::summarise( 
+      mean_StatisticallyEqui = mean(StatisticallyEquiv, na.rm = T),
+      sd_StatisticallyEquiv = sd(StatisticallyEquiv, na.rm = T), 
+      mean_StatisticalSig = mean(StatisticalSig, na.rm = T),    
+      sd_StatisticalSig = sd(StatisticalSig, na.rm = T), 
+      mean_BF01 = mean(BF01, na.rm = T),              
+      sd_BF0 = sd(BF01, na.rm = T),
+      mean_BF10 = mean(BF10, na.rm = T),            
+      sd_BF10 = sd(BF01, na.rm = T),
+      mean_BFplus0 = mean(BFplus0, na.rm = T),           
+      sd_BFplus0 = sd(BFplus0, na.rm = T), 
+      mean_BF0plus = mean(BF0plus, na.rm = T),           
+      sd_BF0plus = sd(BF0plus, na.rm = T), 
+      mean_BFrep0 = mean(BFrep0, na.rm = T),            
+      sd_BFrep0 = sd(BFrep0, na.rm = T), 
+      mean_BF0rep = mean(BF0rep, na.rm = T),            
+      sd_BF0rep = sd(BF0rep, na.rm = T), n())
+
+vis <- simulationAccuracy %>% 
+  gather(key = "Subsample", value = "Accuracy", names(simulationAccuracy)[str_which(names(simulationAccuracy), "mean")])
+
+    
+    # Plotting mean accuracy 
+    ggplot(vis, aes(x = propAttenuation, y = propNull)) +
+      geom_raster(aes(fill = Accuracy), interpolate=F)  +
+      scale_fill_gradient2("Accuracy \n", low="red", mid="white", high="navy", 
+                           midpoint=.5, limits = c(0,1))+ facet_wrap(~ Subsample) + theme_bw() +
+      labs(x = "Proportion true attenuation", y = "Proportion true null effects")
+
+    
+    
