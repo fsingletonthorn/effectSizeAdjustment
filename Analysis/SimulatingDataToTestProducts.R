@@ -204,71 +204,87 @@ tableAllEstimatesSim <- data.table::rbindlist(list(tableAllEstimatesSim, simOutp
 print(paste(i, "out of", nSim))
 }
 }
-write.csv(tableAllEstimatesSim, file = "Data/SimulationModelOutput.csv", row.names = FALSE)
-
-tableAllEstimatesSim$squaredError <- (-tableAllEstimatesSim$propAttenuation-tableAllEstimatesSim$meanPropChange)^2
-tableAllEstimatesSim$absoluteError <- abs(-tableAllEstimatesSim$propAttenuation-tableAllEstimatesSim$meanPropChange)
-
-simulationSum <-as.tibble(tableAllEstimatesSim) %>%
-group_by(propNull, propAttenuation, Row.names) %>%
-  dplyr::summarise(meanMeanPropChange = mean(meanPropChange), sdMeanPropChange = sd(meanPropChange), meanChange = mean(meanDiff), 
-                   meanModelEstimate = mean(modelEstimate), sdModelEstimate = sd(modelEstimate),  nSims = n(), MSE = mean(squaredError), 
-                   RMSE = sqrt(mean(squaredError)),  MAE = mean(absoluteError), meanTrueDiff = mean(trueMeanDifference, na.rm = T),
-                   meanTrueDiff = mean(trueMeanDifferenceNo0s, na.rm = T), errorMeanPropReduction = mean(-propAttenuation - meanPropChange))
-
-vis <- simulationSum 
-
-# Plotting distance between estimated mean change and true prop
-ggplot(vis, aes(x = propAttenuation, y = propNull)) +
-  geom_raster(aes(fill = errorMeanPropReduction), interpolate=F)  +
-  scale_fill_gradient2(low="navy", mid="white", high="red", 
-                       midpoint=0)+ facet_wrap(~ Row.names) + theme_bw()
-
-# Plotting SD by method at different values 
-ggplot(vis, aes(x = propAttenuation, y = propNull)) +
-  geom_raster(aes(fill = sdMeanPropChange), interpolate=F)  +
-  scale_fill_gradient2(low="navy", mid="white", high="red", 
-                       midpoint=0)+ facet_wrap(~ Row.names) + theme_bw()
-
-# Plotting MSE by method at different values 
-ggplot(vis, aes(x = propAttenuation, y = propNull)) +
-  geom_raster(aes(fill = MSE), interpolate=F)  +
-  scale_fill_gradient2(low="navy", mid="white", high="red", 
-                       midpoint=0)+ facet_wrap(~ Row.names) + theme_bw()
-
-# Plotting MAE by method at different values 
-ggplot(vis, aes(x = propAttenuation, y = propNull)) +
-  geom_raster(aes(fill = MAE), interpolate=F)  +
-  scale_fill_gradient2(low="navy", mid="white", high="red", 
-                       midpoint=0)+ facet_wrap(~ Row.names) + theme_bw()
-
-simulationSumByType <- as.tibble(tableAllEstimatesSim) %>%
-  group_by(Row.names) %>%
-  dplyr::summarise(meanMeanPropChange = mean(meanPropChange, na.rm = T), sdMeanPropChange = sd(meanPropChange, na.rm = T), 
-                   meanModelEstimate = mean(modelEstimate, na.rm = T), sdModelEstimate = sd(modelEstimate, na.rm = T),  nSims = n(), MSE = mean(squaredError, na.rm = T), 
-                   RMSE = sqrt(mean(squaredError, na.rm = T)),  MAE = mean(absoluteError, na.rm = T), AE_SD = sd(absoluteError, na.rm = T), Error_SD = sd(-propAttenuation - meanPropChange, na.rm = T))
-View(simulationSumByType)
+# write.csv(tableAllEstimatesSim, file = "Data/SimulationModelOutput.csv", row.names = FALSE)
 
 
 
-simulationSumByTypeLessThan75 <- as.tibble(tableAllEstimatesSim) %>%
-  group_by(Row.names, below.8s = propNull < .8 & propAttenuation < .8) %>%
-  dplyr::summarise(meanMeanPropChange = mean(meanPropChange, na.rm = T), sdMeanPropChange = sd(meanPropChange, na.rm = T), 
-                   meanModelEstimate = mean(modelEstimate, na.rm = T), sdModelEstimate = sd(modelEstimate, na.rm = T),  nSims = n(), MSE = mean(squaredError, na.rm = T), 
-                   RMSE = sqrt(mean(squaredError, na.rm = T)),  MAE = mean(absoluteError, na.rm = T), AE_SD = sd(absoluteError, na.rm = T), Error_SD = sd(-propAttenuation - meanPropChange, na.rm = T))
-View(simulationSumByTypeLessThan75)
 
+simData <- allData[c("correlation.o", "fis.o", "n.o", "n.r","seFishAprox.o" ,"seFish.o", "seFish.r" ,"seFishAprox.r", "seDifference.ro", "pVal.o", "source", "authorsTitle.o")]
 
-# Plotting mean distance between estimated mean change and true prop
-ggplot(vis, aes(x = propAttenuation, y = propNull)) +
-  geom_raster(aes(fill = meanModelEstimate/mean(allData$fis.o, na.rm =T)), interpolate=F)  +
-  scale_fill_gradient2(low="navy", mid="white", high="red", 
-                       midpoint=0)+ facet_wrap(~ Row.names) + theme_bw()
+# Must run data cleaning and analysis scripts before this one 
+nSim <- 100
 
+# This controls whether you are adding or starting over again in the simulation - THIS HAS TO BE FALSE FOR THE FIRST ROUND 
+add <- TRUE 
+accuracy <- data.frame(propNull = rep(NA, nSim), propAttenuation = rep(NA, nSim), StatisticallyEquiv = rep(NA, nSim), StatisticalSig= rep(NA, nSim), BF01= rep(NA, nSim), BFplus0= rep(NA, nSim), BF0plus= rep(NA, nSim), BFrep0= rep(NA, nSim), BF0rep  = rep(NA, nSim))
+### sIMULATING JUST ACCURACY OF EXCLUSION CRITERIA 
+for(i in 1:nSim) {
+  propNull <- sample(x = seq(0,1,by=.1), 1)
+  propAttenuation <- sample(x = seq(0,1,by=.1), 1)
+  accuracy$propNull[i] <- propNull
+  accuracy$propAttenuation[i] <- propAttenuation
+  # Simulating selection from the true effect - i.e., adding random variability as the se of the original (i.e. finding the "true" effect) and replciation studies, 
+  # this value assumes that if there were no Ns reported, the SE was actually the mean of all of the standard errors
+  
+  simData$simulatedFish.true <- (rnorm(nrow(simData), simData$fis.o, ifelse(!is.na(simData$seFish.o),simData$seFish.o, mean(simData$seFish.o, na.rm = T) ))) * (1- propAttenuation)
+  
+  simData$simulatedFish.true[!is.na(simData$simulatedFish.true)][sample(x = 1:sum(!is.na(simData$simulatedFish.true)), 
+                                                                        size =   round(sum(!is.na(simData$simulatedFish.true))*propNull), replace = F)] <- 0
+  simData$fis.r <- simData$simulatedFish.true + (rnorm(nrow(simData), 0, ifelse(!is.na(simData$seFish.r),simData$seFish.r, mean(simData$seFish.r, na.rm = T)) ))
+  
+  simData$correlation.r <- ztor(simData$fis.r)
+  
+  # calculating differences
+  simData$fisherZDiffSim <- simData$fis.r - simData$fis.o
+  
+  trueMeanDiff <- mean(simData$simulatedFish.true - simData$fis.r, na.rm = T)
+  
+  trueMeanDiffNo0s <- mean(simData$simulatedFish.true[simData$simulatedFish.true!=0&!is.na(simData$simulatedFish.true)] - simData$fis.r[simData$simulatedFish.true!=0&!is.na(simData$simulatedFish.true)] )
+  
+  simData$p.r <- pnorm(q = simData$fis.r, mean = 0, sd = simData$seFishAprox.r, lower.tail = F)
+  
+  simData$significantSameDirection.r <- (simData$p.r<.05 & simData$fis.r > 0)
+  
+  # Two sided default Bayes factor
+  simData$bf10Sim <- apply(data.frame(simData$correlation.r, simData$n.r), MARGIN = 1, FUN = bfapply10) 
+  simData$bf01Sim <- 1/simData$bf10Sim 
+  
+  # one sided ~ probably makes more sense as they have all been shifted to positive direction
+  simData$bfplus0Sim <- apply(data.frame(simData$correlation.r, simData$n.r), MARGIN = 1, FUN = bfapplyplus0) 
+  simData$bf0plusSim <- 1/simData$bfplus0Sim 
+  
+  # Replication Bayes factor
+  simData$bfrep0Sim <- apply(data.frame(simData$correlation.o, simData$n.o, simData$correlation.r, simData$n.r), MARGIN = 1, FUN = bfapplyRep0) 
+  simData$bf0repSim <- 1/simData$bfrep0Sim
+  
+  # some of these fail because the BF is ~ infinity, setting them to that here
+  simData$bfrep0Sim[is.na(simData$bfrep0Sim) & (!is.na(simData$correlation.o) & !is.na(simData$n.o) & !is.na(simData$correlation.r) & !is.na(simData$n.r))] <- Inf
+  simData$bf0repSim[is.na(simData$bf0repSim) & (!is.na(simData$correlation.o) & !is.na(simData$n.o) & !is.na(simData$correlation.r) & !is.na(simData$n.r))] <- 0 
+  
+  
+  # mean(simData$bfrep0Sim_updated - simData$bfrep0Sim, na.rm =T)
+  # plot(log(simData$bfrep0Sim_updated), log(simData$bfrep0Sim))
+  # ## Finding minimium effect that would have been significant in the original study - 
+  minimumEffectDetectableZ <- qnorm(.05, mean = 0, sd = simData$seFishAprox.o, lower.tail = FALSE)
+  CIs90UB <-   simData$fis.r + (qnorm(0.95)*simData$seFishAprox.r)
+  
+  # calculating the number of equiv studies
+  simData$simStatisticallyEquiv.ro <- CIs90UB < minimumEffectDetectableZ
+  
+  truePosEffects <- simData$simulatedFish.true > 0 
+  
+  accuracy$StatisticallyEquiv[i] <- mean(simData$simStatisticallyEquiv.ro == (simData$simulatedFish.true<minimumEffectDetectableZ), na.rm = T)
+  accuracy$StatisticalSig[i] <- mean(simData$significantSameDirection.r == truePosEffects, na.rm = T)
+  accuracy$BF01[i]            <- mean(na.rm = T, x = (simData$bf01Sim < 3) == truePosEffects)
+  accuracy$BFplus0[i] <- mean(na.rm = T, x = (simData$bfplus0Sim > 3) == truePosEffects)
+  accuracy$BF0plus[i] <- mean(na.rm = T, x = (simData$bf0plusSim< 3) == truePosEffects)
+  accuracy$BFrep0[i] <- mean(na.rm = T, x = (simData$bfrep0Sim >3) == truePosEffects)
+  accuracy$BF0rep[i] <- mean(na.rm = T, x = (simData$bf0repSim < 3) == truePosEffects)
 
-# Plotting mean distance between estimated mean change and true prop
-ggplot(vis, aes(x = propAttenuation, y = propNull)) +
-  geom_raster(aes(fill = meanMeanPropChange), interpolate=F)  +
-  scale_fill_gradient2(low="navy", mid="white", high="red", 
-                       midpoint=0, limits = c(-1,0))+ facet_wrap(~ Row.names) + theme_bw()
+  
+ 
+ print(paste(i, "of", nSim))
+}
 
+accuracyOutput <-  merge.data.frame(accuracyOutput, accuracy, by = "row.names", sort = F)
+write.csv(accuracyOutput, file = "Data/SimulationAccuracyCriteria.csv", row.names = FALSE)

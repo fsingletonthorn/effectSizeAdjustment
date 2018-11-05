@@ -20,25 +20,18 @@ projectNames <- data_frame(c("OSC (2015) \n General Psychology",
                                                      "Soto (2019)\n Personality Psychology",
                                                      "Klein et al. (2018)\n Many Labs 2"))
 
-
 #### First extracting data from the OSC's RPP  ####
 
-########################################################################################
-### Code from https://github.com/CenterForOpenScience/rpp/blob/master/masterscript.R####
-########################################################################################
+####################################################################################################################
+### Most of this first chunk of Code from https://github.com/CenterForOpenScience/rpp/blob/master/masterscript.R####
+####################################################################################################################
 
-# source functions
-# if(!require(httr)){install.packages('httr')}
-# library(httr)
-# info <- GET('https://osf.io/b2vn7/?action=download', write_disk('functions.r', overwrite = TRUE)) #downloads data file from the OSF
-# source('functions.r')
+
 if(!require(Hmisc)){install.packages('Hmisc')}
 library(Hmisc)
 if(!require(metafor)){install.packages('metafor')}
 library(metafor)
 
-# Read in Tilburg data for OSF projects 
-# info <- GET('https://osf.io/fgjvw/?action=download', write_disk('rpp_data.csv', overwrite = TRUE)) #downloads data file from the OSF - has been done.
 MASTER <- read.csv("Data/rpp_data.csv")[1:167, ]
 colnames(MASTER)[1] <- "ID" # Change first column name to ID to be able to load .csv file
 
@@ -52,7 +45,6 @@ RPP$ri.o <- MASTER$T_r..O.
 RPP$ri.r <- MASTER$T_r..R.
 RPP$N.o <- MASTER$T_df2..O.+2
 RPP$N.r <- MASTER$T_df2..R.+2
-
 
 ### Partial correlation, so degrees of freedom plus 2 in order to get N
 RPP$N.o[MASTER$ID == 82] <- MASTER$T_df1..O.[MASTER$ID == 82]+2
@@ -95,7 +87,7 @@ RPP$pval.r <- pnorm(RPP$fis.r, sd = RPP$sei.r, lower.tail = FALSE)
 ### Standard error of difference score
 RPP$sei <- sqrt(1/(RPP$N.o-3) + 1/(RPP$N.r-3))
 
-### ADDITION FELIX - Removing SEs for Fdf_1 > 2 and chi square
+### Removing SEs for Fdf_1 > 2 and chi square
 RPP$sei.o[str_detect(MASTER$Test.statistic..O., "F\\([2-9]|F\\(1[1-9]|X\\^2|b|z")] <- NA
 RPP$sei.r[str_detect(MASTER$Test.statistic..R., "F\\([2-9]|F\\(1[1-9]|X\\^2|b|z")] <- NA
 
@@ -130,12 +122,10 @@ data$pVal.r[data$pVal.r=="X"] <- data$pValFish.r[data$pVal.r=="X"] # this one is
 # Checking that all NAs are non-significant 
 # data$pVal.r[is.na(as.numeric(data$pVal.r))]
 
-
 data$source <- as.character(projectNames[1,1])
   #"OSC (2015)"
 data$abrev <- "OSCRPP"
 ########## End RPP data recollection ########
-
 
 # Removing everything apart from data from WS 
 # rm(list = c("RPP","MASTER","info"))
