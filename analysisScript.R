@@ -1,11 +1,12 @@
 # source(file = 'Data/data_collection_cleaning.R')
 source(file = "R code effect size estimation/appendixCodeFunctionsJeffreys.R")
 source(file = "Analysis/Wilson score interval.R")
-# source(file = 'Data/data_collection_cleaning.R') # this calls the data
+# source(file = 'Data/data_collection_cleaning.R') # this sources the data
 library(readr)
 library(tidyr)
 library(tidyverse)
 library(ggplot2)
+library(scales)
 library(Hmisc)
 library(plyr)
 library(RColorBrewer)
@@ -27,6 +28,7 @@ allData$seFishAprox.o  <- ifelse( is.na(allData$seFish.o ), sqrt(1/(allData$n.o-
 # first off simple calculation of the proportion of studies conducted per published result given a significnat main effect
 # How to get to .9 or .75 of the literature being sig, assuming all studies are statistically significant
 studiesPerPublishedPaper <- paste(round(.75/.44,2), "to", round(.9/.44,2))
+
 
 # converting to cohen's d
 effsizes.r <- compute.es::res(allData$correlation.r, n = allData$n.r, verbose = F)
@@ -224,7 +226,7 @@ tableReductions[,-which(str_detect(names(tableReductions), "Prop|nTrue|nValid"))
 names(tableReductions) <- c("Mean proportion change", "Mean replication ES", "Mean original ES", "Mean ES difference", 
   "SD difference", "Median proportion change", "Median replicaiton ES", "Median original ES", "Median ES difference",
   "n included", "n criteria calculable for", "95% CI LB Mean ES Change", "95% CI UB Mean ES Change")
-
+ 
 # Reordering cols
 tableReductions <- tableReductions[c("n included", "n criteria calculable for",  "Mean original ES", "Median original ES",  "Mean replication ES", "Median replicaiton ES", 
                   "Mean ES difference",  "95% CI LB Mean ES Change", "95% CI UB Mean ES Change",  "Median ES difference", "SD difference", "Mean proportion change", "Median proportion change")]
@@ -237,31 +239,76 @@ kableReductions <- kable(tableReductions, digits = 2)
 #########################################################
 
 # Plotting effects on each other 
-plotAllData <- ggplot(allData, aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T, alpha = .5)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("All data")
+plotAllData <- ggplot(allData, aes(correlation.o, correlation.r, size = n.r, colour = as.factor(source))) +
+  geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T, alpha = .5) +
+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + 
+  guides( size = guide_legend(title = "Replication\nSample size", values= trans_format("identity", function(x) round(exp(x),0)), order = 2),
+          colour = guide_legend(title = "Replication projects"), override.aes = list(alpha = 1), order = 1) +
+ xlab("Original correlation")+ ylab("Replication correlation") + scale_size(trans = "log", breaks = c(150, 3000, 60000))
 
 # Plotting only non-equivalent studies  
-plotNonequiv <- ggplot(allData[!allData$statisticallyEquiv.ro,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T, alpha = .5)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Non-equivalent studies")
+plotNonequiv <- ggplot(allData[!allData$statisticallyEquiv.ro & !is.na(allData$statisticallyEquiv.ro),], aes(correlation.o, correlation.r, size = n.r, colour = as.factor(source))) +
+  geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T, alpha = .5) +
+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + 
+  guides( size = guide_legend(title = "Replication\nSample size", values= trans_format("identity", function(x) round(exp(x),0)), order = 2),
+          colour = guide_legend(title = "Replication projects"), override.aes = list(alpha = 1), order = 1) +
+  xlab("Original correlation")+ ylab("Replication correlation") + scale_size(trans = "log", breaks = c(150, 3000, 60000))
 
 # Plotting just significant studies (sig and in same direction)
-plotSigR <- ggplot(allData[allData$significantSameDirection.r==TRUE,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source)))+ geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T, alpha = .5)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Significant replications in the same direction only")
+plotSigR <- ggplot(allData[allData$significantSameDirection.r==TRUE,], aes(correlation.o, correlation.r, size = n.r, colour = as.factor(source))) +
+  geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T, alpha = .5) +
+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + 
+  guides( size = guide_legend(title = "Replication\nSample size", values= trans_format("identity", function(x) round(exp(x),0)), order = 2),
+          colour = guide_legend(title = "Replication projects"), override.aes = list(alpha = 1), order = 1) +
+  xlab("Original correlation")+ ylab("Replication correlation") + scale_size(trans = "log", breaks = c(150, 3000, 60000))
 
 # two sided test, Exluding studies with BF10 lower than 3, i.e., without evidence moderate or greater for the alternative
-plotBF10Greater3 <- ggplot(allData[(allData$bf10>3),], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source)))+ geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T, alpha = .5)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF10 lower than 3")
+plotBF10Greater3 <- ggplot(allData[(allData$bf10>3) & !is.na(allData$bf10<3),],aes(correlation.o, correlation.r, size = n.r, colour = as.factor(source))) +
+  geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T, alpha = .5) +
+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + 
+  guides( size = guide_legend(title = "Replication\nSample size", values= trans_format("identity", function(x) round(exp(x),0)), order = 2),
+          colour = guide_legend(title = "Replication projects"), override.aes = list(alpha = 1), order = 1) +
+  xlab("Original correlation")+ ylab("Replication correlation") + scale_size(trans = "log", breaks = c(150, 3000, 60000))
 
 # two sided test, excluding those with evidence for null > 3
-plotBF01Lesser3 <- ggplot(allData[(allData$bf01<3) & (sign(allData$correlation.o) == sign(allData$correlation.r)),], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0)+  geom_point(na.rm = T, alpha = .5)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF01 greater than 3")
+plotBF01Lesser3 <- ggplot(allData[(allData$bf01<3) & !is.na(allData$bf01<3),], aes(correlation.o, correlation.r, size = n.r, colour = as.factor(source))) +
+  geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T, alpha = .5) +
+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + 
+  guides( size = guide_legend(title = "Replication\nSample size", values= trans_format("identity", function(x) round(exp(x),0)), order = 2),
+          colour = guide_legend(title = "Replication projects"), override.aes = list(alpha = 1), order = 1) +
+  xlab("Original correlation")+ ylab("Replication correlation") + scale_size(trans = "log", breaks = c(150, 3000, 60000))
 
 # One sided default bayes factor, excluding studies with ev for null > 3
-plotBF0plusLesser3 <- ggplot(allData[allData$bf0plus<3,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0)+  geom_point(na.rm = T, alpha = .5)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF0+ (one sided) greater than 3")
+plotBF0plusLesser3 <- ggplot(allData[allData$bf0plus<3 & !is.na(allData$bf0plus<3),], aes(correlation.o, correlation.r, size = n.r, colour = as.factor(source))) +
+  geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T, alpha = .5) +
+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + 
+  guides( size = guide_legend(title = "Replication\nSample size", values= trans_format("identity", function(x) round(exp(x),0)), order = 2),
+          colour = guide_legend(title = "Replication projects"), override.aes = list(alpha = 1), order = 1) +
+  xlab("Original correlation")+ ylab("Replication correlation") + scale_size(trans = "log", breaks = c(150, 3000, 60000))
 
 # One sided default bayes factor, including only studies with ev for alternative > 3
-plotBFPlus0Greater3 <- ggplot(allData[allData$bfplus0>3,], aes(correlation.o, correlation.r,size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0)+  geom_point(na.rm = T, alpha = .5)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BF+0 less than than 3")
+plotBFPlus0Greater3 <- ggplot(allData[allData$bfplus0>3 & !is.na(allData$bfplus0>3),], aes(correlation.o, correlation.r, size = n.r, colour = as.factor(source))) +
+  geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T, alpha = .5) +
+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + 
+  guides( size = guide_legend(title = "Replication\nSample size", values= trans_format("identity", function(x) round(exp(x),0)), order = 2),
+          colour = guide_legend(title = "Replication projects"), override.aes = list(alpha = 1), order = 1) +
+  xlab("Original correlation")+ ylab("Replication correlation") + scale_size(trans = "log", breaks = c(150, 3000, 60000))
 
 # Replication bayes factor, including only studies *without* evidence for the null vs the original effect over 3
-plotBF0RepLesser3 <- ggplot(allData[allData$bf0Rep <3,], aes(correlation.o, correlation.r, size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0)+  geom_point(na.rm = T, alpha = .5)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17))+ ggtitle("Exluding studies with BF0Rep greater than than 3")
+plotBF0RepLesser3 <- ggplot(allData[allData$bf0Rep <3 & !is.na(allData$bf0Rep <3),], aes(correlation.o, correlation.r, size = n.r, colour = as.factor(source))) +
+  geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T, alpha = .5) +
+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + 
+  guides( size = guide_legend(title = "Replication\nSample size", values= trans_format("identity", function(x) round(exp(x),0)), order = 2),
+          colour = guide_legend(title = "Replication projects"), override.aes = list(alpha = 1), order = 1) +
+  xlab("Original correlation")+ ylab("Replication correlation") + scale_size(trans = "log", breaks = c(150, 3000, 60000))
 
 # Replication bayes factor, including only studies with evidence for the alternative of greater than 3
-plotBFRep0Lesser3 <- ggplot(allData[allData$bfRep0>3,], aes(correlation.o, correlation.r, size = log(n.r), colour = as.factor(source))) + geom_abline( slope = 1, intercept = 0)+  geom_point(na.rm = T, alpha = .5)+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + scale_shape_manual(values = c(0,1,2,15,16,17)) + ggtitle("Exluding studies with BFRep0 less than than 3")
+plotBFRep0Greater3 <- ggplot(allData[allData$bfRep0>3 & !is.na(allData$bfRep0>3),], aes(correlation.o, correlation.r, size = n.r, colour = as.factor(source))) +
+  geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T, alpha = .5) +
+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + 
+  guides( size = guide_legend(title = "Replication\nSample size", values= trans_format("identity", function(x) round(exp(x),0)), order = 2),
+          colour = guide_legend(title = "Replication projects"), override.aes = list(alpha = 1), order = 1) +
+  xlab("Original correlation")+ ylab("Replication correlation") + scale_size(trans = "log", breaks = c(150, 3000, 60000))
 
 
 
@@ -279,6 +326,7 @@ REMod <- rma.mv(yi = allData$fisherZDiff, V = allData$seDifference.ro^2, random 
 
 # Empirical Bayes estimates for random Effects 
 
+BLUPsSource <- ranef(REMod)[1]
 
 # Model output summary function plus converting results into an understandable format function. 
 modelOutputSummary <- function(REMod) {
@@ -299,8 +347,16 @@ list(estimate_Z = zDecrease, CI95_Z = c(zDecreaseCILB, zDecreaseCIUB) ,
      sourceEstimate = randEffREModSource)
 }
 
+niceMLMESum <- function(REMod) {
+data_frame(Estimate = c(REMod$b, rep(NA, 3)), "95% CI LB" = c(REMod$ci.lb, rep(NA, 3)), "95% CI UB" = c(REMod$ci.ub, rep(NA, 3)), SE = c(REMod$se,  rep(NA, 3)), p = c(ifelse(REMod$pval<.001, "< .001", REMod$pval),  rep(NA, 3)), 
+           "Random effects" = c(NA, paste0("Project variance = ", round(REMod$sigma2[1], 3), ", n = ", REMod$s.nlevels[1]), paste0("Article variance = ", round(REMod$sigma2[2], 3), ", n = ", REMod$s.nlevels[2]),  paste0("QE(",REMod$k-1, ") = ", round(REMod$QE, 2),  ", p ", ifelse(REMod$QEp <.001, "< .001", paste("=" , round(REMod$QEp, 2))))))
+}
+
+niceREModSum<- niceMLMESum(REMod)
+
 REModSum <- modelOutputSummary(REMod)
-  
+ 
+
 # The first model but with only significant replications
 REModOnlySigR <- rma.mv(yi = fisherZDiff, V = allData[allData$significantSameDirection.r==TRUE,]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = allData[allData$significantSameDirection.r==TRUE,])
 
@@ -339,8 +395,36 @@ modSumaries <- rbind(modRes, modRes1, modRes2, modRes3, modRes4, modRes5, modRes
 modSumariesR <- modSumaries
 modSumariesR[2:4] <- ztor(modSumaries[2:4])
 
+niceModelSums <- lapply(X = list("All Data" = REMod, "Only Signficant replications" = REModOnlySigR,  "BF0Plus < 3" = REModBF0PlusGreaterThan3Excluded, 
+                                 "BFplus0 > 3" = REModBFPlus0LessThan3Excluded, "BF01 < 3" = REModBF01GreaterThan3Excluded, 
+                                 "BF10 > 3" = REModBF10LessThan3Excluded, "BF0rep < 3" = REModBF0RepGreaterThan3Excluded, 
+                                 "BFrep0 > 3" = REModBFRep0LessThan3Excluded, "Non-equivalent studies" = REModNonequiv), niceMLMESum)
+  
+  
 
 tableAllEstimates <- merge.data.frame(tableReductions, modSumaries, by = "row.names", sort = F)
+
+
+# estimating the probability of obtaining results as extreme given that x studies were removed randomly
+
+#applicData <- allData[!is.na(allData$bfRep0),]
+#simulationOutput <- 1000 %>% rerun(
+#  applicData[sample( x = 1:nrow(applicData), size = modRes1$modelN,  replace = F),]  %>%
+#  rma.mv(yi = fisherZDiff, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = .) %>% 
+#  .$b)
+#
+#mean(unlist(simulationOutput) > as.numeric(REModBFRep0LessThan3Excluded$b))
+#
+
+#applicData <- allData[!is.na(allData$bfRep0),]
+#simulationOutput <- 1000 %>% rerun(
+#  applicData[sample( x = 1:nrow(applicData), size = modRes1$modelN,  replace = F),]  %>%
+#  rma.mv(yi = fisherZDiff, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o, data = .) %>% 
+#  .$b)
+#
+#mean(unlist(simulationOutput) > as.numeric(REModBFRep0LessThan3Excluded$b))
+#
+
 
 #### Leave one out cross validation for main model, excluding first each source ####
 # # # Commented out to avoid having to run this each time I knit
@@ -456,7 +540,6 @@ ggplot(allData,aes(y = fisherZDiff,x= source,
 dev.off()
 
 pdf(file = "Figures/ViolinPlotPercentageChange.pdf")
-
 # percentage change
 ggplot(allData, aes(y = percentageChangeES.ro,x= source, 
                     fill = source, colour = source))+ geom_hline(yintercept = 0, alpha = .1) + 
@@ -502,9 +585,7 @@ simulationSum <-as.tibble(tableAllEstimatesSim) %>%
   dplyr::summarise(meanChange = mean(meanDiff, na.rm = T), 
                    meanModelEstimate = mean(modelEstimate, na.rm = T), sdModelEstimate = sd(modelEstimate, na.rm = T),  nSims = n(), MSE = mean(squaredError, na.rm = T), 
                    RMSE = sqrt(mean(squaredError, na.rm = T)),  MAE = mean(absoluteError, na.rm = T), meanTrueDiff = mean(trueMeanDifference, na.rm = T),
-                   meanTrueDiff = mean(trueMeanDifferenceNo0s, na.rm = T), errorMeanPropReduction = mean(-propAttenuation - meanPropChange, na.rm = T), 
-                   modelError = mean(trueMeanDifferenceNo0s - modelEstimate, na.rm = T),  modelErrorSD = sd(trueMeanDifferenceNo0s - modelEstimate, na.rm = T), 
-                   meanAbsError = mean(modelAbsoluteError, na.rm = T), Error_SD = sd(-propAttenuation - meanPropChange, na.rm = T), n_model_simulations = n() - sum(is.na(modelEstimate)))
+                   meanTrueDiff = mean(trueMeanDifferenceNo0s, na.rm = T), errorMeanPropReduction = mean(-propAttenuation - meanPropChange, na.rm = T), Error_SD = sd(-propAttenuation - meanPropChange, na.rm = T))
 
 vis <- simulationSum 
 
@@ -518,7 +599,7 @@ meanErrorPlot <- ggplot(vis, aes(x = propAttenuation, y = propNull)) +
 # Plotting SD by method at different values 
 sdErrorPlot <- ggplot(vis, aes(x = propAttenuation, y = propNull)) +
   geom_raster(aes(fill = Error_SD), interpolate=F)  +
-  scale_fill_gradient2("Mean error \n", low="navy", mid="white", high="red", 
+  scale_fill_gradient2("Error SD \n", low="navy", mid="white", high="red", 
                        midpoint=0)+ facet_wrap(~ Row.names) + theme_bw() +
   labs(x = "Proportion true attenuation", y = "Proportion true null effects")
 
@@ -529,16 +610,13 @@ MAEPlot <- ggplot(vis, aes(x = propAttenuation, y = propNull)) +
                        midpoint=0)+ facet_wrap(~ Row.names) + theme_bw() +
   labs(x = "Proportion true attenuation", y = "Proportion true null effects")
 
-
 simulationSumByType <- as.tibble(tableAllEstimatesSim) %>%
   group_by(Subsample = Row.names) %>%
   dplyr::summarise( # meanMeanPropChange = mean(meanPropChange, na.rm = T), sdMeanPropChange = sd(meanPropChange, na.rm = T), 
     # meanModelEstimate = mean(modelEstimate, na.rm = T), sdModelEstimate = sd(modelEstimate, na.rm = T), 
-    nSims = n(), MSE = mean(squaredError, na.rm = T), 
-    RMSE = sqrt(mean(squaredError, na.rm = T)),  MAE = mean(absoluteError, na.rm = T), AE_SD = sd(absoluteError, na.rm = T), 
-    Error_SD = sd(-propAttenuation - meanPropChange, na.rm = T), n_model_simulations = n() - sum(is.na(modelEstimate)),
-    Model_error = mean(trueMeanDifferenceNo0s - modelEstimate, na.rm = T),  Model_error_SD = sd(trueMeanDifferenceNo0s - modelEstimate, na.rm = T))
-
+    nSims = n(), MSE = mean(squaredError, na.rm = T), Mean_Error = mean(-propAttenuation-meanPropChange, na.rm = T),
+    RMSE = sqrt(mean(squaredError, na.rm = T)),  MAE = mean(absoluteError, na.rm = T), # AE_SD = sd(absoluteError, na.rm = T), 
+    Error_SD = sd(-propAttenuation - meanPropChange, na.rm = T))
 
 simulationSumByTypeLessThan75 <- as.tibble(tableAllEstimatesSim) %>%
   group_by(Subsample = Row.names, below.8s = propNull < .8 & propAttenuation < .8) %>%
@@ -546,5 +624,71 @@ simulationSumByTypeLessThan75 <- as.tibble(tableAllEstimatesSim) %>%
     # meanModelEstimate = mean(modelEstimate, na.rm = T), sdModelEstimate = sd(modelEstimate, na.rm = T), 
     nSims = n(), MSE = mean(squaredError, na.rm = T), 
     RMSE = sqrt(mean(squaredError, na.rm = T)),  MAE = mean(absoluteError, na.rm = T), AE_SD = sd(absoluteError, na.rm = T), 
-    Error_SD = sd(-propAttenuation - meanPropChange, na.rm = T), n_model_simulations = n() - sum(is.na(modelEstimate)),
-    Model_error = mean(trueMeanDifferenceNo0s - modelEstimate, na.rm = T),  Model_error_SD = sd(trueMeanDifferenceNo0s - modelEstimate, na.rm = T))
+    Error_SD = sd(-propAttenuation - meanPropChange, na.rm = T)) 
+
+accuracyOutput <- read.csv(file = "Data/SimulationAccuracyCriteria.csv")
+
+simulationAccuracy  <- as.tibble(accuracyOutput) %>%
+  group_by(propNull, propAttenuation) %>%
+  dplyr::summarise( 
+    mean_StatisticallyEqui = mean(StatisticallyEquiv, na.rm = T),
+    sd_StatisticallyEquiv = sd(StatisticallyEquiv, na.rm = T), 
+    mean_StatisticalSig = mean(StatisticalSig, na.rm = T),    
+    sd_StatisticalSig = sd(StatisticalSig, na.rm = T), 
+    mean_BF01 = mean(BF01, na.rm = T),              
+    sd_BF0 = sd(BF01, na.rm = T),
+    mean_BF10 = mean(BF10, na.rm = T),            
+    sd_BF10 = sd(BF01, na.rm = T),
+    mean_BFplus0 = mean(BFplus0, na.rm = T),           
+    sd_BFplus0 = sd(BFplus0, na.rm = T), 
+    mean_BF0plus = mean(BF0plus, na.rm = T),           
+    sd_BF0plus = sd(BF0plus, na.rm = T), 
+    mean_BFrep0 = mean(BFrep0, na.rm = T),            
+    sd_BFrep0 = sd(BFrep0, na.rm = T), 
+    mean_BF0rep = mean(BF0rep, na.rm = T),            
+    sd_BF0rep = sd(BF0rep, na.rm = T), n())
+
+vis <- simulationAccuracy %>% 
+  gather(key = "Subsample", value = "Accuracy", names(simulationAccuracy)[str_which(names(simulationAccuracy), "mean")])
+vis$Subsample <- str_remove_all(vis$Subsample, "mean_")
+vis$Subsample <- ifelse(str_detect(vis$Subsample, "BFrep0|BFplus0|BF10"), paste(vis$Subsample,"> 3"), ifelse(str_detect(vis$Subsample, "BF0rep|BF0plus|BF01"), paste(vis$Subsample,"< 3"), vis$Subsample))
+vis$Subsample <- ifelse(vis$Subsample == "StatisticalSig", "Statistical significance", ifelse(vis$Subsample == "StatisticallyEqui", "Not statistically equivalent", vis$Subsample) )
+
+
+# Plotting mean accuracy 
+accuracyPlot<-   ggplot(vis, aes(x = propAttenuation, y = propNull)) +
+  geom_raster(aes(fill = Accuracy), interpolate=F)  +
+  scale_fill_gradient2("Accuracy \n", low="red", mid="white", high="navy", 
+                       midpoint=.5, limits = c(0,1))+ facet_wrap(~ Subsample) + theme_bw() +
+  labs(x = "Proportion true attenuation", y = "Proportion true null effects") + theme(legend.position = c(0.825, .11), legend.direction="horizontal")
+
+simulationAccuracyByType  <- as.tibble(accuracyOutput) %>%
+  dplyr::summarise( 
+    mean_StatisticallyEqui = mean(StatisticallyEquiv, na.rm = T),
+    sd_StatisticallyEquiv = sd(StatisticallyEquiv, na.rm = T), 
+    mean_StatisticalSig = mean(StatisticalSig, na.rm = T),    
+    sd_StatisticalSig = sd(StatisticalSig, na.rm = T), 
+    mean_BF01 = mean(BF01, na.rm = T),              
+    sd_BF0 = sd(BF01, na.rm = T),
+    mean_BF10 = mean(BF10, na.rm = T),            
+    sd_BF10 = sd(BF01, na.rm = T),
+    mean_BFplus0 = mean(BFplus0, na.rm = T),           
+    sd_BFplus0 = sd(BFplus0, na.rm = T), 
+    mean_BF0plus = mean(BF0plus, na.rm = T),           
+    sd_BF0plus = sd(BF0plus, na.rm = T), 
+    mean_BFrep0 = mean(BFrep0, na.rm = T),            
+    sd_BFrep0 = sd(BFrep0, na.rm = T), 
+    mean_BF0rep = mean(BF0rep, na.rm = T),            
+    sd_BF0rep = sd(BF0rep, na.rm = T), n())
+
+names(simulationAccuracyByType) <- str_remove_all(names(simulationAccuracyByType), "mean_")
+names(simulationAccuracyByType) <- str_replace_all(names(simulationAccuracyByType), "sd_", "SD ")
+names(simulationAccuracyByType) <- ifelse(str_detect(names(simulationAccuracyByType), "BFrep0|BFplus0|BF10"), paste(names(simulationAccuracyByType),"> 3"), ifelse(str_detect(names(simulationAccuracyByType), "BF0rep|BF0plus|BF01"), paste(names(simulationAccuracyByType),"< 3"), names(simulationAccuracyByType)))
+names(simulationAccuracyByType) <- ifelse(names(simulationAccuracyByType)== "StatisticalSig", "Statistical significance", ifelse(names(simulationAccuracyByType) == "StatisticallyEqui", "Not statistically equivalent", names(simulationAccuracyByType)) )
+
+simulationAccuracyByTypeDF <- data_frame("Data inclusion rule" = names(simulationAccuracyByType)[-str_which(names(simulationAccuracyByType), 'SD|n\\(\\)')])
+simulationAccuracyByTypeDF$Accuracy <- t(simulationAccuracyByType[-str_which(names(simulationAccuracyByType), 'SD|n\\(\\)')])
+simulationAccuracyByTypeDF$`Accuracy SD` <- t(simulationAccuracyByType[str_which(names(simulationAccuracyByType), 'SD')])
+nSimsimulationAccuracyByTypeDF <- simulationAccuracyByType[(names(simulationAccuracyByType) == 'n()')]
+
+                                                           

@@ -592,3 +592,5 @@ projectNamesSingleLine <- data_frame(unique(allData$source), c("OSC (2015)",
                                                                "Cova, et al. (2018), Experimental Philosophy",
                                                                "Soto (2019), Personality Psychology",
                                                                "Klein et al. (2018), Many Labs 2"))
+
+
