@@ -3,9 +3,11 @@ model{
 tau ~ dgamma(0.001,0.001) # vague prior on study precision
 phi ~ dbeta(1, 1) # flat prior on the true effect rate
 
-# prior on alpha, the effect size attenuation value 
+# Prior on meta-alpha, the mean effect size 
+metaAlpha ~ dbeta(1, 1)
+# prior on alpha, the effect size attenuation value for each study
 for(i in 1:nSource){
-alpha[i] ~ dunif(0,1) # flat prior on attenuation factor for each replication project
+alpha[i] ~ dnorm(metaAlpha,.0001) T(0,1) # flat prior on attenuation factor for each replication project
 }
 
 # prior on true effect size of original studies:

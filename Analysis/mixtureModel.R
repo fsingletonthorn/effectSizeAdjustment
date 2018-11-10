@@ -28,7 +28,7 @@ samples <- coda.samples(jagMod,params,n.iter = 10000)
 samplesSum <- summary(samples)
 # Highest prob density interval
 HPDinterval(samples)
-plot(samples)
+# plot(samples)
 # Traceplot - be warned, this takes forever unless you are only looking at one parameter at a time - I suggest alpha, the most important (assuming all else is working)
 # traceplot(samples)
 
@@ -48,14 +48,15 @@ jagMod_additional <- jags.model(file = 'Analysis/BMWMod_additional.R',
                                  n.chains=4)
 
 # Parameters to keep
-params <- c("mu",
+params <- c(#"mu",
             "phi",
-  "clust",
-  "orgEffect" ,
-  "trueOrgEffect",
-  "repEffect" ,
-  "trueRepEffect",
-  "alpha")
+  #"clust",
+  #"orgEffect" ,
+  #"trueOrgEffect",
+  #"repEffect" ,
+  #"trueRepEffect",
+  "alpha",
+  "metaAlpha")
 
 # Running model and summarising 
 samples2 <- coda.samples(jagMod_additional,params,n.iter = 10000)
@@ -71,8 +72,8 @@ HPDinterval(samples2)
 sums <- do.call(cbind.data.frame, samples2Sum)
 statsMeans <- sums$statistics.Mean
 # par(mar = c(0, 0, 0, 0))
-alpha <- statsMeans[grepl(pattern = "alpha", rownames(sums))]
-alpha <- statsMeans[grepl(pattern = "phi", rownames(sums))]
+alpha <- statsMeans[grepl(pattern = "metaAlpha", rownames(sums))]
+phi <- statsMeans[grepl(pattern = "phi", rownames(sums))]
 jagData$probRealEffect <- statsMeans[grepl(pattern = "clust", rownames(sums))]
 jagData$trueRepEffectModel <- statsMeans[grepl(pattern = "trueRepEffect", rownames(sums))]
 jagData$trueOrgEffectModel <- statsMeans[grepl(pattern = "trueOrgEffect", rownames(sums))]
