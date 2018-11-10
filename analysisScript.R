@@ -391,8 +391,14 @@ modRes6 <- data.frame(modelN = REModBF0RepGreaterThan3Excluded$k, modelEstimate 
 modRes7 <- data.frame(modelN = REModBFRep0LessThan3Excluded$k, modelEstimate = REModBFRep0LessThan3Excluded$b, MLM95lb = REModBFRep0LessThan3Excluded$ci.lb, MLM95ub = REModBFRep0LessThan3Excluded$ci.ub, row.names = "BFRep0Above3")
 modRes8 <- data.frame(modelN = REModNonequiv$k, modelEstimate = REModNonequiv$b, MLM95lb = REModNonequiv$ci.lb, MLM95ub = REModNonequiv$ci.ub, row.names = "Nonequivalence")
 
-modSumaries <- rbind(modRes, modRes1, modRes2, modRes3, modRes4, modRes5, modRes6, modRes7, modRes8)
+# brining these together
+modSumaries <- rbind(modRes, modRes1, modRes8, modRes2, modRes3, modRes4, modRes5, modRes6, modRes7)
+# Estiating the degree of effect size change as a proportion of the average effect size in psychology 
+modSumaries$`Estimated % attenuation` <- modSumaries$modelEstimate/mean(allData$fis.o, na.rm = T)
+modSumaries$`LB % attenuation` <- (modSumaries$MLM95lb/mean(allData$fis.o, na.rm = T)*100)
+modSumaries$`UB % attenuation` <- (modSumaries$MLM95ub/mean(allData$fis.o, na.rm = T)*100)
 modSumariesR <- modSumaries
+# converting to z
 modSumariesR[2:4] <- ztor(modSumaries[2:4])
 
 niceModelSums <- lapply(X = list("All Data" = REMod, "Only Signficant replications" = REModOnlySigR,  "BF0Plus < 3" = REModBF0PlusGreaterThan3Excluded, 
