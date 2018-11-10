@@ -48,15 +48,14 @@ jagMod_additional <- jags.model(file = 'Analysis/BMWMod_additional.R',
                                  n.chains=4)
 
 # Parameters to keep
-params <- c(#"mu",
+params <- c("mu",
             "phi",
-  #"clust",
-  #"orgEffect" ,
-  #"trueOrgEffect",
-  #"repEffect" ,
-  #"trueRepEffect",
-  "alpha",
-  "metaAlpha")
+  "clust",
+  "orgEffect" ,
+  "trueOrgEffect",
+  "repEffect" ,
+  "trueRepEffect",
+  "alpha")
 
 # Running model and summarising 
 samples2 <- coda.samples(jagMod_additional,params,n.iter = 10000)

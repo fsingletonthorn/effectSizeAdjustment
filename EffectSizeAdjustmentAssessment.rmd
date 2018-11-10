@@ -399,7 +399,36 @@ kable(LOOProjectDFSum)
 
 ### Bayesian Mixture Model
 
-The bayesian mixture model is largely identical to that of Camera (see https://osf.io/xhj4d/ for thier detailed description of this model), except in that it allows for different replication projects to have different attenuation factors. 
+The bayesian mixture model is largely identical to that of Camera (see https://osf.io/xhj4d/ for thier detailed description of this model), except in that it allows for different replication projects to have different attenuation factors. All priors are chosen to be uninformaitve. 
+
+First, this is the original model from {Camerer, 2018 #967}. This has the issue of constraining all effect size attenuation factor factors to a single value. 
+
+```{r}
+model{
+# Mixture Model Priors:
+alpha ~ dunif(0,1) # flat prior on slope for predicted effect size under H1
+tau ~ dgamma(0.001,0.001) # vague prior on study precision
+phi ~ dbeta(1, 1) # flat prior on the true effect rate
+# prior on true effect size of original studies:
+for (i in 1:n){
+trueOrgEffect[i] ~ dnorm(0, 1)
+}
+# Mixture Model Likelihood:
+for(i in 1:n){
+clust[i] ~ dbern(phi)# extract errors in variables (FT stands for Fisher-transformed):
+orgEffect_FT[i] ~ dnorm(trueOrgEffect[i], orgTau[i])
+repEffect_FT[i] ~ dnorm(trueRepEffect[i], repTau[i])
+trueRepEffect[i] ~ dnorm(mu[i], tau)
+# if clust[i] = 0 then H0 is true; if clust[i] = 1 then H1 is true and
+# the replication effect is a function of the original effect:
+mu[i] <- alpha * trueOrgEffect[i] * equals(clust[i], 1)
+# when clust[i] = 0, then mu[i] = 0;
+# when clust[i] = 1, then mu[i] = alpha * trueOrgEffect[i]
+  }
+}
+```
+
+The expanded model includes an alpha parameter, an effect size disattenuation factor, for each included study. 
 
 ```{echo = T}
 model{
@@ -418,9 +447,8 @@ trueOrgEffect[i] ~ dnorm(0, 1) # Normal prior on the original effect size
 }
 
 # Mixture Model Likelihood:
-# Study level
 for(i in 1:n){
-clust[i] ~ dbern(phi)# extract errors in variables:
+clust[i] ~ dbern(phi)
 orgEffect[i] ~ dnorm(trueOrgEffect[i] , orgTau[i]) # 
 repEffect[i] ~ dnorm(trueRepEffect[i] ,   repTau[i]) 
 trueRepEffect[i] ~ dnorm(mu[i], tau)
@@ -433,3 +461,10 @@ mu[i] <- (alpha[source[i]] * trueOrgEffect[i] * equals(clust[i], 1))
   }
 }
 ```
+
+This later model allows for all of the replication effect sizes attenuation factors to differ by replication project. 
+
+
+
+
+
