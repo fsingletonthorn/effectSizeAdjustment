@@ -4,7 +4,6 @@ output:
   word_document
 ---
 
-
 ```{r message=FALSE, warning=FALSE, include=FALSE}
 source(file = 'Data/data_collection_cleaning.R')
 source(file = 'analysisScript.R')
@@ -13,11 +12,8 @@ knitr::opts_chunk$set(fig.width=8, fig.height=5, echo =FALSE)
 options(knitr.kable.NA = '')
 ```
 
-
 ## Introduction
 See word document 
-
-\f
 
 ## Methods 
 ### Data extraction
@@ -92,8 +88,12 @@ All methods of exluding studies function by removing studies which have small ef
 Accuracy (i.e., the proportion of studies which were accuratly excluded as true negative or null effects, or for equivilance testing the proportion of studies which were at or below the minimum effect size of interest) was assessed under this data generation process in `r as.numeric(nSimsimulationAccuracyByTypeDF)` simulations, showing that accuracy of these methods across all scenarios ranged from `r range(simulationAccuracyByTypeDF$Accuracy)[1]` to `r range(simulationAccuracyByTypeDF$Accuracy)[2]`, with SDs of  `r rangeSDaccuracy[1]` to  `r rangeSDaccuracy[2]`. See supplementary materials [simulations] table [SM accuracy] for full details on the perfomred simulations, including a table of the outcomes of these simulations, and  heat maps of the mean error over these values. Note that these values are only valid under the simulated specific data generation process, where there is a consistent factor effect size decrease, and where the studies which are null are random and independent of the original effect and sample sizes. See supplementary materials [simulation] for a full description of the simulations, heat maps of the mean absolute error at each benchmark and full simulation output tables. The code used in these simulations is avalible from [OSFOSF.io].
 
 
+#### Bayesian mixture model
+
+A Bayesian mixture model adapted from {Camerer, 2018 #967} was used to estimate the relative effect sizes of the true positives. This model assumes that the a replicion study effect size comes from either the null hypothesis or the alternative hypothesis. If the replication effect size is drawn from the null hypothesis, it is modeled to have come from a normal distribution with a mean of 0 and a standard deviation equal to the standard error of the replication study (estimated here as $\sqrt{\frac{1}{n-3}}$, n being the replication sample size). If the replication effect size comes from the alternative hypothesis, it is modeled to have been drawn from a normal distribution with a standard deviation equal to the standard error of the replicaiton study, and a mean equal to the true sample size. In this case, the true sample size is equal to the original study's estimated true effect size attenuated by an "attenuation factor", equal to some value between zero and one. The parameter of interest in this model is the "attenuation factor" (called a deflation factor in {Camerer, 2018 #967}), the degree to which effect sizes are attenuated between original and replication study. {Camerer, 2018 #967}'s model was adapted to allowed the ammount of effect size attenuation to vary by replication project, as it is expected that these different projects will have different amounts of effect size attenuation, and as the differences are interesting in of themselves. See supplementary materials ["mixture model"] for model code and further analysis details. 
+
 ## Results
-### Decrease in effect sizes
+### Raw decreases in effect sizes
 
 Looking at the `r tableReductions["Overall", "n included"]` replications for which both original and replication effect sizes were available, the effect size seen in the replication study fell in `r sum(allData$fisherZDiff < 0, na.rm = T)` articles, (`r round(mean(allData$fisherZDiff < 0, na.rm = T)*100)`%) . The average effect size for original studies was `r tableReductions["Overall", "Mean original ES"]`, and the mean effect size for replication studies was `r tableReductions["Overall", "Mean replication ES"]`. There was an average decrease of r = `r tableReductions["Overall", "Mean ES difference"]` (Wald-type 95% CI [`r as.numeric(tableReductions["Overall", c("95% CI LB Mean ES Change", "95% CI UB Mean ES Change")])`]). Notably, this represents an average decrease in effect sizes from the original to the replication study of  `r tableReductions["Overall", "Mean proportion change"]*100`%. See Table 2 for a more comprehensive list of descriptives on the effect size differences seen, and figure 1 for a scatterplot of the replication effect sizes plotted against the original studies'.
 
@@ -105,15 +105,12 @@ Figure 1. A scatterplot of replication study effect sizes (in correlation coeffi
 
 
 ![](Figures/zScoreDifferenceRainCloudPlot.jpg)
-Figure 2. A raincloud plot of the change in effect sizes (here Fisher Z scores) from the original to the replication study, panneled by the original study. 
+
+Figure 2. A raincloud plot of the change in effect sizes (here Fisher Z scores) from the original to the replication study by the replication project that the replication study was performed as a part of. 
 
 ### Excluding null results 
 
-#### Examining only the statistically significant replicaiton studies
-
-Looking at the `r tableReductions["StatisticalSignificance", "n included"]` replications in which the replication study was statistically significant, the average effect for original studies was `r tableReductions["StatisticalSignificance", "Mean original ES"]`, and the mean effect size for replication studies was `r tableReductions["StatisticalSignificance", "Mean replication ES"]`. There was an average decrease of r = `r tableReductions["StatisticalSignificance", "Mean ES difference"]` (naive 95% CI [`r as.numeric(tableReductions["StatisticalSignificance", c("95% CI LB Mean ES Change", "95% CI UB Mean ES Change")])`, an average decrease of  `r tableReductions["StatisticalSignificance", "Mean proportion change"]*100`%.
-
-#### Examining only studies which were not statistically equivilent to the null
+Looking at the `r tableReductions["StatisticalSignificance", "n included"]` replications in which the replication study was statistically significant `r tableReductions["StatisticalSignificance", "n included"]/tableReductions["Overall", "n included"]`, the average effect for original studies was `r tableReductions["StatisticalSignificance", "Mean original ES"]`, and the mean effect size for replication studies was `r tableReductions["StatisticalSignificance", "Mean replication ES"]`. There was an average decrease of r = `r tableReductions["StatisticalSignificance", "Mean ES difference"]` (naive 95% CI [`r as.numeric(tableReductions["StatisticalSignificance", c("95% CI LB Mean ES Change", "95% CI UB Mean ES Change")])`, an average decrease of  `r tableReductions["StatisticalSignificance", "Mean proportion change"]*100`%.
 
 Excluding studies which were not statistically significant is likely to lead to an underestimate of the degree of effect size attenuation, as this exclusion rule will lead to the exclusion of under-powered replication studies as well as studies which are likely to be true null effects. In order to avoid this issue, equivilence tests were performed, meaning that the studies which are not-statistically equivilent to the null are included (using a bound of equivilence equal to the minimum detectable effect in the original study). This method is an attempt to not exclude the non-diagnostic replicaiton studies, studies which are not statistically significant but which do not suggest that the null hypothesis is true. Using this method, `r tableReductions["Nonequivalence", "n included"]` replications were not statistically equivalent to the null, `r ( tableReductions["Nonequivalence", "n included"]/ tableReductions["Nonequivalence", "n criteria calculable for"])*100`% of studies for which equivalence tests could be performed. The average effect size in the original non-equivalent studies was `r tableReductions["Nonequivalence", "Mean original ES"]`, compared to a mean effect size for replication studies of r = `r tableReductions["Nonequivalence", "Mean replication ES"]`. This is a mean decrease of r = `r tableReductions["Nonequivalence", "Mean ES difference"]` (Wald-like 95% CI [`r as.numeric(tableReductions["Nonequivalence", c("95% CI LB Mean ES Change", "95% CI UB Mean ES Change")])`, an average decrease of  `r tableReductions["Nonequivalence", "Mean proportion change"]*100`%.
 
@@ -141,28 +138,33 @@ meanDiffNotOverall <- mean(tableReductions$`Mean ES difference`[2:nrow(tableRedu
 meanPropDiffNotOverall <- mean(tableReductions$`Mean proportion change`[2:nrow(tableReductions)])
 ```
 
-
 ### Multilevel model
 
-
-The model including all data estiamtes a `r REModSum$estimate_Cor` (95% CI [`r REModSum$CI95_Cor`]) point decrease in effect sizes from the orignal to replication studies in correlation coefficent terms. This is reresnets a change equvilant to `r (REModSum$estimate_Cor/mean(allData$correlation.o, na.rm = T))*100`  (95% CI [`r ((REModSum$CI95_Cor/mean(allData$correlation.o, na.rm = T))*100)[1]`%, `r ((REModSum$CI95_Cor/mean(allData$correlation.o, na.rm = T))*100)[2]`%]) of the mean effect size in the original studies (r = `r mean(allData$correlation.o, na.rm = T)`). 
+The model including all data estiamtes a `r REModSum$estimate_Cor` (95% CI [`r REModSum$CI95_Cor`]) point decrease in effect sizes from the orignal to replication studies in correlation coefficent terms. This is represnets a change equvilant to `r (REModSum$estimate_Z/mean(allData$fis.o, na.rm = T))*100`  (95% CI [`r ((REModSum$CI95_Z/mean(allData$fis.o, na.rm = T))*100)[1]`%, `r ((REModSum$CI95_Z/mean(allData$fis.o, na.rm = T))*100)[2]`%]) of the mean effect size in the original studies (r = `r mean(allData$correlation.o, na.rm = T)`). 
 
 Looking at there was more variance attributable to the article (i.e., the original article) than too the project ($\sigma^2_{article}$ = `r round(REMod$sigma2[2], 3)` compared to $\sigma^2_{project}$ = `r round(REMod$sigma2[1], 3)`). QE tests of hetrogenetiy suggest that there is a large amount of unexplained hetrogeneity, `r niceREModSum[4, "Random effects"]`. 
 
-The model was re-estimated using each the subsets of studies, excluding studies based on the exclusion criteria detailed above. See table [all model output] for the model estiamtes from each model. The estimates of the proportion of variance attributable to the article or replicaiton project level did not change considerably in any of these models. There is a notable reduction in the estimated effect sizes under these different selection criteria, with estimates of the amount of effect size decrease from r = `r range(modSumariesR$modelEstimate)[2]` to `r range(modSumariesR$modelEstimate[-1])[1]`, representing `r abs(range(modSumariesR$modelEstimate)[2]/mean(allData$correlation.o, na.rm = T))*100` to `r abs(range(modSumariesR$modelEstimate[-1])[1]/mean(allData$correlation.o, na.rm = T))*100` of the average effect in the original studies. See supplemtary materials [all exclusion crtiera output] for full model output and scatterplots of the dataset using each exclusion rule. 
-
 Table [nice mod sum]. Model output from a multilevel random effects meta-analysis of the difference between original and replication effect sizes, with random effects for the project (i.e., which large scale replicaiton project the replicaiton was a part of) and the original (i.e., replicated) article or effect. 
+
 ```{r}
 kable(niceREModSum)
 ```
 
 Table [BLUP]. Empirical Bayes estimates and 95% credible intervals for random effects, which contain the true value with 95% confidence assuming that the studies are a random sample from a population with normally distributed average effect size difference.
+
 ```{r}
 kable(BLUPsSource[[1]], col.names = c("Estimate", "Standard Error", "95% PI lower bound", "95% PI upper bound"))
 ```
 
+The model was re-estimated using each the subsets of studies, excluding studies based on the exclusion criteria detailed above. See table [all model output] for the model estiamtes from each model. The estimates of the proportion of variance attributable to the article or replicaiton project level did not change considerably in any of these models. There is a notable reduction in the estimated effect sizes under these different selection criteria, with estimates of the amount of effect size decrease from r = `r range(modSumariesR$modelEstimate)[2]` to `r range(modSumariesR$modelEstimate[-1])[1]`, representing `r abs(range(modSumaries$modelEstimate)[2]/mean(allData$fis.o, na.rm = T))*100`% to `r abs(range(modSumaries$modelEstimate[-1])[1]/mean(allData$fis.o, na.rm = T))*100`% of the average effect in the original studies. 
+
+However, it is important to emphasize the degree of uncertanty in these results. For example, taking the highest effect size decrease using any of the excusion criteria, estimating the decrease using only the results of the `r modSumariesR[which.min(modSumaries$modelEstimate[-1])+1,][['modelN']]` experiments which did not provide have a $BF_{0P}$ of greater than 3 (i.e., which did not have at more than "anecdotal" evidence for the null hypothesis compared to the one sided alternative hypthesis), showed that an estimated decrease of modSumariesR r = `r modSumaries[which.min(modSumariesR$modelEstimate[-1])+1,][['modelEstimate']]`, 95% CI [`r as.numeric( modSumariesR[which.min(modSumaries$modelEstimate[-1])+1,][str_which(names(modSumaries), "95")])`]. Looking at the smallest estimated effect size difference under any exclusion criteria on the other hand, running the multilevel meta-analysis on  just the results of the `r modSumariesR[which.max(modSumaries$modelEstimate[-1])+1,][['modelN']]` experiments which had a $BF_{rep0}$ of three or more (i.e., which had a replication bayes factor which showed more than 'anecdotal' evidence for the alternative hypothesis), showed an estimated decrease of  `r modSumaries[which.max(modSumariesR$modelEstimate[-1])+1,][['modelEstimate']]`, 95% CI [`r as.numeric( modSumariesR[which.max(modSumaries$modelEstimate[-1])+1,][str_which(names(modSumaries), "95")])`]. This is equivalent to a decrease of `r ( modSumaries[which.max(modSumaries$modelEstimate[-1])+1,][['modelEstimate']]/mean(allData$fis.o, na.rm = T))*100`% of the average original effect size, 95% CI [`r (as.numeric( modSumaries[which.max(modSumaries$modelEstimate[-1])+1,][str_which(names(modSumaries), "95")])/mean(allData$fis.o, na.rm = T))*100`].
+
+See supplemtary materials [all exclusion crtiera output] for full model output and scatterplots of the dataset using each exclusion rule. 
+
+
 ##### Table [all model output]
-The number of studies included in each model, and the estimated correlation coefficent decrease from each model. Models were estiamted using Fisher Z transformed correlation coefficents and back transformed for interpretability.
+The number of studies included in each model, and the estimated correlation coefficent decrease from each model. Models were estiamted using Fisher Z transformed correlation coefficents and back transformed for interpretability. Percentage attenuations give the percentage attenuation this effect size difference would as a percentage fo the the mean original effect size.
 
 ```{r echo=F}
 rowNames <- row.names(modSumariesR) %>% 
@@ -174,22 +176,39 @@ rowNames <- row.names(modSumariesR) %>%
 kable(data.frame(rowNames, modSumariesR), col.names = c("Inclusion rule", str_replace(str_replace(names(modSumariesR), "model", "Model "), "MLM95", "95% CI ")), row.names = F)
 ```
 
-## Discussion 
-Overall, there was an average decrease in correlation coefficent terms of `r meanDecrease`, approximately equal to a Cohen's d difference of `r (2*meanDecrease) / sqrt(1-meanDecrease^2)`. On average, replicaiton sample sizes were 30% smaller in replicaiton studies, than they were in original studies, a considerable decrease. In looking at the results of the multilevel meta-analysis including all data, there is an etimated `r REModSum$estimate_Cor` correlation coefficent decrease (95% CI [`r REModSum$CI95_Cor`]), equivalent to a `r REModSum$estimate_D` point Cohen's d decrease (95% CI [`r REModSum$CI95_d`]). However, there is evidence to suggest that this decrease may be largely driven by the presence of null (or effectivly null) effects. 
 
-Averaging across exclusion methods, there is an `r meanDiffNotOverall` point average change in correlation coefficent terms from the original to replicaiton effect size, or an average decrease of just `r round(meanPropDiffNotOverall * 100, 1)`%.  The results from the varied multilevel models provide support for this idea, showing that there is a much lower effect size decrease when attempting to exclude effectivly null results. The highest effect size decrease using any of these rules, estimating the decrease using only the results of the `r modSumariesR[which.min(modSumaries$modelEstimate[-1])+1,][['modelN']]` experiments which did not provide have a $BF_{0P}$ of greater than 3 (i.e., which did not have at more than "anecdotal" evidence for the null hypothesis compared to the one sided alternative hypthesis), showed that an estimated decrease of modSumariesR `r modSumaries[which.min(modSumariesR$modelEstimate[-1])+1,][['modelEstimate']]`, 95% CI [`r as.numeric( modSumariesR[which.min(modSumaries$modelEstimate[-1])+1,][str_which(names(modSumaries), "95")])`].
+
+
+## Discussion 
+Overall, there was an average decrease in correlation coefficent terms of `r meanDecrease`, approximately equal to a Cohen's d difference of `r (2*meanDecrease) / sqrt(1-meanDecrease^2)`. On average, replicaiton sample sizes were 30% smaller in replicaiton studies than they were in original studies, a considerable decrease. In looking at the results of the multilevel meta-analysis including all data, there is an etimated `r REModSum$estimate_Cor` correlation coefficent decrease (95% CI [`r REModSum$CI95_Cor`]), equivalent to a `r REModSum$estimate_D` point Cohen's d decrease (95% CI [`r REModSum$CI95_d`]), or an estimated decreaes of `r (REModSum$estimate_Z/mean(allData$fis.o, na.rm = T))*100`  (95% CI [`r ((REModSum$CI95_Z/mean(allData$fis.o, na.rm = T))*100)[1]`%, `r ((REModSum$CI95_Z/mean(allData$fis.o, na.rm = T))*100)[2]`%]) of the mean effect size in the original studies (a Fisher Z equal to r = `r ztor(mean(allData$fis.o, na.rm = T))`). 
+
+These results also provide preliminary evidence to suggest that the large decrease from original to replication effect sizes may be largely driven by the presence of null (or effectivly null) effects. Averaging across the exclusion methods, there is an `r meanDiffNotOverall` point change in correlation coefficent terms from the original to replicaiton effect size, or an average decrease of just `r round(meanPropDiffNotOverall * 100, 1)`%. The results from the multilevel models also support this idea, and highlight the degree of uncertanty in this result. Although all model estimates show a lower effect size decrease when attempting to exclude effectivly-null results, the confidence intervals for all results extend from a decrease of `r min(modSumariesR$MLM95lb[-1])/mean(allData$correlation.o, na.rm = T)*100`% of the average original correlation coefficent, to an incrase of `r max(modSumariesR$MLM95ub[-1])/mean(allData$correlation.o, na.rm = T)*100`%. More data is required to show the degree to which effect size attenudation is driven by the presence of null effects. 
+
+
 
 #### Limitiations: 
-None of the projects included in this analysis were true random selections from the literature, and it is possible that the pattern in the selected sample may be different that that which would be seen in the literature overall.
+None of the projects included in this analysis were true random selections from the literature, and it is possible that the pattern in the selected sample may be different that that which would be seen in the literature overall. All of the methods that were used to the replication studies which were null-or-effectively were bound to decrease the amount of effect size decrease that is seen. At worst, they could be seen as just removing the studies which happened to find low effects as opposed to removing all the true null hypotheses. However, this preliminary analysis does provide suggestive evidence that the degree of effect size attenuation that is seen may be largely attributed to the presence of effectively-null results, and that the overall. The current study also cannot distinguish between heterogeneity (i.e., effect sizes that are different under different scenarios) and effect size scenario. However, it seems reasonable to except in that effect size heterogeneity should lead to symmetrical effect size differences, leading to a mean unbaised  estimate of the degree of effect size deflation that can be expected. 
 
-All of the methods that were used to the replication studies which were null-or-effectively were bound to decrease the amount of effect size decrease that is seen. At worst, they could be seen as just removing the studies which happened to find low effects as opposed to removing all the true null hypotheses. However, this preliminary analysis does provide suggestive evidence that the degree of effect size attenuation that is seen may be largely attributed to the presence of effectively-null results, and that the overall. The current study also cannot distinguish between heterogeneity (i.e., effect sizes that are different under different scenarios) and effect size scenario. However, it seems reasonable to except in that effect size heterogeneity should lead to symmetrical effect size differences, leading to a mean unbaised  estimate of the degree of effect size deflation that can be expected. 
+#### Future directions
+
+This analysis also shows that there is a degree of hetrogeneity between replicaiton projects and studies. However, this analysis did not examine whether the differences between effect sizes in various fields of behavioural sciences reserach. Future analyses of this growing body of replication studies may be able to examine these issues in more depth. Additionally, the approaches used here to estimating the effect of publication bias without the influence of the likely-or-effectivly null studies relies on dichotomising the evidence and discarding those that do not reach a given criterion. Here, we have attempted to mittegate this issue by using varied classification methods, however another appraoch could be to explicitly model the full data generation process using, for example, an appraoch similar to the Bayesian Mixture in the supplementary analysis of {Camerer, 2018 #967}. 
+
+### Conclusion 
+
+These results highlight some major issues in the psychological reserach literature. Looking at the raw average proportion decrease, -29%, or the results of the multilevel model, an r =`r modSumariesR$modelEstimate[1]` (95% CI [`r REModSum$CI95_Cor`]) average decrease, differences which would make a considerable difference in most research scenarios. Reserachers reading the literature should be aware of this large discrepancy, and plan their future experiemnts accordingly. Reserachers who wish to ensure that they do not perform experiments that are unlikely to detect real effects should be aware that their experiments are likely to be underpowered if they plan their sample sizes using the effect size reported in a previous experiment. As a heuristic, reserachers could follow the advice given in {Camerer, 2018 #967} and plan their experiments assuming that the original effect size is 50% of its reported value, a value matched by the more exetreme 95% confidence interval of the estimated ammount of effect size ecrease using the multilevel meta-analytic framework as a percentage of the average effect size seen in the orignal studies. 
+
+This study also provides preliminary evidence that a large ammount of this decrease my be accounted for by the presence of effect which are close to or effectivly nulls. Future reserach is necessary to quantify the degree of effect size attenuation expected given that a real effect was under examination experiment has been performed, as the current experiment suggests that the degree of attenuation is between  a negligibly small to quite large negative decrease (e.g., the confidence intervals of the multilevel meta-analyses extend from a small positive effect to an effect equal to 40% of the average origianl effect size). However, in the current sample it the degree of attenuation seen in studies after discounting 
+
+allData
+
 
 ## Supplementary material 
 ### Approximate bayes factors comparison
-A comparison of the results of the Bayes Factors as estiamted here and as reported in {Camerer, 2018 #967} shows that they do, for the most part, agree with each other, although there are some notable discrepancies. See Table SM1 for the Bayes factors reported in {Camerer, 2018 #967} and those reported in the current paper. The only large discrepancy included is seen in Balafoutas and Sutter (2012) in which the Bayes Factor reported in {Camerer, 2018 #967} was based on a hypothesis test of orderd binomial probabilities, making it difficult to appropraitely convert into a correlation coefficient, and likely accounting for the large difference. 
+
+A comparison of the results of the Bayes Factors as estiamted here and as reported in {Camerer, 2018 #967} shows that they agree with each other in approximate magnitude and direction for the most part, although there are some notable discrepancies. See Table SM1 for the Bayes factors reported in {Camerer, 2018 #967} and those reported in the current paper. The only large discrepancy included is seen in Balafoutas and Sutter (2012) in which the Bayes Factor reported in {Camerer, 2018 #967} was based on a hypothesis test of orderd binomial probabilities, making it difficult to appropraitely convert into a correlation coefficient, and likely accounting for the large difference. 
 
 Table SM`r tabSMN <- 1; tabSMN`.
-One-sided and ($BF_{plus1}$) and replication ($BF_{rep1}$) Bayes Factors for as reported in {Camerer, 2018 #967} and as estimated in the current paper, along with the reported correlation coefficients and sample sizes from the original and replication studies. 
+One-sided and ($BF_{plus1}$) and replication ($BF_{rep1}$) Bayes Factors for as reported in {Camerer, 2018 #967} and as estimated in the current paper, along with the reported correlation coefficients and sample sizes from the orig inal and replication studies. 
 
 `r kable(tableBayesFactors, digits = 2)`
 
@@ -370,10 +389,47 @@ kable(LOOStudyDFSum)
 ```
 
 
-# Table [LOO cross validation output].
+#### Table [LOO cross validation output].
 0th, 25th, 50th, 75th and 100th percentiles from leave one out cross validation for each multilevel model, exluding one replication project at a time, including only the sample indicated in "subsample". 
 
 ```{r}
 kable(LOOProjectDFSum)
 ```
 
+
+### Bayesian Mixture Model
+
+The bayesian mixture model is largely identical to that of Camera (see https://osf.io/xhj4d/ for thier detailed description of this model), except in that it allows for different replication projects to have different attenuation factors. 
+
+```{echo = T}
+model{
+# Mixture Model Priors:
+tau ~ dgamma(0.001,0.001) # vague prior on study precision
+phi ~ dbeta(1, 1) # flat prior on the true effect rate
+
+# prior on alpha, the effect size attenuation value 
+for(i in 1:nSource){
+alpha[i] ~ dunif(0,1) # flat prior on attenuation factor for each replication project
+}
+
+# prior on true effect size of original studies:
+for (i in 1:n){
+trueOrgEffect[i] ~ dnorm(0, 1) # Normal prior on the original effect size 
+}
+
+# Mixture Model Likelihood:
+# Study level
+for(i in 1:n){
+clust[i] ~ dbern(phi)# extract errors in variables:
+orgEffect[i] ~ dnorm(trueOrgEffect[i] , orgTau[i]) # 
+repEffect[i] ~ dnorm(trueRepEffect[i] ,   repTau[i]) 
+trueRepEffect[i] ~ dnorm(mu[i], tau)
+
+# if clust[i] = 0 then H0 is true; if clust[i] = 1 then H1 is true and
+# the observed replication effect is a function of the original effect:
+mu[i] <- (alpha[source[i]] * trueOrgEffect[i] * equals(clust[i], 1))
+# when clust[i] = 0, then mu[i] = 0;
+# when clust[i] = 1, then mu[i] = alpha * trueOrgEffect[i]
+  }
+}
+```

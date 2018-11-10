@@ -16,15 +16,15 @@ jagMod <- jags.model(file = 'Analysis/BMWMod.R',
                      n.chains=4)
 
 # Parameters to keep
-params <- c("clust",
-            "orgEffect_FT" ,
+params <- c("alpha",
+            "mu",
+            "phi",
+            "clust",
             "trueOrgEffect",
-            "repEffect_FT" ,
-            "trueRepEffect",
-            "alpha")
+            "trueRepEffect")
 
 # Running model and summarising 
-samples <- coda.samples(jagMod,params,n.iter = 100000)
+samples <- coda.samples(jagMod,params,n.iter = 10000)
 samplesSum <- summary(samples)
 # Highest prob density interval
 HPDinterval(samples)
@@ -41,29 +41,28 @@ View(samplesSum)
 ### additional model - it should also account for random effects for both study and for source
 
 jagMod_additional <- jags.model(file = 'Analysis/BMWMod_additional.R', 
-                     data = list(orgEffect_FT = jagData$fis.o, n = length(jagData$fis.o), repTau = 1/(jagData$seFish.r^2), orgTau = 1/(jagData$seFish.o^2), repEffect_FT = jagData$fis.r,
+                     data = list(orgEffect = jagData$fis.o, n = length(jagData$fis.o), repTau = 1/(jagData$seFish.r^2), orgTau = 1/(jagData$seFish.o^2), repEffect = jagData$fis.r,
                                  nSource = length(unique(jagData$source)), #nStudy = length(unique(jagData$authorsTitle.o)), 
                                  #study = as.factor(as.character(jagData$authorsTitle.o)), 
                                  source = as.factor(as.character(jagData$source))),
                                  n.chains=4)
 
-
 # Parameters to keep
-params <- c("mu_source_rep","mu_source_ori",
+params <- c("mu",
+            "phi",
   "clust",
-  "orgEffect_FT" ,
+  "orgEffect" ,
   "trueOrgEffect",
-  "repEffect_FT" ,
+  "repEffect" ,
   "trueRepEffect",
   "alpha")
 
-
 # Running model and summarising 
-samples2 <- coda.samples(jagMod_additional,params,n.iter = 100000)
+samples2 <- coda.samples(jagMod_additional,params,n.iter = 10000)
 samples2Sum<-summary(samples2)
 samples2Sum
-mean(samples2Sum$statistics[2:305,2])
-plot(samples2)
+mean(samples2Sum$statistics[9:313,2])
+# plot(samples2)
 # View(samples2Sum)
 
 HPDinterval(samples2)
@@ -73,6 +72,7 @@ sums <- do.call(cbind.data.frame, samples2Sum)
 statsMeans <- sums$statistics.Mean
 # par(mar = c(0, 0, 0, 0))
 alpha <- statsMeans[grepl(pattern = "alpha", rownames(sums))]
+alpha <- statsMeans[grepl(pattern = "phi", rownames(sums))]
 jagData$probRealEffect <- statsMeans[grepl(pattern = "clust", rownames(sums))]
 jagData$trueRepEffectModel <- statsMeans[grepl(pattern = "trueRepEffect", rownames(sums))]
 jagData$trueOrgEffectModel <- statsMeans[grepl(pattern = "trueOrgEffect", rownames(sums))]
@@ -85,3 +85,4 @@ plot(trueOrgEffectModel ~ fis.o, data = jagData)
 plot(trueRepEffectModel ~ fis.r, data = jagData)
 
 sum((jagData$probRealEffect > .5)/nrow(jagData))
+

@@ -9,7 +9,7 @@ rstan_options(auto_write = TRUE)
 # study as factor
 allData$study <- as.factor(allData$authorsTitle.o)
 # Setting up same MLM as the main analysis but in bayesian framework
-mod <- brm(fisherZDiff | se(seDifference.ro) ~ 1 + (1|source/study), data = allData[!is.na(allData$seDifference.ro) & !is.na(allData$fisherZDiff),], cores = 4, 
+mod <- brm(fisherZDiff | se(seDifference.ro) ~ 1 + (1|source/study), data = allData[!is.na(allData$seDifference.ro) & !is.na(allData$fisherZDiff),], cores = parallel::detectCores(), 
            control =list(adapt_delta = .999, max_treedepth = 30), warmup = 1000, iter = 3000)
 summary(mod)
 REsMod <- ranef(mod)
@@ -18,16 +18,14 @@ pairs(mod)
 
 stancode(mod)
  
-modFixed <- brm(fisherZDiff | se(seDifference.ro) ~ 1 + source + (1|study), data = allData[!is.na(allData$seDifference.ro) & !is.na(allData$fisherZDiff),], cores = 4, 
+modFixed <- brm(fisherZDiff | se(seDifference.ro) ~ 1 + source + (1|study), data = allData[!is.na(allData$seDifference.ro) & !is.na(allData$fisherZDiff),], cores = parallel::detectCores(), 
            control =list(adapt_delta = .999, max_treedepth = 30), warmup = 500, iter = 1500)
 summary(modFixed)
 
 
 
-modSimple <- brm(fisherZDiff | se(seDifference.ro) ~ 1 + (1|source/study), data = allData[!is.na(allData$seDifference.ro) & !is.na(allData$fisherZDiff),], cores = 4, 
+modSimple <- brm(fisherZDiff | se(seDifference.ro) ~ 1 + (1|source/study), data = allData[!is.na(allData$seDifference.ro) & !is.na(allData$fisherZDiff),], cores = parallel::detectCores(), 
            control =list(adapt_delta = .95, max_treedepth = 15), iter = 1000)
-stanCode <-stancode(mod)
-
 
 
 
