@@ -27,7 +27,7 @@ params <- c("alpha",
 samples <- coda.samples(jagMod,params,n.iter = 10000)
 samplesSum <- summary(samples)
 # Highest prob density interval
-HPDinterval(samples)
+intervalSamples <- HPDinterval(samples)
 # plot(samples)
 # Traceplot - be warned, this takes forever unless you are only looking at one parameter at a time - I suggest alpha, the most important (assuming all else is working)
 # traceplot(samples)
