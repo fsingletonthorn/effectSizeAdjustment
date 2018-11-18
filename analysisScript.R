@@ -3,7 +3,7 @@ source(file = "R code effect size estimation/appendixCodeFunctionsJeffreys.R")
 source(file = "Analysis/Wilson score interval.R")
 # source(file = 'Data/data_collection_cleaning.R') # this sources the data
 library(readr)
-library(tidyr)
+library(MASS)
 library(tidyverse)
 library(ggplot2)
 library(scales)
@@ -13,22 +13,78 @@ library(RColorBrewer)
 library(reshape2)
 source("https://gist.githubusercontent.com/benmarwick/2a1bb0133ff568cbe28d/raw/fb53bd97121f7f9ce947837ef1a4c65a73bffb3f/geom_flat_violin.R")
 
+# Setting up summary functions:
+
 sumStats <- function(x, na.rm = T){
 return(list(mean = mean(x, na.rm = na.rm), sd = sd(x, na.rm = na.rm), median = median(x, na.rm = na.rm) , quantile = quantile(x, na.rm = na.rm), n = sum(!is.na(x)), nNA = sum(is.na(x))))
 }
 
-tableAverageDecrease <- allData %>%
-  group_by(source) %>%
-  dplyr::summarise(mean=mean(fisherZDiff, na.rm=T), sd=sd(fisherZDiff, na.rm=T))
+# Model output summary function plus converting results into an understandable format function. 
+modelOutputSummary <- function(REMod) {
+  zDecrease <- as.numeric(REMod[1])
+  zDecreaseCILB <- as.numeric(REMod[6])
+  zDecreaseCIUB <- as.numeric(REMod[7])
+  rDecrease <- ztor(as.numeric(REMod[1]))
+  rDecreaseCILB <- ztor(as.numeric(REMod[6]))
+  rDecreaseCIUB <- ztor(as.numeric(REMod[7]))
+  cDcreaseCIs <- c(rDecreaseCILB, rDecreaseCIUB)
+  # And in cohen's d: 
+  dDecrease <- (2*rDecrease) / sqrt(1-rDecrease^2)
+  dDecreaseCIs <- (2*cDcreaseCIs) / sqrt(1-cDcreaseCIs^2)
+  randEffREModSource <- ranef(REMod)[1]
+  list(estimate_Z = zDecrease, CI95_Z = c(zDecreaseCILB, zDecreaseCIUB) , 
+       estimate_Cor = rDecrease, CI95_Cor = c(rDecreaseCILB, rDecreaseCIUB), 
+       estimate_D = dDecrease, CI95_d = dDecreaseCIs, 
+       sourceEstimate = randEffREModSource)
+}
 
-# Could approximate SEs using: # Not valid for F stats w/ df1 > 2 / chi square tests
+niceMLMESum <- function(REMod) {
+  data_frame(Estimate = c(REMod$b, rep(NA, 3)), "95% CI LB" = c(REMod$ci.lb, rep(NA, 3)), "95% CI UB" = c(REMod$ci.ub, rep(NA, 3)), SE = c(REMod$se,  rep(NA, 3)), p = c(ifelse(REMod$pval<.001, "< .001", REMod$pval),  rep(NA, 3)), 
+             "Random effects" = c(NA, paste0("Project variance = ", round(REMod$sigma2[1], 3), ", n = ", REMod$s.nlevels[1]), paste0("Article variance = ", round(REMod$sigma2[2], 3), ", n = ", REMod$s.nlevels[2]),  paste0("QE(",REMod$k-1, ") = ", round(REMod$QE, 2),  ", p ", ifelse(REMod$QEp <.001, "< .001", paste("=" , round(REMod$QEp, 2))))))
+}
+
+
+#### Default bayes factors ####
+# Setting up functions for BFs for apply function 
+# From Wagenmakers, E. J., Verhagen, J., & Ly, A. (2016). How to quantify the evidence for the absence of a correlation. Behav Res Methods, 48(2), 413-426. doi:10.3758/s13428-015-0593-0
+
+bfapply10 <- function(x){
+  if(sum(is.na(x)>0)) {
+    return(NA)
+  }
+  else{
+    bf10JeffreysIntegrate( r = as.numeric(x[1]),n = as.numeric(x[2]))
+  }
+}
+
+bfapplyplus0 <- function(x){
+  if(sum(is.na(x)>0)) {
+    return(NA)
+  }
+  else{
+    bfPlus0JeffreysIntegrate( r = as.numeric(x[1]),n = as.numeric(x[2]))
+  }
+}
+
+bfapplyRep0 <- function(x){
+  if(sum(is.na(x))>0) {
+    return(NA)
+  }
+  else{
+    tryCatch(repBfR0(rOri=as.numeric(x[1]), nOri = as.numeric(x[2]),  rRep = as.numeric(x[3]), nRep = as.numeric(x[4])), error=function(err) NA)
+  }
+}
+
+
+
+
+# Could approximate SEs using: # Not valid for F stats w/ df1 > 2 / chi square tests, used as an approximation where necessary
 allData$seFishAprox.r  <- ifelse( is.na(allData$seFish.r ), sqrt(1/(allData$n.r-3)), allData$seFish.r)
 allData$seFishAprox.o  <- ifelse( is.na(allData$seFish.o ), sqrt(1/(allData$n.o-3)), allData$seFish.o)
 
 # first off simple calculation of the proportion of studies conducted per published result given a significnat main effect
 # How to get to .9 or .75 of the literature being sig, assuming all studies are statistically significant
 studiesPerPublishedPaper <- paste(round(.75/.44,2), "to", round(.9/.44,2))
-
 
 # converting to cohen's d
 effsizes.r <- compute.es::res(allData$correlation.r, n = allData$n.r, verbose = F)
@@ -60,33 +116,6 @@ summaryD.o <-   sumStats(allData$cohensD.o, na.rm = T)
 #### Default bayes factors ####
 # Setting up functions for BFs for apply function 
 # From Wagenmakers, E. J., Verhagen, J., & Ly, A. (2016). How to quantify the evidence for the absence of a correlation. Behav Res Methods, 48(2), 413-426. doi:10.3758/s13428-015-0593-0
-
-bfapply10 <- function(x){
-  if(sum(is.na(x)>0)) {
-    return(NA)
-    }
-     else{
-    bf10JeffreysIntegrate( r = as.numeric(x[1]),n = as.numeric(x[2]))
-     }
-  }
-
-bfapplyplus0 <- function(x){
-  if(sum(is.na(x)>0)) {
-    return(NA)
-  }
-  else{
-    bfPlus0JeffreysIntegrate( r = as.numeric(x[1]),n = as.numeric(x[2]))
-  }
-}
-
-bfapplyRep0 <- function(x){
-  if(sum(is.na(x))>0) {
-    return(NA)
-  }
-  else{
-    tryCatch(repBfR0(rOri=as.numeric(x[1]), nOri = as.numeric(x[2]),  rRep = as.numeric(x[3]), nRep = as.numeric(x[4])), error=function(err) NA)
-  }
-}
 
 # Two sided default Bayes factor
 allData$bf10 <- apply(data.frame(allData$correlation.r, allData$n.r), MARGIN = 1, FUN = bfapply10) 
@@ -310,11 +339,8 @@ plotBFRep0Greater3 <- ggplot(allData[allData$bfRep0>3 & !is.na(allData$bfRep0>3)
           colour = guide_legend(title = "Replication projects"), override.aes = list(alpha = 1), order = 1) +
   xlab("Original correlation")+ ylab("Replication correlation") + scale_size(trans = "log", breaks = c(150, 3000, 60000))
 
-
-
 ### Descriptives
 nNotSig.r <- sum(allData$significant.r)
-
 
 ######################################
 ###### Multilevel meta-analysis ######
@@ -324,33 +350,18 @@ nNotSig.r <- sum(allData$significant.r)
 REMod <- rma.mv(yi = allData$fisherZDiff, V = allData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = allData)
  # cdREMOD <- cooks.distance(REMod, parallel = "snow", ncpus = parallel::detectCores())
 
-# Empirical Bayes estimates for random Effects 
 
+# Normalising replication p values for inclusion in the model
+# bestNormalize(allData$cleanedpVal.r) - selected normalising transform, this version used as it is faster:
+temp <- orderNorm(allData$cleanedpVal.r, na.rm = T)
+allData$normalisedpVal.r <- temp[['x.t']]
+
+REMod.p.val <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = normalisedpVal.r, random =  ~ 1|source/authorsTitle.o,  data = allData)
+REMod.p.val <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = normalisedpVal.r, random =  ~ 1|source/authorsTitle.o,  data = allData)
+
+# Empirical Bayes estimates for random Effects 
 BLUPsSource <- ranef(REMod)[1]
 
-# Model output summary function plus converting results into an understandable format function. 
-modelOutputSummary <- function(REMod) {
-zDecrease <- as.numeric(REMod[1])
-zDecreaseCILB <- as.numeric(REMod[6])
-zDecreaseCIUB <- as.numeric(REMod[7])
-rDecrease <- ztor(as.numeric(REMod[1]))
-rDecreaseCILB <- ztor(as.numeric(REMod[6]))
-rDecreaseCIUB <- ztor(as.numeric(REMod[7]))
-cDcreaseCIs <- c(rDecreaseCILB, rDecreaseCIUB)
-# And in cohen's d: 
-dDecrease <- (2*rDecrease) / sqrt(1-rDecrease^2)
-dDecreaseCIs <- (2*cDcreaseCIs) / sqrt(1-cDcreaseCIs^2)
-randEffREModSource <- ranef(REMod)[1]
-list(estimate_Z = zDecrease, CI95_Z = c(zDecreaseCILB, zDecreaseCIUB) , 
-     estimate_Cor = rDecrease, CI95_Cor = c(rDecreaseCILB, rDecreaseCIUB), 
-     estimate_D = dDecrease, CI95_d = dDecreaseCIs, 
-     sourceEstimate = randEffREModSource)
-}
-
-niceMLMESum <- function(REMod) {
-data_frame(Estimate = c(REMod$b, rep(NA, 3)), "95% CI LB" = c(REMod$ci.lb, rep(NA, 3)), "95% CI UB" = c(REMod$ci.ub, rep(NA, 3)), SE = c(REMod$se,  rep(NA, 3)), p = c(ifelse(REMod$pval<.001, "< .001", REMod$pval),  rep(NA, 3)), 
-           "Random effects" = c(NA, paste0("Project variance = ", round(REMod$sigma2[1], 3), ", n = ", REMod$s.nlevels[1]), paste0("Article variance = ", round(REMod$sigma2[2], 3), ", n = ", REMod$s.nlevels[2]),  paste0("QE(",REMod$k-1, ") = ", round(REMod$QE, 2),  ", p ", ifelse(REMod$QEp <.001, "< .001", paste("=" , round(REMod$QEp, 2))))))
-}
 
 niceREModSum<- niceMLMESum(REMod)
 
@@ -409,6 +420,12 @@ niceModelSums <- lapply(X = list("All Data" = REMod, "Only Signficant replicatio
   
 
 tableAllEstimates <- merge.data.frame(tableReductions, modSumaries, by = "row.names", sort = F)
+
+
+tableAverageDecrease <- allData %>%
+  group_by(source) %>%
+  dplyr::summarise(mean=mean(fisherZDiff, na.rm=T), sd=sd(fisherZDiff, na.rm=T))
+
 
 
 # estimating the probability of obtaining results as extreme given that x studies were removed randomly
@@ -697,4 +714,37 @@ simulationAccuracyByTypeDF$Accuracy <- t(simulationAccuracyByType[-str_which(nam
 simulationAccuracyByTypeDF$`Accuracy SD` <- t(simulationAccuracyByType[str_which(names(simulationAccuracyByType), 'SD')])
 nSimsimulationAccuracyByTypeDF <- simulationAccuracyByType[(names(simulationAccuracyByType) == 'n()')]
 
-                                                           
+
+## more plots - catapillar plot of correlation differences 
+plotDat <- allData[!is.na(allData$fisherZDiff),]
+plotDat <- plotDat[order(plotDat$correlationDifference.ro),]
+names(plotDat)[names(plotDat)=="source"]  <- "Replication Project"
+
+catPlot <- ggplot(plotDat, aes(1:nrow(plotDat), 
+                               correlationDifference.ro, 
+                               ymin = correlationDifference.ro + ztor(1.96*seDifference.ro), 
+                               ymax = correlationDifference.ro -  ztor(1.96*seDifference.ro), 
+                               color =source, fill = source)) + 
+  geom_point(na.rm = T) + geom_errorbar(na.rm = T) +
+  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + 
+  xlab(NULL) + ylab("Correlation difference") + 
+  theme(axis.title.x=element_blank(),                                            
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+
+                                      
+# Logistic regression etc. 
+logisticoutcome <- glm(allData$significantSameDirection.r ~ allData$cleanedpVal.o + allData$n.o + allData$fis.o + allData$source, family = binomial(link = "logit"))
+
+summary(logisticoutcome)
+
+# logisticoutcome <- glm(allData$significantSameDirection.r ~ temp[["x.t"]], family = binomial(link = "logit"))
+
+fitted.results <- predict(logisticoutcome, type='response')
+
+fitted.results <- ifelse(fitted.results > 0.5,1,0)
+
+misClasificError <- mean(fitted.results != logisticoutcome$y)
+
+print(paste('Accuracy',1-misClasificError))
+                     

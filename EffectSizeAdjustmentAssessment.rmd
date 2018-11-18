@@ -164,7 +164,7 @@ See supplemtary materials [all exclusion crtiera output] for full model output a
 
 
 ##### Table [all model output]
-The number of studies included in each model, and the estimated correlation coefficent decrease from each model. Models were estiamted using Fisher Z transformed correlation coefficents and back transformed for interpretability. Percentage attenuations give the percentage attenuation this effect size difference would as a percentage fo the the mean original effect size.
+The number of studies included in each model, and the estimated correlation coefficent decrease from each model. Models were estiamted using Fisher Z transformed correlation coefficents and back transformed for interpretability. Percentage attenuations give the percentage attenuation this effect size difference would as a percentage fo the the mean original effect size. 
 
 ```{r echo=F}
 rowNames <- row.names(modSumariesR) %>% 
@@ -177,7 +177,28 @@ kable(data.frame(rowNames, modSumariesR), col.names = c("Inclusion rule", str_re
 ```
 
 
+### Mixture model results
 
+
+
+However, allowing for the attenuation to differ between studies, the overall parameter of attenuation (i.e., attenuation across studies), this value is not precisely estimated enough to make definite claims about the overall reproducibility of behavioural research with a HDI of . Given that there are relativly few large scale replication studies,
+
+
+as well as the idea that this is a random selection from the population of possible replication studies being implausible. 
+
+
+### Add in double arcsin transformed p value estimated MLM 
+Plot differences in correlation and p value ~ 
+
+
+### 
+ADD catapillar plot for effect size difference ordered by size and colour coded by study. Colour code / etc. by replication probability 
+
+
+
+```{r}
+plot(allData$pVal.r, allData$correlationDifference.ro, xlim=c(0,1))
+```
 
 ## Discussion 
 Overall, there was an average decrease in correlation coefficent terms of `r meanDecrease`, approximately equal to a Cohen's d difference of `r (2*meanDecrease) / sqrt(1-meanDecrease^2)`. On average, replicaiton sample sizes were 30% smaller in replicaiton studies than they were in original studies, a considerable decrease. In looking at the results of the multilevel meta-analysis including all data, there is an etimated `r REModSum$estimate_Cor` correlation coefficent decrease (95% CI [`r REModSum$CI95_Cor`]), equivalent to a `r REModSum$estimate_D` point Cohen's d decrease (95% CI [`r REModSum$CI95_d`]), or an estimated decreaes of `r (REModSum$estimate_Z/mean(allData$fis.o, na.rm = T))*100`  (95% CI [`r ((REModSum$CI95_Z/mean(allData$fis.o, na.rm = T))*100)[1]`%, `r ((REModSum$CI95_Z/mean(allData$fis.o, na.rm = T))*100)[2]`%]) of the mean effect size in the original studies (a Fisher Z equal to r = `r ztor(mean(allData$fis.o, na.rm = T))`). 

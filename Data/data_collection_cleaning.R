@@ -114,7 +114,7 @@ data <- data[-which( data$authorsTitle.o=="PW Eastwick, EJ Finkel-Sex difference
                        data$authorsTitle.o=='KA Ranganath, BA Nosek-Implicit attitude generalization occurs immediately; explicit attitude generalization takes time'),]
 
 # pvalue for missing data replication study 
-data$pVal.r[data$pVal.r=="2.2 x 10-16"] <- 2.2 * 10^16
+data$pVal.r[data$pVal.r=="2.2 x 10-16"] <- 2.2 * 10^-16
 data$pVal.r[data$pVal.r=="prep > .99"] <- "< .0005" # estimated using psych::p.rep(.0005)
 data$pVal.r[data$pVal.r=="0"] <- "< .001"
 data$pVal.r[data$pVal.r=="X"] <- data$pValFish.r[data$pVal.r=="X"] # this one is a correlation, this p value should be accurate
@@ -125,6 +125,7 @@ data$pVal.r[data$pVal.r=="X"] <- data$pValFish.r[data$pVal.r=="X"] # this one is
 data$source <- as.character(projectNames[1,1])
   #"OSC (2015)"
 data$abrev <- "OSCRPP"
+
 ########## End RPP data recollection ########
 
 # Removing everything apart from data from WS 
@@ -593,4 +594,7 @@ projectNamesSingleLine <- data_frame(unique(allData$source), c("OSC (2015)",
                                                                "Soto (2019), Personality Psychology",
                                                                "Klein et al. (2018), Many Labs 2"))
 
+# cleaning replication p values - less than .05 (etc. are set to be just below that value)
 
+allData$cleanedpVal.r <- ifelse(is.na(as.numeric(allData$pVal.r)), as.numeric(str_remove(allData$pVal.r[is.na(as.numeric(allData$pVal.r))], "<")), as.numeric(allData$pVal.r)-.Machine$double.eps)
+allData$cleanedpVal.o <- ifelse(is.na(as.numeric(allData$pVal.o)), as.numeric(str_remove(allData$pVal.o[is.na(as.numeric(allData$pVal.o))], "<")), as.numeric(allData$pVal.o)-.Machine$double.eps)
