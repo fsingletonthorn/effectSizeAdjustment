@@ -354,10 +354,14 @@ REMod <- rma.mv(yi = allData$fisherZDiff, V = allData$seDifference.ro^2, random 
 # Normalising replication p values for inclusion in the model
 # bestNormalize(allData$cleanedpVal.r) - selected normalising transform, this version used as it is faster:
 temp <- orderNorm(allData$cleanedpVal.r, na.rm = T)
-allData$normalisedpVal.r <- temp[['x.t']]
+allData$normalisedpVal.r  <- transf.arcsin(allData$cleanedpVal.r)
 
-REMod.p.val <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = normalisedpVal.r, random =  ~ 1|source/authorsTitle.o,  data = allData)
-REMod.p.val <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = normalisedpVal.r, random =  ~ 1|source/authorsTitle.o,  data = allData)
+
+hist(temp$x.t)
+
+REMod.p.val.tukey <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = normalisedpVal.r, random =  ~ 1|source/authorsTitle.o,  data = allData)
+REMod.p.val.norm <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = temp$x.t, random =  ~ 1|source/authorsTitle.o,  data = allData)
+REMod.p.val.cleaned <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = cleanedpVal.r, random =  ~ 1|source/authorsTitle.o,  data = allData)
 
 # Empirical Bayes estimates for random Effects 
 BLUPsSource <- ranef(REMod)[1]

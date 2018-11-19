@@ -9,7 +9,7 @@ trueOrgEffect[i] ~ dnorm(0, 1)
 }
 # Mixture Model Likelihood:
 for(i in 1:n){
-clust[i] ~ dbern(phi)# extract errors in variables (FT stands for Fisher-transformed):
+clust[i] ~ dbern(phi)
 orgEffect_FT[i] ~ dnorm(trueOrgEffect[i], orgTau[i])
 repEffect_FT[i] ~ dnorm(trueRepEffect[i], repTau[i])
 trueRepEffect[i] ~ dnorm(mu[i], tau)
