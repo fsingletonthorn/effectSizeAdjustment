@@ -90,7 +90,7 @@ Accuracy (i.e., the proportion of studies which were accurately excluded as true
 
 #### Bayesian mixture model
 
-A Bayesian mixture model adapted from {Camerer, 2018 #967} was used to estimate the relative effect sizes of the true positives. This model assumes that the each observed replication effect size  comes from one of two components, either from the null hypothesis or from the alternative hypothesis. If the replication effect size is drawn from the null hypothesis, it is modeled to have come from a normal distribution with a mean of 0 and a standard deviation equal to the standard error of the replication study (estimated here as $\sqrt{\frac{1}{n-3}}$, n being the replication sample size). If the replication effect size comes from the alternative hypothesis, it is assumed to have been drawn from a normal distribution with a standard deviation equal to the standard error of the replication study, and a mean equal to the true sample size. In this case, the true sample size is equal to the original study's estimated true effect size attenuated by an "attenuation factor", equal to some value between zero and one and assumed to be equal across all studies. The parameter of interest in this model is the "attenuation factor" (called a deflation factor in {Camerer, 2018 #967}), the degree to which effect sizes are attenuated between original and replication study, as well as the overall rate at which studies are reported assigned to have come from the null hypothesis. This model was estimated using four Markov chains from each of which 100,000 draws were taken (exlcuding a 11,000 draw burn-in period). Trace and density plots for the discussed paramters were assessed and the model appeared to have succesfully converged.
+A Bayesian mixture model adapted from {Camerer, 2018 #967} was used to estimate the relative effect sizes of the true positives. This model assumes that the each observed replication effect size  comes from one of two components, either from the null hypothesis or from the alternative hypothesis. If the replication effect size is drawn from the null hypothesis, it is modeled to have come from a normal distribution with a mean of 0 and a standard deviation equal to the standard error of the replication study (estimated here as $\sqrt{\frac{1}{n-3}}$, n being the replication sample size). If the replication effect size comes from the alternative hypothesis, it is assumed to have been drawn from a normal distribution with a standard deviation equal to the standard error of the replication study, and a mean equal to the true effect size. In this case, the true effect size is sampled from a normal distribution with a mean equal to the original study's estimated true effect size attenuated by an "attenuation factor", equal to some value between zero and one and assumed to be equal across all studies. The parameter of interest in this model is the "attenuation factor" (called a deflation factor in {Camerer, 2018 #967}), the degree to which effect sizes are attenuated between original and replication study, as well as the overall rate at which studies are reported assigned to have come from the null hypothesis. This model was estimated using four Markov chains from each of which 100,000 draws were taken (exlcuding a 11,000 draw burn-in period). Trace and density plots for the discussed paramters were assessed and the model appeared to have succesfully converged.
 
 This analysis was performed in JAGS version 4.3.0 {Depaoli, 2016 #1010} using the rjags interface (version 4.8.0; {Plummer, 2018 #1011}). See supplementary materials ["mixture model"] for model code and further analysis details, along with the results of a two adaptations of this model which add a third category of effects which do not decrease as well as another which allowed the alpha rate to differ between replication projects. 
 
@@ -429,10 +429,11 @@ kable(LOOProjectDFSum)
 
 ### Bayesian Mixture Model
 
-Three versions of the Bayesian mixture model were developed. The main mixture model presented in text presents the model developed by Camerer et al,. (2018; see https://osf.io/xhj4d/ for their detailed description of this model). Two extensions of this model were developed and tested. All priors are chosen to be uninformative. The first extension allowed for the attenuation factor to differ by effect size, and the second added a third component, a component in which there was no effect size attenuation from the orignal to replication effect size. 
+Three versions of the Bayesian mixture model were developed. The mixture model results presented in text presents the model developed by Camerer et al,. (2018; see https://osf.io/xhj4d/ for their detailed description of this model). However, there are reasonalbe alterations to this model that can provide further insight into this issue. 
 
-First, this is the reported model from {Camerer, 2018 #967}. This model has the issue of constraining all effect size attenuation factor factors to a single value, a restrictive assumption in the current case when different populations are being sampled from. It may be reasonable to assume that the degree of replication effect size attenuation differs by replication project. {Camerer, 2018 #967}'s model was adapted to allowed the amount of effect size attenuation to vary by replication project, as it is expected that these different projects will have different amounts of effect size attenuation, and as the differences are interesting in of themselves. The expanded model includes an alpha parameter, an effect size attenuation factor, for each included study. See Boxes SM1 to 3 for the JAGS code used in each of these analyses.
+Two extensions of this model were developed and tested. All priors are chosen to be uninformative. The first extension allowed for the attenuation factor to differ by effect size, and the second added a third component, a component in which there was no effect size attenuation from the orignal to replication effect size. 
 
+First, this is the reported model from {Camerer, 2018 #967}. 
 
 Box SM1. The original model reported in {Camerer, 2018 #967} and reported on in the main text of the current article. 
 
@@ -462,41 +463,80 @@ mu[i] <- alpha * trueOrgEffect[i] * equals(clust[i], 1)
 ```
 
 
-Box SM2. The altered model, estimating alpha independently for each replication project. 
+This model has a few unideal characteristics. First off, it allows for the alternative hypothesis to be estimated as 0 or negative while allowing assigning the study to the alternative hypothesis. This occours because it follows {Matzke, 2017 #1012} in modelling the observed effect size as a two-step process, ... 
+
+Although this may be reasonable in that the true effect size of the effect may not be the true effect size of a particular study and analysis set up , this poses an interpretative problem in that the model
+
+This model has the issue of constraining all effect size attenuation factor factors to a single value, a restrictive assumption in the current case when different populations are being sampled from. 
+
+The major issue is that it estimatesa true replication effect size seperatly from 
+
+It may be reasonable to assume that the degree of replication effect size attenuation differs by replication project. {Camerer, 2018 #967}'s model was adapted to allowed the amount of effect size attenuation to vary by replication project, as it is expected that these different projects will have different amounts of effect size attenuation, and as the differences are interesting in of themselves. The expanded model includes an alpha parameter, an effect size attenuation factor, for each included study. The replicaiton rate of each study is assumed to be drawn from a normal distribtuion with a mean of $\alpha_{meta}$, and a standard deviation of 
+See Boxes SM1 to 3 for the JAGS code used in each of these analyses.
+
+
+
+Box SM2. The altered model, estimating alpha independently for each replication project, assuming they are drawn from a normal distribtuion with center alphaMeta and a precision of metaTau.  
 
 ```{}
 model{
-# Mixture Model Priors:
-tau ~ dgamma(0.001,0.001) # vague prior on study precision
-phi ~ dbeta(1, 1) # flat prior on the true effect rate
+  # Mixture Model Priors:
+  tau ~ dgamma(0.001,0.001) # vague prior on study precision
+  phi ~ ddirch(mPriorProb) # Flat prior on the model priors
+  mPriorProb[1] <- 1
+  mPriorProb[2] <- 1
+  mPriorProb[3] <- 1
+    
+    alpha ~ dunif(0,1) # flat prior on attenuation factor for each replication project
+  
+  # prior on true effect size of original studies:
+  for (i in 1:n){
+    trueOrgEffect[i] ~ dnorm(0, 1) # Normal prior on the original effect size 
+  }
+  
+  # Mixture Model Likelihood:
+  # Study level
+  for(i in 1:n){
+    clust[i] ~ dcat(phi)# extract errors in variables:
+    orgEffect[i] ~ dnorm(trueOrgEffect[i] , orgTau[i]) # 
+    
+    # if clust[i] = 0 then H0 is true; if clust[i] = 1 then the true effect size is a function of the original effect size (times alpha),
+    # if phi == 2 the the effect is exactly equal to the original effect 
+    # the observed replication effect is a function of the original effect:
+    mu[i] <- ifelse(clust[i] == 2,  (alpha * trueOrgEffect[i]), ifelse(clust[i] == 3, trueOrgEffect[i], 0))
+    H1original[i] <-  ifelse(clust[i] == 3, 1, 0)  
+    H1decrease[i] <-  ifelse(clust[i] == 2, 1, 0)
+    H0True[i] <- ifelse(clust[i] == 1, 1, 0)
 
-# prior on alpha, the effect size attenuation value 
-for(i in 1:nSource){
-alpha[i] ~ dunif(0,1) # flat prior on attenuation factor for each replication project
-}
-
-# prior on true effect size of original studies:
-for (i in 1:n){
-trueOrgEffect[i] ~ dnorm(0, 1) # Normal prior on the original effect size 
-}
-
-# Mixture Model Likelihood:
-for(i in 1:n){
-clust[i] ~ dbern(phi)
-orgEffect[i] ~ dnorm(trueOrgEffect[i] , orgTau[i]) # 
-repEffect[i] ~ dnorm(trueRepEffect[i] ,   repTau[i]) 
-trueRepEffect[i] ~ dnorm(mu[i], tau)
-
-# if clust[i] = 0 then H0 is true; if clust[i] = 1 then H1 is true and
-# the observed replication effect is a function of the original effect:
-mu[i] <- (alpha[source[i]] * trueOrgEffect[i] * equals(clust[i], 1))
-# when clust[i] = 0, then mu[i] = 0;
-# when clust[i] = 1, then mu[i] = alpha * trueOrgEffect[i]
+    trueRepEffect[i] ~ dnorm(mu[i], tau)    
+    repEffect[i] ~ dnorm(trueRepEffect[i] ,   repTau[i]) 
+    
   }
 }
 ```
 
-This later model allows for all of the replication effect sizes attenuation factors to differ by replication project. 
+This model estimates 
+
+
+```{r}
+mixtureModel3CatPlot
+```
+
+Figure SM`r figSMN <- figSMN+1; figSMN`. Scatter plot of replication effect sizes (in correlation coefficients) plotted against original effects with the estimated most probible category for each replication study. 
+
+It is noteworthy that in this model, almost no studies are grouped
+
+
+
+
+
+
+
+
+
+
+
+However, doing this does not adequatly specify ... This leads to extremely large estaimtes of the standard devation of alpha, i.e., it estiamtes that there is an extremely large amount of effect size decrease (a
 
 
 

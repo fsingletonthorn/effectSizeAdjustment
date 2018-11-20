@@ -749,7 +749,7 @@ jagData <- read_csv("Data/mixtureModelOutput/jagData.csv")
 
 
 # Ploting the results
-mixtureModelPlot <- ggplot(jagData, aes(x = correlation.o, y = correlation.r,  color = probRealEffect, size = n.r)) + # scale_shape_manual(values =c(1, 21)) + scale_fill_manual(values = c('#999999','#56B4E9')) +
+mixtureModelPlot <- ggplot(jagData, aes(x = correlation.o, y = correlation.r,  color = probRealEffect, size = n.r)) +
   geom_abline( slope = 1, intercept = 0) + geom_point(alpha = .8, na.rm = T)+ theme_classic() +
   guides(color = guide_legend(title = "Posterior\nassignment\nrate"),
          shape = guide_legend(title = "True effect size < 0.1"),
@@ -757,5 +757,20 @@ mixtureModelPlot <- ggplot(jagData, aes(x = correlation.o, y = correlation.r,  c
                              values= trans_format("identity", function(x) round(exp(x),0)), order = 2)) +
   scale_size(trans = "log", breaks = c(150, 3000, 60000)) + geom_point(colour = "black", na.rm = T, size = .5, shape = 3) +
   xlab("Original correlation")+ ylab("Replication correlation") + ylim(c(-.5, 1))+ xlim(c(-0, 1)) 
+
+
+
+# plot of the mixture model with 3 categories
+mixtureModel3CatPlot <- ggplot(jagData, aes(x = correlation.o, y = correlation.r, colour = mostLikelyClass, alpha = probabilityMostLikelyClass, size = n.r)) + # scale_shape_manual(values =c(1, 21)) + scale_fill_manual(values = c('#999999','#56B4E9')) +
+  geom_abline( slope = 1, intercept = 0) + geom_point(alpha = .8, na.rm = T)+ theme_classic() +
+  guides(color = guide_legend(title = "Most\nassigned\ncategory"),
+         shape = guide_legend(title = "True effect size < 0.1", value = c(1,25,3)),
+         size = guide_legend(title = "Replication\nSample size",
+                             values= trans_format("identity", function(x) round(exp(x),0)), order = 2)) +
+  scale_size(trans = "log", breaks = c(150, 3000, 60000)) + geom_point(colour = "black", na.rm = T, size = .5, shape = 3) +
+  xlab("Original correlation")+ ylab("Replication correlation") + ylim(c(-.5, 1))+ xlim(c(-0, 1))  + 
+   ochRe::scale_colour_ochre(palette = "tasmania") 
+  
+ 
 
 

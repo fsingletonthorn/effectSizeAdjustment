@@ -10,8 +10,8 @@ trueOrgEffect[i] ~ dnorm(0, 1)
 # Mixture Model Likelihood:
 for(i in 1:n){
 clust[i] ~ dbern(phi)
-orgEffect_FT[i] ~ dnorm(trueOrgEffect[i], orgTau[i])
-repEffect_FT[i] ~ dnorm(trueRepEffect[i], repTau[i])
+orgEffect[i] ~ dnorm(trueOrgEffect[i], orgTau[i])
+repEffect[i] ~ dnorm(trueRepEffect[i], repTau[i])
 trueRepEffect[i] ~ dnorm(mu[i], tau)
 # if clust[i] = 0 then H0 is true; if clust[i] = 1 then H1 is true and
 # the replication effect is a function of the original effect:
