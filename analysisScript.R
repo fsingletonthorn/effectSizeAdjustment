@@ -10,6 +10,7 @@ library(scales)
 library(Hmisc)
 library(plyr)
 library(RColorBrewer)
+library(bestNormalize)
 library(reshape2)
 source("https://gist.githubusercontent.com/benmarwick/2a1bb0133ff568cbe28d/raw/fb53bd97121f7f9ce947837ef1a4c65a73bffb3f/geom_flat_violin.R")
 
@@ -363,6 +364,11 @@ REMod.p.val.tukey <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = norm
 REMod.p.val.norm <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = temp$x.t, random =  ~ 1|source/authorsTitle.o,  data = allData)
 REMod.p.val.cleaned <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = cleanedpVal.r, random =  ~ 1|source/authorsTitle.o,  data = allData)
 
+
+REMod.p.val.cleaned.sum <-   data_frame(" " = c("Estimate", "p value", NA,NA,NA), Estimate = c(REMod.p.val.cleaned$b, rep(NA, 3)), "95% CI LB" = c(REMod.p.val.cleaned$ci.lb, rep(NA, 3)), "95% CI UB" = c(REMod.p.val.cleaned$ci.ub, rep(NA, 3)), SE = c(REMod.p.val.cleaned$se,  rep(NA, 3)), p = c(ifelse(REMod.p.val.cleaned$pval<.001, "< .001", round(REMod.p.val.cleaned$pval, 3)),  rep(NA, 3)), 
+                                        "Random effects" = c(NA, NA, paste0("Project variance = ", round(REMod.p.val.cleaned$sigma2[1], 3), ", n = ", REMod.p.val.cleaned$s.nlevels[1]), paste0("Article variance = ", round(REMod.p.val.cleaned$sigma2[2], 3), ", n = ", REMod.p.val.cleaned$s.nlevels[2]),  paste0("QE(",REMod.p.val.cleaned$k-1, ") = ", round(REMod.p.val.cleaned$QE, 2),  ", p ", ifelse(REMod.p.val.cleaned$QEp <.001, "< .001", paste("=" , round(REMod.p.val.cleaned$QEp, 2))))))
+
+
 # Empirical Bayes estimates for random Effects 
 BLUPsSource <- ranef(REMod)[1]
 
@@ -409,7 +415,7 @@ modRes8 <- data.frame(modelN = REModNonequiv$k, modelEstimate = REModNonequiv$b,
 # brining these together
 modSumaries <- rbind(modRes, modRes1, modRes8, modRes2, modRes3, modRes4, modRes5, modRes6, modRes7)
 # Estiating the degree of effect size change as a proportion of the average effect size in psychology 
-modSumaries$`Estimated % attenuation` <- modSumaries$modelEstimate/mean(allData$fis.o, na.rm = T)
+modSumaries$`Estimated % attenuation` <- (modSumaries$modelEstimate/mean(allData$fis.o, na.rm = T))*100
 modSumaries$`LB % attenuation` <- (modSumaries$MLM95lb/mean(allData$fis.o, na.rm = T)*100)
 modSumaries$`UB % attenuation` <- (modSumaries$MLM95ub/mean(allData$fis.o, na.rm = T)*100)
 modSumariesR <- modSumaries
@@ -722,33 +728,34 @@ nSimsimulationAccuracyByTypeDF <- simulationAccuracyByType[(names(simulationAccu
 ## more plots - catapillar plot of correlation differences 
 plotDat <- allData[!is.na(allData$fisherZDiff),]
 plotDat <- plotDat[order(plotDat$correlationDifference.ro),]
-names(plotDat)[names(plotDat)=="source"]  <- "Replication Project"
+names(plotDat)[names(plotDat)=="source"]  <- "Project"
 
 catPlot <- ggplot(plotDat, aes(1:nrow(plotDat), 
                                correlationDifference.ro, 
                                ymin = correlationDifference.ro + ztor(1.96*seDifference.ro), 
                                ymax = correlationDifference.ro -  ztor(1.96*seDifference.ro), 
-                               color =source, fill = source)) + 
-  geom_point(na.rm = T) + geom_errorbar(na.rm = T) +
-  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + 
+                               color = Project)) + 
+  geom_point(na.rm = T) + geom_errorbar(na.rm = T) + theme_classic() + 
   xlab(NULL) + ylab("Correlation difference") + 
   theme(axis.title.x=element_blank(),                                            
-        axis.text.x=element_blank(),
-        axis.ticks.x=element_blank())
-
+        axis.text.x=element_blank(), 
+        axis.ticks.x=element_blank()) +  ochRe::scale_colour_ochre(palette = "tasmania") 
                                       
-# Logistic regression etc. 
-logisticoutcome <- glm(allData$significantSameDirection.r ~ allData$cleanedpVal.o + allData$n.o + allData$fis.o + allData$source, family = binomial(link = "logit"))
+## Loading data from mixture model to avoid having to rerun the whole model
+HDISimple <- readRDS("Data/mixtureModelOutput/HDIsAlphaSimple.rds")
+alphaSimple <- readRDS("Data/mixtureModelOutput/alphaSimple.rds")
+phiSimple <- readRDS("Data/mixtureModelOutput/phiSimple.rds")
+jagData <- read_csv("Data/mixtureModelOutput/jagData.csv")
 
-summary(logisticoutcome)
 
-# logisticoutcome <- glm(allData$significantSameDirection.r ~ temp[["x.t"]], family = binomial(link = "logit"))
+# Ploting the results
+mixtureModelPlot <- ggplot(jagData, aes(x = correlation.o, y = correlation.r,  color = probRealEffect, size = n.r)) + # scale_shape_manual(values =c(1, 21)) + scale_fill_manual(values = c('#999999','#56B4E9')) +
+  geom_abline( slope = 1, intercept = 0) + geom_point(alpha = .8, na.rm = T)+ theme_classic() +
+  guides(color = guide_legend(title = "Posterior\nassignment\nrate"),
+         shape = guide_legend(title = "True effect size < 0.1"),
+         size = guide_legend(title = "Replication\nSample size",
+                             values= trans_format("identity", function(x) round(exp(x),0)), order = 2)) +
+  scale_size(trans = "log", breaks = c(150, 3000, 60000)) + geom_point(colour = "black", na.rm = T, size = .5, shape = 3) +
+  xlab("Original correlation")+ ylab("Replication correlation") + ylim(c(-.5, 1))+ xlim(c(-0, 1)) 
 
-fitted.results <- predict(logisticoutcome, type='response')
 
-fitted.results <- ifelse(fitted.results > 0.5,1,0)
-
-misClasificError <- mean(fitted.results != logisticoutcome$y)
-
-print(paste('Accuracy',1-misClasificError))
-                     
