@@ -15,7 +15,6 @@ library(reshape2)
 source("https://gist.githubusercontent.com/benmarwick/2a1bb0133ff568cbe28d/raw/fb53bd97121f7f9ce947837ef1a4c65a73bffb3f/geom_flat_violin.R")
 
 # Setting up summary functions:
-
 sumStats <- function(x, na.rm = T){
 return(list(mean = mean(x, na.rm = na.rm), sd = sd(x, na.rm = na.rm), median = median(x, na.rm = na.rm) , quantile = quantile(x, na.rm = na.rm), n = sum(!is.na(x)), nNA = sum(is.na(x))))
 }
@@ -76,9 +75,6 @@ bfapplyRep0 <- function(x){
   }
 }
 
-
-
-
 # Could approximate SEs using: # Not valid for F stats w/ df1 > 2 / chi square tests, used as an approximation where necessary
 allData$seFishAprox.r  <- ifelse( is.na(allData$seFish.r ), sqrt(1/(allData$n.r-3)), allData$seFish.r)
 allData$seFishAprox.o  <- ifelse( is.na(allData$seFish.o ), sqrt(1/(allData$n.o-3)), allData$seFish.o)
@@ -133,7 +129,6 @@ allData$bf0Rep <- 1/allData$bfRep0
 # some of these fail because the BF is ~ infinity, setting them to that here
 allData$bfRep0[is.na(allData$bfRep0) & (!is.na(allData$correlation.o) & !is.na(allData$n.o) & !is.na(allData$correlation.r) & !is.na(allData$n.r))] <- Inf
 allData$bf0Rep[is.na(allData$bf0Rep) & (!is.na(allData$correlation.o) & !is.na(allData$n.o) & !is.na(allData$correlation.r) & !is.na(allData$n.r))] <- 1/Inf
-
 
 # mean(allData$bfRep0_updated - allData$bfRep0, na.rm =T)
 # plot(log(allData$bfRep0_updated), log(allData$bfRep0))
@@ -241,7 +236,6 @@ reductionEquiv <- allData %>%
             medianDiff = median(fisherZDiff, na.rm = T),
             nTrue = sum(!is.na(statisticallyEquiv.ro)), nValid = sum(!is.na(allData$statisticallyEquiv.ro)& !is.na(allData$fis.r - allData$fis.o)))
 
-
 # Bringing all of the above together:
 tableReductions <- rbind(Overall = reductionAllData, StatisticalSignificance = reductionSignifcantR, Nonequivalence = reductionEquiv, BF0RepBelow3 = reductionSbf0RepLessThan3 , BFRep0Above3 = reductionSbfRep0MoreThan3,  BF01Below3 = reductionSbf01LessThan3 , BF10Above3 = reductionSbf10MoreThan3, BF0PBelow3 = reductionSbf0PlusLessThan3, BFP0Above3 = reductionSbfPlus0MoreThan3)
 
@@ -262,7 +256,6 @@ tableReductions <- tableReductions[c("n included", "n criteria calculable for", 
                   "Mean ES difference",  "95% CI LB Mean ES Change", "95% CI UB Mean ES Change",  "Median ES difference", "SD difference", "Mean proportion change", "Median proportion change")]
 
 kableReductions <- kable(tableReductions, digits = 2)
-
 
 #########################################################
 #### Plots of the effects plotted against each other ####
@@ -351,12 +344,10 @@ nNotSig.r <- sum(allData$significant.r)
 REMod <- rma.mv(yi = allData$fisherZDiff, V = allData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o,  data = allData)
  # cdREMOD <- cooks.distance(REMod, parallel = "snow", ncpus = parallel::detectCores())
 
-
 # Normalising replication p values for inclusion in the model
 # bestNormalize(allData$cleanedpVal.r) - selected normalising transform, this version used as it is faster:
 temp <- orderNorm(allData$cleanedpVal.r, na.rm = T)
 allData$normalisedpVal.r  <- transf.arcsin(allData$cleanedpVal.r)
-
 
 hist(temp$x.t)
 
@@ -364,10 +355,8 @@ REMod.p.val.tukey <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = norm
 REMod.p.val.norm <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = temp$x.t, random =  ~ 1|source/authorsTitle.o,  data = allData)
 REMod.p.val.cleaned <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = cleanedpVal.r, random =  ~ 1|source/authorsTitle.o,  data = allData)
 
-
 REMod.p.val.cleaned.sum <-   data_frame(" " = c("Estimate", "p value", NA,NA,NA), Estimate = c(REMod.p.val.cleaned$b, rep(NA, 3)), "95% CI LB" = c(REMod.p.val.cleaned$ci.lb, rep(NA, 3)), "95% CI UB" = c(REMod.p.val.cleaned$ci.ub, rep(NA, 3)), SE = c(REMod.p.val.cleaned$se,  rep(NA, 3)), p = c(ifelse(REMod.p.val.cleaned$pval<.001, "< .001", round(REMod.p.val.cleaned$pval, 3)),  rep(NA, 3)), 
                                         "Random effects" = c(NA, NA, paste0("Project variance = ", round(REMod.p.val.cleaned$sigma2[1], 3), ", n = ", REMod.p.val.cleaned$s.nlevels[1]), paste0("Article variance = ", round(REMod.p.val.cleaned$sigma2[2], 3), ", n = ", REMod.p.val.cleaned$s.nlevels[2]),  paste0("QE(",REMod.p.val.cleaned$k-1, ") = ", round(REMod.p.val.cleaned$QE, 2),  ", p ", ifelse(REMod.p.val.cleaned$QEp <.001, "< .001", paste("=" , round(REMod.p.val.cleaned$QEp, 2))))))
-
 
 # Empirical Bayes estimates for random Effects 
 BLUPsSource <- ranef(REMod)[1]
@@ -493,6 +482,7 @@ tableAverageDecrease <- allData %>%
 # LOOProjectDF <- data.frame(b = as.numeric(LOOProjectDF$b), p = as.numeric(LOOProjectDF$pval), call = as.character(LOOProjectDF$call))
 
 #  write.csv( LOOProjectDF, "Data/LOOProject.csv", row.names = F)
+# This reads in the data from the LOO analysis above 
 LOOProjectDF <- read_csv("Data/LOOProject.csv")
 
 LOOProjectDFSum <- LOOProjectDF %>%
@@ -527,14 +517,14 @@ LOOProjectDFSum$Subsample <- namesR
 #LOOStudy <- sapply(LOOTracking, function(m) m[c(1,5, 105)], simplify = T)
 #LOOStudyDF <- data.frame(as.data.frame(t(LOOStudy)))
 #LOOStudyDF <- data.frame(b = as.numeric(LOOStudyDF$b), p = as.numeric(LOOStudyDF$pval), call = as.character(LOOStudyDF$call))
-
+# This reads in the data produced by the above text 
  LOOStudyDF <- read.csv("Data/LOOStudyDF.csv")
  
 LOOStudyDFSum <- LOOStudyDF %>%
   group_by(Subsample = call) %>%
   dplyr::summarise('Proportion significant'= mean(p<.05), 'Minimum estimate' = quantile(b)[1],  '25th percentile' = quantile(b)[2], 'Median' = quantile(b)[3], '75th percentile' = quantile(b)[4], 'Maximum estimate' = quantile(b)[5])
 
-
+# This is just relabeling things for easy presentation 
 namesR <- str_split(str_split( LOOStudyDFSum$Subsample, "tempData\\[tempData\\$", simplify = T)[,2], " ", simplify = T)[,1:3]
 namesR[!str_detect(namesR[,2], ">|<"),c(2,3)] <- ""
 namesR[str_detect(namesR[,1], "signif"),1] <- "Significant in same direction"
@@ -550,10 +540,6 @@ maximumStudyDif <- max(as.numeric(REMod[1]) - LOOStudyDF[1])
 #####################
 ###### Figures ######
 #####################
-
-# functions used in plots 
-lb <- function(x) mean(x) - sd(x)
-ub <- function(x) mean(x) + sd(x)
 
 # Fishers Z change 
 pdf(file = "Figures/ViolinPlotZscoreChange.pdf", width = 5)
@@ -740,13 +726,14 @@ catPlot <- ggplot(plotDat, aes(1:nrow(plotDat),
   theme(axis.title.x=element_blank(),                                            
         axis.text.x=element_blank(), 
         axis.ticks.x=element_blank()) +  ochRe::scale_colour_ochre(palette = "tasmania") 
-                                      
+                                
 ## Loading data from mixture model to avoid having to rerun the whole model
 HDISimple <- readRDS("Data/mixtureModelOutput/HDIsAlphaSimple.rds")
 alphaSimple <- readRDS("Data/mixtureModelOutput/alphaSimple.rds")
 phiSimple <- readRDS("Data/mixtureModelOutput/phiSimple.rds")
+phiSimpleHDI <- readRDS("Data/mixtureModelOutput/HPDphiSimple.rds")
+propBelow.1.BMM <- readRDS("Data/mixtureModelOutput/ValuesBelow.1.rds")
 jagData <- read_csv("Data/mixtureModelOutput/jagData.csv")
-
 
 # Ploting the results
 mixtureModelPlot <- ggplot(jagData, aes(x = correlation.o, y = correlation.r,  color = probRealEffect, size = n.r)) +
@@ -757,20 +744,3 @@ mixtureModelPlot <- ggplot(jagData, aes(x = correlation.o, y = correlation.r,  c
                              values= trans_format("identity", function(x) round(exp(x),0)), order = 2)) +
   scale_size(trans = "log", breaks = c(150, 3000, 60000)) + geom_point(colour = "black", na.rm = T, size = .5, shape = 3) +
   xlab("Original correlation")+ ylab("Replication correlation") + ylim(c(-.5, 1))+ xlim(c(-0, 1)) 
-
-
-
-# plot of the mixture model with 3 categories
-mixtureModel3CatPlot <- ggplot(jagData, aes(x = correlation.o, y = correlation.r, colour = mostLikelyClass, alpha = probabilityMostLikelyClass, size = n.r)) + # scale_shape_manual(values =c(1, 21)) + scale_fill_manual(values = c('#999999','#56B4E9')) +
-  geom_abline( slope = 1, intercept = 0) + geom_point(alpha = .8, na.rm = T)+ theme_classic() +
-  guides(color = guide_legend(title = "Most\nassigned\ncategory"),
-         shape = guide_legend(title = "True effect size < 0.1", value = c(1,25,3)),
-         size = guide_legend(title = "Replication\nSample size",
-                             values= trans_format("identity", function(x) round(exp(x),0)), order = 2)) +
-  scale_size(trans = "log", breaks = c(150, 3000, 60000)) + geom_point(colour = "black", na.rm = T, size = .5, shape = 3) +
-  xlab("Original correlation")+ ylab("Replication correlation") + ylim(c(-.5, 1))+ xlim(c(-0, 1))  + 
-   ochRe::scale_colour_ochre(palette = "tasmania") 
-  
- 
-
-
