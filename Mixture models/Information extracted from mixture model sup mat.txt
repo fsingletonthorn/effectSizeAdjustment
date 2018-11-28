@@ -1,0 +1,285 @@
+
+Do a model comparison paper
+
+Start with a single component model
+Then do a two component model following BMW ~ with and without the error in variables approach stuff
+Then add a third component
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Setting up the model three component  model version 
+## NOTE: JAGS uses the precision, not the variance, when specifying a normal distribution (precision = 1/variance), i.e., 1/(se^2)
+jagMod <- jags.model(file = 'Analysis/BMWMod_3cat_additional.R', 
+                     data = list(orgEffect = jagData$fis.o, n = length(jagData$fis.o), repTau = 1/(jagData$seFish.r^2), orgTau = 1/(jagData$seFish.o^2), repEffect = jagData$fis.r),
+                     n.chains=4)
+
+# Running model and summarising 
+samples <- coda.samples(jagMod,params,n.iter = 10000)
+samplesSum <- summary(samples)
+
+sums <- do.call(cbind.data.frame, samplesSum)
+statsMeans <- sums$statistics.Mean
+# par(mar = c(0, 0, 0, 0))
+alpha <- statsMeans[grepl(pattern = "alpha", rownames(sums))]
+# Probability of null, decrease, original effect 
+phi <- statsMeans[grepl(pattern = "phi", rownames(sums))]
+
+jagData$probH1Original <- statsMeans[grepl(pattern = "H1original", rownames(sums))]
+jagData$probH1decrease <- statsMeans[grepl(pattern = "H1decrease", rownames(sums))]
+jagData$probH0True <- statsMeans[grepl(pattern = "H0True", rownames(sums))]
+
+jagData$mostLikelyClass <- apply(jagData[c("probH0True","probH1decrease","probH1Original")], 1,which.max)
+jagData$probabilityMostLikelyClass <- apply(jagData[c("probH0True","probH1decrease","probH1Original")], 1,max)
+jagData$mostLikelyClass <- factor(jagData$mostLikelyClass, labels = c("H0 true", "H1 attenuated", "H1 original effect"))
+
+
+# Setting up the model 
+## NOTE: JAGS uses the precision, not the variance, when specifying a normal distribution (precision = 1/variance), i.e., 1/(se^2)
+jagMod <- jags.model(file = 'Analysis/BMWMod_vanilla_plus.R', 
+                     data = list(orgEffect = jagData$fis.o, n = length(jagData$fis.o), repTau = 1/(jagData$seFish.r^2), repEffect = jagData$fis.r),
+                     n.chains=4)
+
+# Running model and summarising 
+samples <- coda.samples(jagMod,params,n.iter = 10000)
+samplesSum <- summary(samples)
+
+## Collecting information from both models
+sums <- do.call(cbind.data.frame, samplesSum)
+statsMeans <- sums$statistics.Mean
+# par(mar = c(0, 0, 0, 0))
+alpha <- statsMeans[grepl(pattern = "alpha", rownames(sums))]
+phi <- statsMeans[grepl(pattern = "phi", rownames(sums))]
+jagData$probRealEffect <- statsMeans[grepl(pattern = "clust", rownames(sums))]
+
+mean((jagData$trueRepEffect-jagData$fis.o)/jagData$fis.o)
+
+# Highest prob density interval on alpha 
+intervalSamples <- HPDinterval(samples)
+chains <- data.frame(t(sapply(intervalSamples, FUN = function(x) x[1,])))
+HDIs <- data.frame(mean(chains$lower), mean(chains$upper))
+
+
+# Setting up the model 
+## NOTE: JAGS uses the precision, not the variance, when specifying a normal distribution (precision = 1/variance), i.e., 1/(se^2)
+jagMod_trunc <- jags.model(file = 'Analysis/BMWMod_truncated.R', 
+                     data = list(orgEffect = jagData$fis.o, n = length(jagData$fis.o), repTau = 1/(jagData$seFish.r^2), orgTau = 1/(jagData$seFish.o^2), repEffect = jagData$fis.r),
+                     n.chains=4)
+
+# Running model and summarising 
+samples_trunc <- coda.samples(jagMod_trunc,params,n.iter = 10000)
+samplesSum_trunc <- summary(samples_trunc)
+
+## Collecting information from both models
+sums_trunc <- do.call(cbind.data.frame, samplesSum_trunc)
+statsMeans <- sums_trunc$statistics.Mean
+# par(mar = c(0, 0, 0, 0))
+alpha <- statsMeans[grepl(pattern = "alpha", rownames(sums_trunc))]
+phi <- statsMeans[grepl(pattern = "phi", rownames(sums_trunc))]
+jagData$probRealEffect <- statsMeans[grepl(pattern = "clust", rownames(sums_trunc))]
+
+# Highest prob density interval on alpha 
+intervalSamples <- HPDinterval(samples)
+chains <- data.frame(t(sapply(intervalSamples, FUN = function(x) x[1,])))
+HDIs <- data.frame(mean(chains$lower), mean(chains$upper))
+
+
+## Diganostics:
+#rejectionRate(samples)
+#effectiveSize(samples)
+# plot(samples)
+# Traceplot - be warned, this takes forever unless you are only looking at one parameter at a time - I suggest alpha, the most important (assuming all else is working)
+# traceplot(samples)
+
+
+### additional model - this accounts for 3 categories - null true effects, attenuated effects, and an additional set of studies which are not attenuated
+
+jagMod_additional3 <- jags.model(file = 'Analysis/mixtureModel3Cat.R', 
+                     data = list(orgEffect = jagData$fis.o, n = length(jagData$fis.o), repTau = 1/(jagData$seFish.r^2), orgTau = 1/(jagData$seFish.o^2), repEffect = jagData$fis.r),
+                                 n.chains=4)
+
+# Parameters to keep
+params <- c("phi",
+  # "clust",
+  "H1original",
+  "H0True",
+  "H1decrease",
+  "trueRepEffect",
+  "alpha")
+
+# Running model and summarising 
+samples3 <- coda.samples(jagMod_additional3,params,n.iter = 20000)
+samples3Sum<-summary(samples3)
+samples3Sum
+
+boundsamples3 <- as.mcmc(do.call(rbind,samples3)) 
+HPDSamples3 <- HPDinterval(boundsamples3)
+HPDCat <- HPDSamples3[grepl(pattern = "alpha", rownames(HPDSamples3))]
+
+
+sums <- do.call(cbind.data.frame, samples3Sum)
+statsMeans <- sums$statistics.Mean
+# par(mar = c(0, 0, 0, 0))
+alpha <- statsMeans[grepl(pattern = "alpha", rownames(sums))]
+# Probability of null, decrease, original effect 
+phi <- statsMeans[grepl(pattern = "phi", rownames(sums))]
+
+jagData$probH1Original <- statsMeans[grepl(pattern = "H1original", rownames(sums))]
+jagData$probH1decrease <- statsMeans[grepl(pattern = "H1decrease", rownames(sums))]
+jagData$probH0True <- statsMeans[grepl(pattern = "H0True", rownames(sums))]
+
+jagData$trueRepEffect <- statsMeans[grepl(pattern = "trueRepEffect", rownames(sums))]
+
+jagData$mostLikelyClass <- apply(jagData[c("probH0True","probH1decrease","probH1Original")], 1,which.max)
+jagData$probabilityMostLikelyClass <- apply(jagData[c("probH0True","probH1decrease","probH1Original")], 1,max)
+jagData$mostLikelyClass <- factor(jagData$mostLikelyClass, labels = c("H0 true", "H1 attenuated", "H1 original effect"))
+
+
+
+
+
+
+
+
+
+
+jagMod_additional <- jags.model(file = 'Analysis/BMWMod_additional.R', 
+                                data = list(orgEffect = jagData$fis.o, n = length(jagData$fis.o), repTau = 1/(jagData$seFish.r^2), orgTau = 1/(jagData$seFish.o^2), repEffect = jagData$fis.r,
+                                            nSource = length(unique(jagData$source)), #nStudy = length(unique(jagData$authorsTitle.o)), 
+                                            #study = as.factor(as.character(jagData$authorsTitle.o)), 
+                                            source = as.factor(as.character(jagData$source))),
+                                n.chains=4)
+
+
+# Parameters to keep
+params <- c("metaAlpha",
+            "alphaTau",
+  "phi",
+  # "clust",
+  # "orgEffect" ,
+  # "trueOrgEffect",
+  # "trueRepEffect",
+  "alpha")
+
+# Running model and summarising 
+samples2 <- coda.samples(jagMod_additional,params,n.iter = 20000)
+samples2Sum<-summary(samples2)
+samples2Sum
+
+boundsamples2 <- as.mcmc(do.call(rbind,samples2)) 
+# 
+hdp <- HPDinterval(boundsamples2)
+# mean(samples2Sum$statistics[9:313,2])
+# plot(samples2)
+# View(samples2Sum)
+
+# HPDinterval(samples2)
+
+#### Plots etc
+## Collecting information from both models
+sums <- do.call(cbind.data.frame, samples2Sum)
+statsMeans <- sums$statistics.Mean
+# par(mar = c(0, 0, 0, 0))
+alpha <- statsMeans[grepl(pattern = "alpha", rownames(sums))]
+metaAlpha <- statsMeans[grepl(pattern = "metaAlpha", rownames(sums))] 
+phi <- statsMeans[grepl(pattern = "phi", rownames(sums))]
+jagData$probRealEffect <- statsMeans[grepl(pattern = "clust", rownames(sums))]
+jagData$trueRepEffect <- statsMeans[grepl(pattern = "trueRepEffect", rownames(sums))]
+
+
+
+
+
+
+MIXTURE MODEL PLOT 
+
+
+
+# plot of the mixture model with 3 categories
+mixtureModel3CatPlot <- ggplot(jagData, aes(x = correlation.o, y = correlation.r, colour = mostLikelyClass, alpha = probabilityMostLikelyClass, size = n.r)) + # scale_shape_manual(values =c(1, 21)) + scale_fill_manual(values = c('#999999','#56B4E9')) +
+  geom_abline( slope = 1, intercept = 0) + geom_point(alpha = .8, na.rm = T)+ theme_classic() +
+  guides(color = guide_legend(title = "Most\nassigned\ncategory"),
+         shape = guide_legend(title = "True effect size < 0.1", value = c(1,25,3)),
+         size = guide_legend(title = "Replication\nSample size",
+                             values= trans_format("identity", function(x) round(exp(x),0)), order = 2)) +
+  scale_size(trans = "log", breaks = c(150, 3000, 60000)) + geom_point(colour = "black", na.rm = T, size = .5, shape = 3) +
+  xlab("Original correlation")+ ylab("Replication correlation") + ylim(c(-.5, 1))+ xlim(c(-0, 1))  + 
+   ochRe::scale_colour_ochre(palette = "tasmania") 
+  
+ 
+# _____________________________-___________-_____ markdown  from here
+
+Box SM2. The altered model, estimating alpha independently for each replication project, assuming they are drawn from a normal distribtuion with center alphaMeta and a precision of metaTau.  
+
+```{}
+model{
+  # Mixture Model Priors:
+  tau ~ dgamma(0.001,0.001) # vague prior on study precision
+  phi ~ ddirch(mPriorProb) # Flat prior on the model priors
+  mPriorProb[1] <- 1
+  mPriorProb[2] <- 1
+  mPriorProb[3] <- 1
+    
+    alpha ~ dunif(0,1) # flat prior on attenuation factor for each replication project
+  
+  # prior on true effect size of original studies:
+  for (i in 1:n){
+    trueOrgEffect[i] ~ dnorm(0, 1) # Normal prior on the original effect size 
+  }
+  
+  # Mixture Model Likelihood:
+  # Study level
+  for(i in 1:n){
+    clust[i] ~ dcat(phi)# extract errors in variables:
+    orgEffect[i] ~ dnorm(trueOrgEffect[i] , orgTau[i]) # 
+    
+    # if clust[i] = 0 then H0 is true; if clust[i] = 1 then the true effect size is a function of the original effect size (times alpha),
+    # if phi == 2 the the effect is exactly equal to the original effect 
+    # the observed replication effect is a function of the original effect:
+    mu[i] <- ifelse(clust[i] == 2,  (alpha * trueOrgEffect[i]), ifelse(clust[i] == 3, trueOrgEffect[i], 0))
+    H1original[i] <-  ifelse(clust[i] == 3, 1, 0)  
+    H1decrease[i] <-  ifelse(clust[i] == 2, 1, 0)
+    H0True[i] <- ifelse(clust[i] == 1, 1, 0)
+
+    trueRepEffect[i] ~ dnorm(mu[i], tau)    
+    repEffect[i] ~ dnorm(trueRepEffect[i] ,   repTau[i]) 
+    
+  }
+}
+```
+
+This model estimates 
+
+
+```{r}
+mixtureModel3CatPlot
+```
+
+Figure SM`r figSMN <- figSMN+1; figSMN`. Scatter plot of replication effect sizes (in correlation coefficients) plotted against original effects with the estimated most probible category for each replication study. 
+
+It is noteworthy that in this model, almost no studies are grouped
+
+
+
+However, doing this does not adequatly specify ... This leads to extremely large estaimtes of the standard devation of alpha, i.e., it estiamtes that there is an extremely large amount of effect size decrease (a
+
+
+It may be reasonable to assume that the degree of replication effect size attenuation differs by replication project. {Camerer, 2018 #967}'s model was adapted to allowed the amount of effect size attenuation to vary by replication project, as it is expected that these different projects will have different amounts of effect size attenuation, and as the differences are interesting in of themselves. The expanded model includes an alpha parameter, an effect size attenuation factor, for each included study. The replicaiton rate of each study is assumed to be drawn from a normal distribtuion with a mean of $\alpha_{meta}$, and a standard deviation of 
+See Boxes SM1 to 3 for the JAGS code used in each of these analyses.
+
