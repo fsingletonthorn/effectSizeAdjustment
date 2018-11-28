@@ -79,6 +79,9 @@ bfapplyRep0 <- function(x){
 allData$seFishAprox.r  <- ifelse( is.na(allData$seFish.r ), sqrt(1/(allData$n.r-3)), allData$seFish.r)
 allData$seFishAprox.o  <- ifelse( is.na(allData$seFish.o ), sqrt(1/(allData$n.o-3)), allData$seFish.o)
 
+# mean raw decrease
+meanDecrease <- mean(allData$percentageChangeES.ro, na.rm = T)
+
 # first off simple calculation of the proportion of studies conducted per published result given a significnat main effect
 # How to get to .9 or .75 of the literature being sig, assuming all studies are statistically significant
 studiesPerPublishedPaper <- paste(round(.75/.44,2), "to", round(.9/.44,2))
@@ -178,7 +181,7 @@ reductionSignifcantR <- allData %>%
             meanDiff = mean(fisherZDiff, na.rm = T), sdDiff = sd(fisherZDiff, na.rm = T),    
             medianPropChange = median((fisherZDiff)/fis.o, na.rm = TRUE), median.r = median(fis.r, na.rm = T) , median.o = median(fis.o, na.rm = T) ,
             medianDiff = median(fisherZDiff, na.rm = T),
-            nTrue = sum(!is.na(significantSameDirection.r & !is.na(significantSameDirection.r))), nValid = sum(!is.na(allData$significantSameDirection.r) & !is.na(allData$fis.r - allData$fis.o)))
+            nTrue = sum((allData$significantSameDirection.r & !is.na(allData$fisherZDiff))), nValid = sum(!is.na(allData$significantSameDirection.r) & !is.na(allData$fis.r - allData$fis.o)))
 # BF01 < 3 (exclude those with moderate or greater evidence for the null)
 reductionSbf01LessThan3 <- allData %>% 
   filter(bf01<3) %>% 
@@ -186,7 +189,7 @@ reductionSbf01LessThan3 <- allData %>%
             meanDiff = mean(fisherZDiff, na.rm = T), sdDiff = sd(fisherZDiff, na.rm = T),   
             medianPropChange = median((fisherZDiff)/fis.o, na.rm = TRUE), median.r = median(fis.r, na.rm = T) , median.o = median(fis.o, na.rm = T) ,
             medianDiff = median(fisherZDiff, na.rm = T),
-            nTrue = sum(!is.na(bf01<3)), nValid = sum(!is.na(allData$bf01) & !is.na(allData$fis.r - allData$fis.o)))
+            nTrue = sum(bf01<3), nValid = sum(!is.na(allData$bf01) & !is.na(allData$fis.r - allData$fis.o)))
 # BF10 > 3 (Only those with evidence for the alternative)
 reductionSbf10MoreThan3 <- allData %>% 
   filter(bf10>3) %>% 
@@ -194,7 +197,7 @@ reductionSbf10MoreThan3 <- allData %>%
             meanDiff = mean(fisherZDiff, na.rm = T), sdDiff = sd(fisherZDiff, na.rm = T),    
             medianPropChange = median((fisherZDiff)/fis.o, na.rm = TRUE), median.r = median(fis.r, na.rm = T) , median.o = median(fis.o, na.rm = T) ,
             medianDiff = median(fisherZDiff, na.rm = T),
-            nTrue = sum(!is.na(bf10>3)), nValid = sum(!is.na(allData$bf10) & !is.na(allData$fis.r - allData$fis.o)))
+            nTrue = sum(bf10>3), nValid = sum(!is.na(allData$bf10) & !is.na(allData$fis.r - allData$fis.o)))
 # BF0Plus < 3 (exclude those with moderate evidence for the null, one sided alternative)
 reductionSbf0PlusLessThan3 <- allData %>% 
   filter(bf0plus<3) %>% 
@@ -202,7 +205,7 @@ reductionSbf0PlusLessThan3 <- allData %>%
             meanDiff = mean(fisherZDiff, na.rm = T), sdDiff = sd(fisherZDiff, na.rm = T),   
             medianPropChange = median((fisherZDiff)/fis.o, na.rm = TRUE), median.r = median(fis.r, na.rm = T) , median.o = median(fis.o, na.rm = T) ,
             medianDiff = median(fisherZDiff, na.rm = T),
-            nTrue = sum(!is.na(bf0plus<3)), nValid = sum(!is.na(allData$bf0plus)& !is.na(allData$fis.r - allData$fis.o)))
+            nTrue = sum(bf0plus<3), nValid = sum(!is.na(allData$bf0plus)& !is.na(allData$fis.r - allData$fis.o)))
 # BFPlus0 (Exclude those without moderate evidence for the one sided alternative)
 reductionSbfPlus0MoreThan3 <- allData %>% 
   filter(bfplus0>3) %>%
@@ -210,7 +213,7 @@ reductionSbfPlus0MoreThan3 <- allData %>%
             meanDiff = mean(fisherZDiff, na.rm = T), sdDiff = sd(fisherZDiff, na.rm = T),    
             medianPropChange = median((fisherZDiff)/fis.o, na.rm = TRUE), median.r = median(fis.r, na.rm = T) , median.o = median(fis.o, na.rm = T) ,
             medianDiff = median(fisherZDiff, na.rm = T),
-            nTrue = sum(!is.na(bfplus0>3)), nValid = sum(!is.na(allData$bfplus0) & !is.na(allData$fis.r - allData$fis.o)))
+            nTrue = sum(bfplus0>3), nValid = sum(!is.na(allData$bfplus0) & !is.na(allData$fis.r - allData$fis.o)))
 # BF0Rep < 3 (exclude those with moderate evidence for the null, replication alternative)
 reductionSbf0RepLessThan3 <- allData %>% 
   filter(bf0Rep<3) %>% 
@@ -218,7 +221,7 @@ reductionSbf0RepLessThan3 <- allData %>%
             meanDiff = mean(fisherZDiff, na.rm = T), sdDiff = sd(fisherZDiff, na.rm = T),  
             medianPropChange = median((fisherZDiff)/fis.o, na.rm = TRUE), median.r = median(fis.r, na.rm = T) , median.o = median(fis.o, na.rm = T) ,
             medianDiff = median(fisherZDiff, na.rm = T),
-            nTrue = sum(!is.na(bf0Rep<3)), nValid = sum(!is.na(allData$bf0Rep) & !is.na(allData$fis.r - allData$fis.o)))
+            nTrue = sum(bf0Rep<3), nValid = sum(!is.na(allData$bf0Rep) & !is.na(allData$fis.r - allData$fis.o)))
 # BFRep0 (Exclude those without moderate evidence for the replication alternative)
 reductionSbfRep0MoreThan3 <- allData %>% 
   filter(bfRep0>3) %>%
@@ -226,7 +229,7 @@ reductionSbfRep0MoreThan3 <- allData %>%
             meanDiff = mean(fisherZDiff, na.rm = T), sdDiff = sd(fisherZDiff, na.rm = T),  
             medianPropChange = median((fisherZDiff)/fis.o, na.rm = TRUE), median.r = median(fis.r, na.rm = T) , median.o = median(fis.o, na.rm = T) ,
             medianDiff = median(fisherZDiff, na.rm = T),
-            nTrue = sum(!is.na(bfRep0>3)), nValid = sum(!is.na(allData$bfRep0) & !is.na(allData$fis.r - allData$fis.o)))
+            nTrue = sum(bfRep0>3), nValid = sum(!is.na(allData$bfRep0) & !is.na(allData$fis.r - allData$fis.o)))
 # Significant TOST (Exclude those without moderate evidence for the one sided alternative)
 reductionEquiv <- allData %>% 
   filter(!statisticallyEquiv.ro) %>%
@@ -234,7 +237,7 @@ reductionEquiv <- allData %>%
             meanDiff = mean(fisherZDiff, na.rm = T), sdDiff = sd(fisherZDiff, na.rm = T),   
             medianPropChange = median((fisherZDiff)/fis.o, na.rm = TRUE), median.r = median(fis.r, na.rm = T) , median.o = median(fis.o, na.rm = T) ,
             medianDiff = median(fisherZDiff, na.rm = T),
-            nTrue = sum(!is.na(statisticallyEquiv.ro)), nValid = sum(!is.na(allData$statisticallyEquiv.ro)& !is.na(allData$fis.r - allData$fis.o)))
+            nTrue = sum(!allData$statisticallyEquiv.ro, na.rm = T), nValid = sum(!is.na(allData$statisticallyEquiv.ro)& !is.na(allData$fis.r - allData$fis.o)))
 
 # Bringing all of the above together:
 tableReductions <- rbind(Overall = reductionAllData, StatisticalSignificance = reductionSignifcantR, Nonequivalence = reductionEquiv, BF0RepBelow3 = reductionSbf0RepLessThan3 , BFRep0Above3 = reductionSbfRep0MoreThan3,  BF01Below3 = reductionSbf01LessThan3 , BF10Above3 = reductionSbf10MoreThan3, BF0PBelow3 = reductionSbf0PlusLessThan3, BFP0Above3 = reductionSbfPlus0MoreThan3)
