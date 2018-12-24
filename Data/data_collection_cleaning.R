@@ -11,6 +11,9 @@ library(knitr)
 library(ochRe)
 # Setting up a dataframe of names of the source studies for easy plotting later
 
+
+## Try to fill in the Chi square - 
+
 projectNames <- data_frame(c("OSC (2015) \n General Psychology",
                                                      "Klein et al. (2014)\n Many Labs 1", 
                                                      "Ebersole et al. (2016)\n Many Labs 3",
@@ -88,8 +91,8 @@ RPP$pval.r <- pnorm(RPP$fis.r, sd = RPP$sei.r, lower.tail = FALSE)
 RPP$sei <- sqrt(1/(RPP$N.o-3) + 1/(RPP$N.r-3))
 
 ### Removing SEs for Fdf_1 > 2 and chi square
-RPP$sei.o[str_detect(MASTER$Test.statistic..O., "F\\([2-9]|F\\(1[1-9]|X\\^2|b|z")] <- NA
-RPP$sei.r[str_detect(MASTER$Test.statistic..R., "F\\([2-9]|F\\(1[1-9]|X\\^2|b|z")] <- NA
+RPP$sei.o[str_detect(as.character(MASTER$Test.statistic..O.), "F\\([2-9]|F\\(1[1-9]|X\\^2")] <- NA
+RPP$sei.r[str_detect(MASTER$Test.statistic..R., "F\\([2-9]|F\\(1[1-9]|X\\^2")] <- NA
 
 data <- data_frame(authorsTitle.o = paste0(MASTER$Authors..O., "-", MASTER$Study.Title..O.),
                    correlation.o = RPP$ri.o, # Pearson R
@@ -108,10 +111,12 @@ data <- data_frame(authorsTitle.o = paste0(MASTER$Authors..O., "-", MASTER$Study
                    testStatistic.r = as.character(MASTER$Test.statistic..R.),
                    seDifference.ro = RPP$sei)
 
-# Removing 3 articles with missing effect sizes, and two NS origs
-data <- data[!is.na(RPP$ri.o) & !is.na(RPP$ri.r),]
-data <- data[-which( data$authorsTitle.o=="PW Eastwick, EJ Finkel-Sex differences in mate preferences revisited: Do people know what they initially desire in a romantic partner?" | 
-                       data$authorsTitle.o=='KA Ranganath, BA Nosek-Implicit attitude generalization occurs immediately; explicit attitude generalization takes time'),]
+# Removing 3 articles with non-significant original effects
+data <- data[-which(data$authorsTitle.o=="PW Eastwick, EJ Finkel-Sex differences in mate preferences revisited: Do people know what they initially desire in a romantic partner?" | 
+                      data$authorsTitle.o=='KA Ranganath, BA Nosek-Implicit attitude generalization occurs immediately; explicit attitude generalization takes time'|
+                      data$authorsTitle.o=="M Reynolds, D Besner-Contextual effects on reading aloud: Evidence for pathway control."),]
+# removing 3 articles where effect sizes could not be extracted from original and replication studies 
+data <- data[!(is.na(data$fis.o) | is.na(data$fis.r)),]
 
 # pvalue for missing data replication study 
 data$pVal.r[data$pVal.r=="2.2 x 10-16"] <- 2.2 * 10^-16
@@ -125,6 +130,7 @@ data$pVal.r[data$pVal.r=="X"] <- data$pValFish.r[data$pVal.r=="X"] # this one is
 data$source <- as.character(projectNames[1,1])
   #"OSC (2015)"
 data$abrev <- "OSCRPP"
+
 
 ########## End RPP data recollection ########
 
@@ -185,7 +191,7 @@ ManyLabs1$pVal.o <- str_split(ManyLabs1$testStatistic.o, "p [=]|[<]", simplify =
 ManyLabs1$pVal.o[str_detect(ManyLabs1$testStatistic.o, "p < .01")] <- "< .01"
 ManyLabs1$pVal.o[str_detect(ManyLabs1$testStatistic.o, "p < .05")] <- "< .05"
 
-   
+
 # Caclulating these for ease p values 
 ManyLabs1$pVal.o[ManyLabs1$testStatistic.o == "r = .42"|ManyLabs1$testStatistic.o =="r = .42, n = 243"] <- 
   es.o$pval.r[ManyLabs1$testStatistic.o == "r = .42"|ManyLabs1$testStatistic.o =="r = .42, n = 243"] 
@@ -221,7 +227,6 @@ data2$abrev <- "ML1"
 # Checking that all NAs are non-significant 
 # data2$pVal.r[is.na(as.numeric(as.character(data2$pVal.r)))]
 
-
 ### 
 # Removing everything apart from data sets  
 # rm(list = c("es","ManyLabs1","ManyLabs1ML_orig"))
@@ -231,25 +236,30 @@ ManyLabs3 <- read_csv("Data/ManyLabs3_Data_ManualAdditions.csv")
 
 # converting effect sizes 
 es.o <- des(d = ManyLabs3$ESOriginal, n.1 = ManyLabs3$n.o/2, n.2 = ManyLabs3$n.o/2, dig = 5)
-es.o$seFish <-ifelse(!is.na(es.o$r),  sqrt(1/(ManyLabs3$n.o -3)), NA)
+es.o$seFish <-  sqrt(1/(ManyLabs3$n.o -3))
+# removing invalids (eta squared and df1 > 2 for SEs)
+es.o$r[c(7,8,9)] <- es.o$seFish[9] <- NA 
 
 # Converting rep ESs 
 es.r <- des(d = ManyLabs3$ReplicationES, n.1 = ManyLabs3$N.r/2,  n.2 = ManyLabs3$N.r/2, dig = 5)
-# removing values based on eta-squared values
-es.r$r[c(7,9)] <- NA 
-es.r$seFish <- ifelse(!is.na(es.r$r),  sqrt(1/(ManyLabs3$N.r -3)), NA)
+# removing invalids (eta squared and df1 > 2 for SEs)
+es.r$r[c(7,8,9)] <- es.r$seFish[9] <- NA 
 
 # removing Boroditsky, L. (2000). Metaphoric structuring: Understanding time through spatial metaphors. Cognition, 75(1), 1-28. who used a chi square test, making SEs for Fisher's z wrong
 es.r$seFish[str_detect(string = ManyLabs3$Effect,  c("MetaphoricRestructuring"))] <- NA
 es.o$seFish[str_detect(string = ManyLabs3$Effect,  c("MetaphoricRestructuring"))] <- NA
-
-# Inputting an effect size from a t test for an original study 
 
 # Extracting test stats from rep study
 testStats.r <- data.frame(str_split(ManyLabs3$KeyStatistics.r, " =", simplify = T)[,1],
            ManyLabs3$df.r,
            str_split(ManyLabs3$KeyStatistics.r, " =", simplify = T)[,2])
 ManyLabs3$testStatistic.r <- str_glue("{testStats.r[,1]} ({testStats.r[,2]}) = {testStats.r[,3]}")
+
+# Calculating ESs from F statistics 
+ftor <- function(x,df1,df2){ sqrt((x*(df1 / df2)) / (((x*df1) / df2) + 1))*sqrt(1/df1)  }
+
+es.r$r[c(7,8,9)] <- ftor(c(.129, 1.98, .0004), 1, c(2361, 3131, 3130))
+es.o$r[c(7,8,9)] <- ftor(c(22.45, 1.98^2, 4.4), c(1,1,2), c(110,349,194))
 
 # Amalgomating
 data3 <- data.frame(authorsTitle.o = ManyLabs3$originalEffects,
@@ -274,7 +284,6 @@ data3 <- data.frame(authorsTitle.o = ManyLabs3$originalEffects,
 data3$source <- as.character(projectNames[3,1])
   #"Ebersole et al. (2016), Many Labs 3"
 data3$abrev <- "ML3"
-
 
 # Checking that all NAs are non-significant 
 # data3$pVal.r[is.na(as.numeric(as.character(data3$pVal.r)))]
@@ -394,14 +403,17 @@ data5$abrev <- "econ"
 # Checking that all NAs are non-significant 
 # data5$pVal.r[is.na(as.numeric(as.character(data5$pVal.r)))]
 
-
 ##### Xphi data recollection #####
 # Data from Cova, F., Strickland, B., Abatista, A., Allard, A., Andow, J., Attie, M., . . . Colombo, M. (2018). Estimating the reproducibility of experimental philosophy. Review of Philosophy and Psychology, 1-36. 
 xPhi <- read_csv(file ="Data/XPhiReplicability_CompleteData.csv")
+
+# EXCLUDING STUDIES WHICH WERE NOT SIGNIFICANT and  which claimed effects 
+xPhi <- xPhi[xPhi$EffectTYPE != "NULL",]
+
 es.o <- escalc(ri = xPhi$OriginalRES, ni = xPhi$OriginalN_Effect, measure = "ZCOR")
 es.r <- escalc(ri = xPhi$ReplicationRES, ni = xPhi$ReplicationN_Effect, measure = "ZCOR")
 
-### Standard errors original and replication study - None appear to use techniques for which SEs can be meaningfully extracted
+### Standard errors original and replication study
 es.o$seFish <- sqrt(1/(xPhi$OriginalN_Effect-3))
 es.r$seFish <- sqrt(1/(xPhi$ReplicationN_Effect-3))
 
@@ -427,12 +439,7 @@ xPhi$pVal.r <- pvalues.r
 es.r$seFish[grepl(x =  xPhi$OriginalANALYSIS, pattern = "χ|X2|F\\(2,|F \\(2")] <- NA
 es.o$seFish[grepl(x =  xPhi$OriginalANALYSIS, pattern = "χ|X2|F\\(2,|F \\(2")] <- NA
 
-
 xPhi$pVal.r[str_detect(xPhi$pVal.r, "20.007")] <- 0.092
-
-
-# EXCLUDING STUDIES WHICH WERE NOT SIGNIFICANT 
-data.frame(xPhi$pVal.o,  as.numeric(xPhi$pVal.o) > .05 & !is.na(as.numeric(xPhi$pVal.o)))
 
 # Amalgomating 
 data6 <- data.frame(authorsTitle.o = xPhi$PAPER_ID,
@@ -453,12 +460,9 @@ data6 <- data.frame(authorsTitle.o = xPhi$PAPER_ID,
                     pVal.r =  xPhi$pVal.r,
                     seDifference.ro = NA)
 
-
 data6$source <- as.character(projectNames[6,1])
   #"Cova, et al. (2018), Experimental Philosophy"
 data6$abrev <- "xPhi"
-# Checking that NA p values are significant 
-data6$pVal.r[is.na(as.numeric(as.character(data6$pVal.r)))]
 
 ########## End xPhi data recollection #########
 ########## Begin LOOPR data collection ############
@@ -484,8 +488,7 @@ es.r$seFish <- sqrt(1/(loopr$ReplicationSampleSize-3))
 # Removing those that were in fact beta coefficents from consideration 
 loopr$DisattenuatedCorrelationPositive.r[loopr$ReplicationEffectType == "B"] <- loopr$correlationPositive.o[loopr$ReplicationEffectType == "B"] <- loopr$DisattenuatedCorrelation.r[loopr$ReplicationEffectType == "B"] <- loopr$correlation.o[loopr$ReplicationEffectType == "B"] <- loopr$correlation.r[(loopr$ReplicationEffectType == "B")] <- es.r[(loopr$ReplicationEffectType == "B"),] <- es.o[(loopr$ReplicationEffectType == "B"),] <- NA
 
-# Removing additional invalid SEs 
-
+# Removing additional invalid SEs
 es.r$seFish[str_detect(loopr$OriginalAnalysis,"Structural equation model")] <- es.o$seFish[str_detect(loopr$OriginalAnalysis,"Structural equation model")] <- NA
 
 # Amalgomating 
@@ -515,7 +518,7 @@ data7$abrev <- "loopr"
 
 # Checking that NA p values are significant 
 # data7$pVal.r[is.na(as.numeric(as.character(data7$pVal.r)))]
-
+data7$correlation.o & data7$correlation.r
 
 ####### end loopr data collection########
 ##### Begin ManyLabs  data collection #####

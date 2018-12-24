@@ -352,7 +352,6 @@ REMod <- rma.mv(yi = allData$fisherZDiff, V = allData$seDifference.ro^2, random 
 temp <- orderNorm(allData$cleanedpVal.r, na.rm = T)
 allData$normalisedpVal.r  <- transf.arcsin(allData$cleanedpVal.r)
 
-hist(temp$x.t)
 
 REMod.p.val.tukey <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = normalisedpVal.r, random =  ~ 1|source/authorsTitle.o,  data = allData)
 REMod.p.val.norm <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = temp$x.t, random =  ~ 1|source/authorsTitle.o,  data = allData)
