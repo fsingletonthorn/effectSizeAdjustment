@@ -16,10 +16,10 @@ options(knitr.kable.NA = '')
 See word document 
 
 ## Methods 
-### Included data extraction and imputation
+### Data extraction
 All eight published or in press large scale replication projects performed within in the behavioral science research literature were included in the current research (see table 1 for a list of the the included studies and their sample size determination methods). The original source of each replicated effect, reported test statistics, effect sizes, sample sizes, standard errors and p-values were extracted for each original and replication study. Several of the large scale replication projects did not present the original test statistics and p values (e.g., Many labs 1 and 3 {Klein, 2014 #988;Ebersole, 2016 #985}). In these cases, these values were manually extracted from the original articles. When sample sizes for original studies were not available they were manually extracted from original articles where possible.
 
-For analysis, reported effect sizes were transformed to Fisher z Transformed correlation coefficents following the methods used in {Open Science Collaboration, 2015 #611} if the study-level results were reported in correlation coefficients or Cohen's d, or when the orignal test result was reported as a t-test or F statistic, but not otherwise (e.g., when effects were only reported as Cohen's q or when no effect size was reported). This means that the current analysis follows the assumptions for conversion between effects following each replication project, and that some studies have been left out of the current analysis (e.g., those which used Chi Square tests in {Open Science Collaboration, 2015 #611} and those reported only as Beta coefficents in [loopr citation]). In cases where sample sizes were not reported per group, sample sizes among groups were assumed to be equal in these conversions. All reported results are back-transformed from Fisher Z transformed correlation coefficients to correlation coefficients for ease of  interprtation unless it is otherwise stated. See Table 1 for the number of valid studies extracted from each project. See supplementary materials 1 for a comprehensive account of exclusions and study specific extraction details for each replication project. An original and replication effect size that could be converted to a Fisher z score was extracted for `r sum(!is.na(allData$fis.o) & !is.na(allData$fis.r))` replications, and this inforamtion along with sample sizes for original and replication studies was extracted for a total of `r sum(!is.na(allData$fis.o) & !is.na(allData$fis.r) & !is.na(allData$n.o)   & !is.na(allData$n.r) )` studies.
+For analysis, the original and replication effect sizes were transformed to Fisher z Transformed correlation coefficents following the methods used in {Open Science Collaboration, 2015 #611}. Cases where the the study-level results were not reported in correlation coefficients, Cohen's d, or when the orignal test result was reported as a t-test or F statistic were excluded from analysis (e.g., when effects were only reported as Cohen's q or when no effect size was reported). This means that some studies have been left out of the current analysis (e.g., those which used Chi Square tests in {Open Science Collaboration, 2015 #611} and those reported only as Beta coefficents in [loopr citation]). In cases where sample sizes were not reported per group, sample sizes among groups were assumed to be equal in these conversions. See Table 1 for the number of valid studies extracted from each project. See supplementary materials 1 for a comprehensive account of exclusions and study specific extraction details for each replication project. An original and replication effect size that could be converted to a Fisher z score was extracted for `r sum(!is.na(allData$fis.o) & !is.na(allData$fis.r))` replications, and this inforamtion along with sample sizes for original and replication studies was extracted for a total of `r sum(!is.na(allData$fis.o) & !is.na(allData$fis.r) & !is.na(allData$n.o)   & !is.na(allData$n.r) )` studies.
 
 Table 1. The reference of each replication project, the number of replication studies performed as a part of each replication project, and the number of studies for which Fisher Z transformed correlation coefficents could be extracted for both the original and replication studies. 
 
@@ -49,13 +49,46 @@ Note: $_a$ Soto et al’s (2018)’s replication rate and was recalculated on th
 
 ### Analysis
 
-This paper uses three main approaches to examine the change in effect sizes from original to replication studies. The first approach is descriptive, giving the mean, median and mean raw effect size decrease, along with the mean and median proportion decrease in effect sizes seen across the sample. The second approach uses a random effects meta-analysis framework to estimate the expected effect size decrease. The final appraoch uses the Bayesian Mixture Model developed and presented in {Camerer, 2018 #967}, and estimates the proportion of studies which are non-null and the expected effect size decrease when these studies are sampled from the non-null alternative hypthesis. All analysis was performed in R version 3.5.1 {R Development Core Team, 2018 #314} and meta-analyses were performed using the Metafor package {Viechtbauer, 2010 #796}. All analyses and difference scores (i.e., proportion changes and mean differences) were calculated using Fisher Z transformed effect sizes, and effect sizes are back transformed to correlation coefficents for easy interpretation unless otherwise stated. All analyses were exploratory, and multiple models which were developed are not presented here. See https://github.com/fsingletonthorn/effectSizeAdjustment for a git repository with a record of all interim models and for all model code and data, and see https://osf.io/daj8b for the preregistration of this project specifying that all analyses would be exploratory.
+This paper uses three analytic techniques to examine the change in effect sizes from original to replication studies. 
 
-#### Accounting for null effects
+The first approach uses a random effects meta-analysis framework to estimate the expected effect size decrease between original and replication studies.
 
-An important question in assessing the degree to which effects are attenuated in this literature is how much this effect is driven by the presence of a subset of null effects (or effects so small as to be effectively null). The average attenuation could be extremely high, and yet this effect be almost entirely driven by the presence of effectively-null effects. In order to account for this issue, three main approaches are used. 
+$differnce_{ij} = \beta_0  + \eta_{id} + \eta_{article} + \eta_{project} + \epsilon_{ij}$
 
-The first approach is to examine raw effect size differences and re-perform the meta-analysis excluding studies using two exclusion criteria; excluding studies in which the replication study was not significant and removing statistically equivalent studies. Because both of these methods function by removing small effects, no significance testing was performed on the difference between the model estimates estimated decreases after accounting for small or near-null effects. It is certain that, at a population level, both of these exclusion rules would lower the size of the observed effect size decrease. The second method of accounting for the presence of null or effectively null effects was to include the p value of the replication studies as a moderator in the meta-analysis of the effect size differences. In this model the meta-analytic mean is the predicted mean effect size decrease given a replication p value of 0. Finally, a Bayesian mixture model adapted from {Camerer, 2018 #967} was used to estimate the propbability that each study is sampled from the null distribution as well as the expected amount of effect size decrease when studies are sampled from a non null distribution. 
+This analysis treats each pair of effects, the original and replicated sample size, as one "study" in a meta-analytic framework, and estiamtes the change from original to replication study ($differnce_{ij}$). In order to account for non-independence between the included difference scores, random effects for replication project ($\eta_{project}$ and original article ($\eta_{article}$) are included (as in some cases, multiple effects from an original article were replicated or multiple operationalisations of an original effect were tested), and random effects are also included for each individual effect ($\eta_{id}$). Standard errors for each difference score were estimated as $se = \sqrt{\frac{1}{N_{1} -3} +  \frac{1}{N_{2} -3} }$, with $N_1$ being the sample size in the original study and $N_2$ being the sample size in the replication study. Empirical Bayes estimates and 95% credible intervals for random effects are also calculated following {Robinson, 1991 #999}{Morris, 1983 #1000}.
+
+
+#### Accounting for null results
+
+An important question in assessing the degree to which effects are attenuated in this literature is how much this effect is driven by the presence of a subset of null effects (or effects so small as to be effectively null). The average attenuation could be extremely high, and yet this effect be almost entirely driven by the presence of effectively-null effects. In order to account for this issue, three main methods are used. 
+
+##### Random effects meta-analysis with exclusions
+
+The first method is to examine raw effect size differences and re-perform the meta-analysis excluding studies using two exclusion criteria; excluding studies in which the replication study was not significant and removing statistically equivalent studies. Because both of these methods function by removing small effects, no significance testing was performed on the difference between the model estimates estimated decreases after accounting for small or near-null effects. It is certain that, at a population level, both of these exclusion rules would lower the size of the observed effect size decrease. The second method of accounting for the presence of null or effectively null effects was to include the p value of the replication studies as a moderator in the meta-analysis of the effect size differences. In this model the meta-analytic mean is the predicted mean effect size decrease given a replication p value of 0. Finally, a Bayesian mixture model adapted from {Camerer, 2018 #967} was used to estimate the propbability that each study is sampled from the null distribution as well as the expected amount of effect size decrease when studies are sampled from a non null distribution. 
+
+The first ex used to exclude likely effectively null effects is to only look at effects that reached statistical significance in the replication study and which had replication effects in the same direction as the original effect. Problematically, this means that replication studies which have a low level of staistical power to detect the true effect size under study are likely to be excluded. Especially as in some of the replication projects the sample size in the replication study was chosen using a power analysis of the observed effect in the original study {Open Science Collaboration, 2015 #611}, this method is likely to underestimate the amount of effect size exaggeration due to the exclusion of under-powered replications. In these cases, original studies which found large effects lead to follow up studies which have low power to detect the true, non-zero, but smaller effect size and would be excluded from this analysis. 
+
+In order to avoid excluding under-powered studies erroneously, we also excluded studies based on whether the results of the replication study were statistically equivalent to the null {Lakens, 2017 #214;Lakens, 2018 #951}, or significant in the opposite direction. As a requirement for equivalence testing is that a minimum effect size of interest is selected, we follow one suggestion in {Lakens, 2018 #951} and use the lowest effect size that would be statistically significant to the original study as the smallest effect of interest (assuming an alpha of .05). Equivalence tests were performed used the Fisher Z transformed effect sizes, and approximated the standard errors of each study as $\sqrt{\frac{1}{n-3}}$, except for studies from {Camerer, 2018 #967} which had more than a single replication attempts, where standard errors are those derived from the meta-analyses that produced the effect size estimate. Equivalence tests were performed using Z tests of the Fisher Z transformed correlation coefficients.
+
+In interpreting the results of this analysis it is important to note that the minimum detectable effect was occasionally quite high as original sample sizes were often very small (mean = `r mean(minimumEffectDetectableZ,na.rm=T)`, SD =  `r sd(minimumEffectDetectableZ,na.rm=T)`, 0th, 25th, 50th, 75th and 100th quintiles = [`r quantile(minimumEffectDetectableZ,na.rm=T)`]). This means that original studies were sometimes under-powered to detect even large effects using the current analysis (i.e., converting effects to correlation coefficients and estimating standard errors in this way). This means that this method may exclude studies which have effects the original authors may have considered important, but which they would have been unlikely to detect using this simplified analytic approach. See supplementary materials 2 for scatter plots of the data-set using each exclusion rule. 
+
+
+
+
+##### Mixed effects meta regression
+
+The second method of accounting for the fact that some of the included studies are likely null (or effectivly) null effects uses the same meta-analytic model as above but adds the replication p value as a moderator.
+
+$differnce_{ij} = \beta_0  +\beta_1Pvalue  + \eta_{id} + \eta_{article} + \eta_{project} + \epsilon_{ij}$
+
+
+#### Approach 3: Bayesian mixture model
+
+The final approach to estimating the amount of effect size attenuation expected given that the effect under question is non-zero was the Bayesian mixture model presented in {Camerer, 2018 #967}. This model assumes that the each observed replication effect size  comes from one of two components, either from the null hypothesis or from the alternative hypothesis. If the replication effect size is drawn from the null hypothesis, it is assumed to have come from a normal distribution with a mean of the true effect size (a value sampled from a distribution with a mean of 0 and a modeled standard deviation) and a standard deviation equal to the standard error of the replication study (estimated here as $\sqrt{\frac{1}{n-3}}$, n being the replication sample size). If the replication effect size is sampled from the alternative distribution, it is assumed to have been drawn from a normal distribution with a standard deviation equal to the standard error of the replication study, and a mean equal to the true effect size. In this case, the true effect size is sampled from a normal distribution with a mean equal to the original study's estimated true effect size attenuated by an "attenuation factor", equal to some value between zero and one and assumed to be equal across all studies. There are two main parameters of interest in this model; the "attenuation factor" (called a deflation factor in {Camerer, 2018 #967}), the degree to which effect sizes are attenuated between original and replication study, and the overall rate at which studies are assigned to have come from the null hypothesis (the "assignment rate"). 
+
+This model was estimated using four Markov chains from each of which 100,000 draws were taken (excluding a 11,000 draw burn-in period). Trace and density plots for the discussed parameters were assessed and the model appeared to have successfully converged. This analysis was performed in JAGS version 4.3.0 {Depaoli, 2016 #1010} using the rjags interface (version 4.8.0; {Plummer, 2018 #1011}). See supplementary materials ["mixture model"] for model syntax and further analysis details.
+
+All analysis was performed in R version 3.5.1 {R Development Core Team, 2018 #314} and meta-analyses were performed using the Metafor package {Viechtbauer, 2010 #796}. All analyses and difference scores (i.e., proportion changes and mean differences) were calculated using Fisher Z transformed effect sizes, and effect sizes are back transformed to correlation coefficents for easy interpretation unless otherwise stated. All analyses were exploratory, and multiple models which were developed are not presented here. See https://github.com/fsingletonthorn/effectSizeAdjustment for a git repository with a record of all interim models and for all model code and data, and see https://osf.io/daj8b for the preregistration of this project specifying that all analyses would be exploratory.
 
 ### Descriptives
 #### Raw changes in effect sizes
@@ -73,24 +106,12 @@ Figure 1. A scatterplot of replication study effect sizes (in correlation coeffi
 
 Figure 2. A raincloud plot of the change in effect sizes (here Fisher Z scores) from the original to the replication study by the replication project that each replication study was performed as a part of. 
 
-#### Excluding studies based on statistical significance and equivilance tests
-###### Statistical significance of the replication study
 
-The first method used to exclude likely effectively null effects is to only look at effects that reached statistical significance in the replication study and which had replication effects in the same direction as the original effect. This has the issue of meaning that effects for which the replication studies which were under-powered to detect the true effect size are likely to be excluded. Especially as in some of the replication projects the sample size in the second study was chosen using a power analysis of the observed effect in the original study {Open Science Collaboration, 2015 #611}, this method is likely to underestimate the amount of effect size exaggeration due to the exclusion of under-powered replications. In these cases, original studies which found large effects lead to follow up studies which have low power to detect the true, non-zero, but smaller effect size. 
-
-###### Equivalence tests
-
-In order to avoid excluding under-powered studies erroneously, we also excluded studies based on whether the results of the replication study were statistically equivalent to the null {Lakens, 2017 #214;Lakens, 2018 #951}, or significant in the opposite direction. As a requirement for equivalence testing is that a minimum effect size of interest is selected, we follow one suggestion in {Lakens, 2018 #951} and use the lowest effect size that would be statistically significant to the original study as the smallest effect of interest (assuming an alpha of .05). Equivalence tests were performed used the Fisher Z transformed effect sizes, and approximated the standard errors of each study as $\sqrt{\frac{1}{n-3}}$, except for studies from {Camerer, 2018 #967} which had more than a single replication attempts, where standard errors are those derived from the meta-analyses that produced the effect size estimate. Equivalence tests were performed using Z tests of the Fisher Z transformed correlation coefficients. As a method of testing how closely this method of approximating standard errors matches the original replication projects results, significance tests for the replication and original studies were performed using this approximation. The results matched the significance or non-significance as reported in the replication projects in every case. 
-
-In interpreting the results of this analysis it is important to note that the minimum detectable effect was occasionally quite high  as original sample sizes were often very small (mean = `r mean(minimumEffectDetectableZ,na.rm=T)`, SD =  `r sd(minimumEffectDetectableZ,na.rm=T)`, 0th, 25th, 50th, 75th and 100th quintiles = [`r quantile(minimumEffectDetectableZ,na.rm=T)`]). This means that original studies were sometimes under-powered to detect even large effects using the current analysis (i.e., converting effects to correlation coefficients and estimating standard errors in this way). This means that this method may exclude studies which have effects the original authors may have considered important, but which they would have been unlikely to detect using this simplified analytic approach. 
-
-See supplementary materials [exclusions] for full model output and scatter plots of the data-set using each exclusion rule. 
-
-##### Descriptives of samples excluding studies
+##### Descriptives of samples after exclusions
 
 Looking at the `r tableReductions["StatisticalSignificance", "n included"]` replications in which the replication study was statistically significant, `r round(tableReductions["StatisticalSignificance", "n included"]/tableReductions["Overall", "n included"],2) * 100`% of all studies, the average effect for original studies was `r tableReductions["StatisticalSignificance", "Mean original ES"]`, and the mean effect size for replication studies was `r tableReductions["StatisticalSignificance", "Mean replication ES"]`. There was an average decrease of r = `r tableReductions["StatisticalSignificance", "Mean ES difference"]`, and a mean percentage increase in effect sizes of `r tableReductions["StatisticalSignificance", "Mean proportion change"]*100`%.
 
-Examining the results of excluding studies based on equivalence testing, `r tableReductions["Nonequivalence", "n included"]` replications were not statistically equivalent to the null, `r ( tableReductions["Nonequivalence", "n included"]/ tableReductions["Nonequivalence", "n criteria calculable for"])*100`% of studies for which equivalence tests could be performed. The average effect size in the original non-equivalent studies was `r tableReductions["Nonequivalence", "Mean original ES"]`, compared to a mean effect size for replication studies of r = `r tableReductions["Nonequivalence", "Mean replication ES"]`. This is a mean decrease of r = `r tableReductions["Nonequivalence", "Mean ES difference"]`, an an average decrease of  `r tableReductions["Nonequivalence", "Mean proportion change"]*100`%.
+A total of `r tableReductions["Nonequivalence", "n included"]` studies were not statistically equivalent to the null, `r ( tableReductions["Nonequivalence", "n included"]/ tableReductions["Nonequivalence", "n criteria calculable for"])*100`% of studies for which equivalence tests could be performed (i.e., all effects for which there was an original and replicaiton effect size and sample). The average effect size in the original non-equivalent studies was `r tableReductions["Nonequivalence", "Mean original ES"]`, compared to a mean effect size for replication studies of r = `r tableReductions["Nonequivalence", "Mean replication ES"]`. This is a mean decrease of r = `r tableReductions["Nonequivalence", "Mean ES difference"]`, an an average decrease of  `r tableReductions["Nonequivalence", "Mean proportion change"]*100`%. See Table 2 for a list of descriptives for the whole sample, as well as the two subsets. 
 
 Table 2. 
 Differences between original and replication studies. All calculations were performed on Fisher's Z transformed correlations and back-transformed into correlation coefficients for interpretability.
@@ -104,16 +125,7 @@ rangePropDiffNotOverall <- range(tableReductions$`Mean proportion change`[2:nrow
 ```
 
 
-### Multilevel random effects meta-analysis
-#### A multilevel random effects meta-analysis
-
-The first appraoch uses a multilevel random effects meta-analysis to estimate the expected effect size difference between original and replication studies. 
-
-$differnce_{ij} = \beta_0  + \eta_{id} + \eta_{study} + \eta_{journal} + \epsilon_{ij}$
-
-This analysis treats each pair of effects, the original and replicated sample size, as one "study" in a meta-analytic framework, and estiamtes the change from origianl to replication study ($differnce_{ij}$). In order to account for non-independence between studies random effects for journal ($\eta_{journal}$ and study ($\eta_{study}$) are included, and random effects are also assumed for each individual effect ($\eta_{id}$). Standard errors for each difference score were estimated as $se = \sqrt{\frac{1}{N_{1} -3} +  \frac{1}{N_{2} -3} }$, with $N_1$ being the sample size in the original study and $N_2$ being the sample size in the replication study. Empirical Bayes estimates and 95% credible intervals for random effects are also calculated following {Robinson, 1991 #999}{Morris, 1983 #1000}.
-
-#### Multilevel model results 
+### Multilevel model results 
 
 The model including all data estimates a r = `r REModSum$estimate_Cor` (95% CI [`r REModSum$CI95_Cor`]) decrease in effect sizes from the original to replication studies. This is represents a change equivalent to `r (REModSum$estimate_Z/mean(allData$fis.o, na.rm = T))*100`% (95% CI [`r ((REModSum$CI95_Z/mean(allData$fis.o, na.rm = T))*100)[1]`%, `r ((REModSum$CI95_Z/mean(allData$fis.o, na.rm = T))*100)[2]`%]) of the mean effect size in the original studies (r = `r mean(allData$correlation.o, na.rm = T)`). 
 
@@ -133,11 +145,8 @@ blups <- BLUPsSource[[1]]
 kable(blups, col.names = c("Estimate", "Standard Error", "95% PI lower bound", "95% PI upper bound"))
 ```
 
-#### Accounting for null results
-
-
 ##### Table [all model output]
-The number of studies included in each model, and the estimated correlation coefficient decrease from each model. Models were estimated using Fisher Z transformed correlation coefficients and back transformed for interpretability. Percentage attenuation gives the percentage attenuation for effect size differences as a percentage for the the mean original effect size (r = `r mean(allData$correlation.o, na.rm = T)`). 
+The number of studies included in each model, and the estimated correlation coefficient decrease from each model. Models were estimated using Fisher Z transformed correlation coefficients and back transformed for interpretability. Percentage attenuation gives the percentage attenuation for effect size differences as a percentage of the the mean original effect size (r = `r mean(allData$correlation.o, na.rm = T)`). 
 ```{r echo=F}
 rowNames <- row.names(modSumariesR) %>% 
         str_replace("Below", " < ") %>%
@@ -157,18 +166,10 @@ Table [moderators]. Multilevel meta-regression results including the p value of 
 kable(REMod.p.val.cleaned.sum, digits = 3)
 ```
 
-
 ##### Leave one out cross validation
 To assess how sensitive the results of the multilevel models are to the inclusion of each of the replication projects and individual replicated effects within each replication project, the models were rerun using leave one out cross validation, excluding both the individual replication attempts and the replication projects one at a time. When leaving out individual studies the range of point estimates (i.e., the difference between the smallest and largest estimate of the difference between original and replication studies) for each of the LOO cross validation models did not exceed more than a Fisher z sore of `r maxDiffLOOStudy`. When excluding one replication project at a time, model estimate ranges did not exceed `r maxDiffLOOProject`. See supplementary material [LOO] for a table of the proportion of model intercept p values below .05, and estimate quintiles for each model from the leave on out cross validation on the study and project levels. None of these changes would lead to substantially different conclusions being drawn from the model output.
 
-
-### Approach 3: Bayesian mixture model
-
-The final approach to estimating the amount of effect size attenuation expected given that the effect under question is non-zero was the Bayesian mixture model presented in {Camerer, 2018 #967}. This model assumes that the each observed replication effect size  comes from one of two components, either from the null hypothesis or from the alternative hypothesis. If the replication effect size is drawn from the null hypothesis, it is assumed to have come from a normal distribution with a mean of the true effect size (a value sampled from a distribution with a mean of 0 and a modeled standard deviation) and a standard deviation equal to the standard error of the replication study (estimated here as $\sqrt{\frac{1}{n-3}}$, n being the replication sample size). If the replication effect size is sampled from the alternative distribution, it is assumed to have been drawn from a normal distribution with a standard deviation equal to the standard error of the replication study, and a mean equal to the true effect size. In this case, the true effect size is sampled from a normal distribution with a mean equal to the original study's estimated true effect size attenuated by an "attenuation factor", equal to some value between zero and one and assumed to be equal across all studies. There are two main parameters of interest in this model; the "attenuation factor" (called a deflation factor in {Camerer, 2018 #967}), the degree to which effect sizes are attenuated between original and replication study, and the overall rate at which studies are assigned to have come from the null hypothesis (the "assignment rate"). 
-
-This model was estimated using four Markov chains from each of which 100,000 draws were taken (excluding a 11,000 draw burn-in period). Trace and density plots for the discussed parameters were assessed and the model appeared to have successfully converged. This analysis was performed in JAGS version 4.3.0 {Depaoli, 2016 #1010} using the rjags interface (version 4.8.0; {Plummer, 2018 #1011}). See supplementary materials ["mixture model"] for model syntax and further analysis details.
-
-#### Mixture model results
+### Analysis 3: Bayesian mixture model results
 
 A total of `r nrow(jagData)` effects were included in the mixture model (i.e., all studies for which sample sizes and effect sizes for replication and original studies were extracted). The overall posterior assignment rate (i.e., the proportion of studies which are estimated to be from the non-null alternative hypothesis) is `r round(phiSimple,2)*100`%, with a 95% highest probability density interval of [`r round(phiSimpleHDI, 2 )[1] * 100`%, `r round(phiSimpleHDI, 2 )[2] * 100`%]. The overall attenuation factor is `r (1-as.numeric(alphaSimple))*100`% with a 95% highest probability density interval of [`r  (1-round(as.numeric(HDISimple)[2], 2))*100`%, `r  (1-round(as.numeric(HDISimple)[1], 2))*100`%]. Figure [mixture model], shows the original effect sizes plotted against replication effect sizes weighted by sample size, along with the posterior assignment rate. The color of each point indicates the proportion of times each effect was assigned to the alternative hypothesis. As was seen and pointed out in the first use of this model in {Camerer, 2018 #967}, values close to the diagonal are reliably assigned to the alternative hypothesis whereas effects far below the diagonal are more often assigned to the null hypothesis, although the overall posterior assignment rate might be overly optimistic (i.e., assign studies to the non-null hypothesis at a high rate). In part, this optimism may be due to the fact that this model allows for true effect sizes to be estimated as being extremely low or near zero due to sampling variability alone and still assigned to the alternative hypothesis not the null, with `r round(propBelow.1.BMM, 2) * 100`% of the estimated true replication effect sizes being smaller than an r of .1.
 
@@ -237,24 +238,12 @@ Original and replication effect sizes were extacted for all 9 original and repli
 The economics replication project {Camerer, 2016 #983}. Original and replication effect sizes for all `r sum(allData$abrev == 'econ')` studies were reported in correlation coefficents and all are included in this analysis.
 
 
-
-
-### Approximate bayes factors comparison
-
-A comparison of the results of the Bayes Factors as estimated here and as reported in {Camerer, 2018 #967} shows that they agree with each other in approximate magnitude and direction for the most part, although there are some notable discrepancies. See Table SM1 for the Bayes factors reported in {Camerer, 2018 #967} and those reported in the current paper. The only large discrepancy included is seen in Balafoutas and Sutter (2012) in which the Bayes Factor reported in {Camerer, 2018 #967} was based on a hypothesis test of ordered binomial probabilities, making it difficult to appropriately convert into a correlation coefficient, and likely accounting for the large difference. 
-
-Table SM`r tabSMN <- 1; tabSMN`.
-One-sided and ($BF_{plus1}$) and replication ($BF_{rep1}$) Bayes Factors for as reported in {Camerer, 2018 #967} and as estimated in the current paper, along with the reported correlation coefficients and sample sizes from the original and replication studies. 
-
-`r kable(tableBayesFactors, digits = 2)`
-
-
 ### SM2 
 ### Plots and multilevel model output of the relationship between original and replication correlation coefficents using varied exclusion criteria
 
 The following output shows scatter plots and model output for all of the multilevel meta-analyses performed using the varied exclusion criteria explained in the main text.
 
-Table SM `r tabSMN <- tabSMN + 1; tabSMN`. Multilevel meta-analysis model estimates and random effects for all data.
+Table SM `r tabSMN <- 1; tabSMN`. Multilevel meta-analysis model estimates and random effects for all data.
 
 ```{r}
 kable(niceModelSums$`All Data`)
@@ -291,52 +280,9 @@ kable(niceModelSums$`Non-equivalent studies`)
 plotNonequiv 
 ```
 
-Figure SM`r figSMN <- figSMN+1; figSMN`. Scatter plot of replication effect sizes (in correlation coefficients) plotted against original effects including studies which are not statistically equivalent to the null, using equivalence bounds set as the minimum effect size that would have been statistically significant in the original study. 
+Figure SM`r figSMN <- figSMN+1; figSMN`. Scatter plot of replication effect sizes (in correlation coefficients) plotted against original effects including studies which are not statistically equivalent to the null, using equivalence bounds set as the minimum effect size that would have been statistically significant in the original study.
 
-## SM3
-### Simulation of exclusion method accuracy
-
-In order to assess whether the methods that were used to estimate the proportion change in studies excluding null results develop reasonable estimates, a series of simulations were performed. Simulations took as a starting point the observed effects in the original studies, estimating a true effect from these original results based on the Fisher Transformed ES standard error (i.e., estimating the true effect of each original study assuming a normal distribution with a mean of the original effect and a standard deviation of the standard error), and applying an attenuation factor (i.e., the proportion by which the true effect is reduced between initial and replication studies). Simulations were performed on attenuation factors from 0 to 1 in steps of .1. Simulation studies also varied the number of true effects, also varying between 0 and 1 in steps of .1, setting some studies to have true effect sizes of 0 randomly. 
-
-These simulations assumed that the probability of each study being a true null results was unrelated to the original effect size, sample size, source or original paper. See Table [all estimates output] for a table of how each method functions under each set of parameter values, along with the number of simulations that make up each value. See Plots [simulation] - [simulation] for heat maps of the root mean square error (RMSE), the mean absolute error (MAE) and average error are reported below in tables for all models. See table [simulation output] for a table of each method's root mean square error (RMSE), the mean absolute error (MAE) and average error using each exclusion rule. 
-
-```{r echo = FALSE}
-accuracyPlot
-```
-
-Figure [accuracy of cut scores]. The proportion of studies correctly classified in `r as.numeric(nSimsimulationAccuracyByTypeDF)` simulations of the accuracy of cut scores under varied true proportions of attenuation and proportion of effects which are true nulls.
-
-Table [accuracy plot]
-`r kable(simulationAccuracyByTypeDF)`
-
-Additionally, simulations were performed using the same data-generation method to estimate the accuracy of the raw methods of estimating the simulated true proportion decrease under these different scenarios. Looking the mean proportion of effect size attenuation in the study, the results of the simulation study suggest that none of these methods for removing effect sizes lead to particularly accurate estimates of the true mean proportion error or the true average reduction in effect sizes in extreme circumstances. The simulation studies show Mean Absolute Errors (MAE) of between `r  MAERange[1]` and `r  MAERange[2]` for estimates of the proportion of attenuation seen, with error standard deviations of between `r  MAESDRange[1]` and `r  MAESDRange[2]`, compared to a MAE of `r MAEOverall` when not removing any studies (error SD = `r MAESDOverall`). However, at reasonable levels of attenuation and proportion of null effects being correct, the simulations suggest that these methods are more accurate. For example,  excluding simulations with a proportion of null results or attrition of .8 or greater, these methods have a MAE range of  between `r  MAELess75range[1]` and `r  MAELess75range[2]`, error SDs of `r  errorLess75SD[1]` to `r  errorLess75SD[2]`, compared to MAE of `r MAELess75Overall` when not excluding any studies (error SD = `r MAELess75SDOverall`).
-
-Note that these values are only valid under a specific data generation process, where there is a consistent factor effect size decrease, and where the studies which are null are random and independent of the original effect and sample sizes. See Table [simulation output] for the mean squared error (MSE), root mean square error (RMSE), mean absolute error (MAE), mean error (i.e., the average difference between the estimated proportion of effect size attenuation and the simulated amount of effect size attenuation), the error standard deviation, (i.e., the SD of the error scores for each simulation) across the parameter space, and figures `r tabSMN` to `r tabSMN + 3` for heat-plots of the simulation mean error, mean absolute error and error SD across simulation conditions. The code used in these simulations is available from [OSFOSF.io].
-
-
-heat maps of the mean absolute error at each benchmark and full simulation output tables. 
-Table [simulation output]. The number of simulations for each subsample, the mean squared error (MSE), root mean square error (RMSE), mean absolute error (MAE), mean error (i.e., the average difference between the estimated proportion of effect size attenuation and the simulated amount of effect size attenuation), the error standard deviation, (i.e., the SD of the error scores for each simulation). 
-
-```{r}
-kable(simulationSumByType, col.names = str_replace_all(names(simulationSumByType), "_", " "))
-```
-
-
-```{r}
-meanErrorPlot
-```
-
-
-```{r}
-sdErrorPlot
-```
-
-```{r}
-MAEPlot
-```
-
-
-### SM4
+### SM3
 ### LOO Cross validation output
 
 # Table [LOO cross validation output].
@@ -351,10 +297,10 @@ kable(LOOStudyDFSum)
 0th, 25th, 50th, 75th and 100th percentiles from leave one out cross validation for each multilevel model, excluding one replication project at a time, including only the sample indicated in "subsample". 
 
 ```{r}
-kable(LOOProjectDFSum)
+kable(LOOoutput)
 ```
 
-
+### SM4
 ### Bayesian Mixture Model
 
 The mixture model results presented in text presents the model developed by Camerer et al,. (2018; see https://osf.io/xhj4d/ for their detailed description of this model).  All priors were chosen to be uninformative or vague. The mixture model assumes that the observed replication effect sizes either come from the null hypothesis, a true effect sampled from a normal distribution with a mean of zero and a estimated precision (tau). This model uses an errors-in-variables approach to account for possible attenuation of effect sizes due to measurement error and estimation uncertainty following {Matzke, 2017 #1012}, which means the effect size attenuation factor is the factor change between the estimated true effect of the original and replication study effect size. Although this may be reasonable in that the true effect size of the effect may not be the true effect size of a particular study and analysis set up, this poses an interpretative problem in that alpha now represents the difference between the estimated original effect and the replication effect.
