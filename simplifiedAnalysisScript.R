@@ -196,10 +196,19 @@ nNotSig.r <- sum(allData$significant.r)
 ######################################
 
 # Random effects model with random effects for authors nested within source
-REMod <- rma.mv(yi = allData$fisherZDiff, V = allData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id/id,  data = allData)
+REMod <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id/id,  data = allData)
+
+# Checking if anything changes excluding those where the SE is approximated
+REModValidSE <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id/id,  data = allData[!is.na(allData$seFish.o) & !is.na(allData$seFish.r),])
+validSEDiff <- REMod$b - REModValidSE$b
+
 # cdREMOD <- cooks.distance(REMod, parallel = "snow", ncpus = parallel::detectCores())
 
 REMod.p.val.cleaned <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = cleanedpVal.r, random =  ~ 1|source/authorsTitle.o/id,  data = allData)
+REMod.p.val.cleanedValidSE <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = cleanedpVal.r, random =  ~ 1|source/authorsTitle.o/id,  data = allData[!is.na(allData$seFish.o) & !is.na(allData$seFish.r),])
+
+validSEDiff[c(2,3)] <- REMod.p.val.cleaned$b - REMod.p.val.cleanedValidSE$b
+
 
 REMod.p.val.cleaned.sum <-   data_frame(" " = c("Estimate", "p value", NA,NA,NA,NA), Estimate = c(REMod.p.val.cleaned$b, rep(NA, 4)), "95% CI LB" = c(REMod.p.val.cleaned$ci.lb, rep(NA, 4)), "95% CI UB" = c(REMod.p.val.cleaned$ci.ub, rep(NA, 4)), SE = c(REMod.p.val.cleaned$se,  rep(NA, 4)), p = c(ifelse(REMod.p.val.cleaned$pval<.001, "< .001", round(REMod.p.val.cleaned$pval, 3)),  rep(NA, 4)), 
                                         "Random effects" = c(NA, NA, paste0("Project variance = ", round(REMod.p.val.cleaned$sigma2[1], 3), ", n = ", REMod.p.val.cleaned$s.nlevels[1]), 
@@ -217,10 +226,15 @@ REModSum <- modelOutputSummary(REMod)
 
 # The first model but with only significant replications
 REModOnlySigR <- rma.mv(yi = fisherZDiff, V = allData[allData$significantSameDirection.r==TRUE,]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id, data = allData[allData$significantSameDirection.r==TRUE,])
-
+# Checking if anything changes excluding those where the SE is approximated
+REModOnlySigRValidSE <- rma.mv(yi = fisherZDiff, V = allData[allData$significantSameDirection.r==TRUE,]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id, data = allData[allData$significantSameDirection.r==TRUE & !is.na(allData$seFish.o) & !is.na(allData$seFish.r),])
+validSEDiff[4] <- REModOnlySigR$b - REModOnlySigRValidSE$b
 
 # The first model but with only non-equiv 
 REModNonequiv <- rma.mv(yi = fisherZDiff, V = allData[allData$statisticallyEquiv.ro==FALSE & !is.na(allData$statisticallyEquiv.ro==FALSE),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id, data = allData[allData$statisticallyEquiv.ro==FALSE & !is.na(allData$statisticallyEquiv.ro==FALSE),])
+# Checking if anything changes excluding those where the SE is approximated
+REModNonequivValidSE <- rma.mv(yi = fisherZDiff, V = allData[allData$statisticallyEquiv.ro==FALSE & !is.na(allData$statisticallyEquiv.ro==FALSE),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id, data = allData[allData$statisticallyEquiv.ro==FALSE & !is.na(allData$statisticallyEquiv.ro==FALSE) & !is.na(allData$seFish.o) & !is.na(allData$seFish.r),])
+validSEDiff[5] <- REModNonequiv$b - REModNonequivValidSE$b
 
 modRes <- data.frame( modelN = REMod$k, modelEstimate = REMod$b, MLM95lb = REMod$ci.lb, MLM95ub = REMod$ci.ub, row.names = "Overall")
 modRes1 <- data.frame(modelN = REModOnlySigR$k, modelEstimate = REModOnlySigR$b, MLM95lb = REModOnlySigR$ci.lb, MLM95ub = REModOnlySigR$ci.ub, row.names = "StatisticalSignificance")
@@ -342,7 +356,6 @@ LOOStudyDFSum$Subsample <- namesR
 # This reads in the data produced by the above  
 LOOEffectDF <- read.csv("Data/LOOSEffectSimp.csv")
 LOOEffectDF <- LOOEffectDF[,c(2,3,4)]
-
 
 LOOEffectDFSum <- LOOEffectDF %>%
   group_by(Subsample = call) %>%
@@ -491,9 +504,9 @@ replicationProjects[9,] <- c("All projects", sum(c(as.numeric(replicationProject
                              paste0(round(weighted.mean(as.numeric(str_split(replicationProjects$`Reported replication rate (statistically significant results in the same direction)`, "%", simplify = T)[,1], na.rm = T), weights))
                                     #,"% (",
                                     # round(weighted.mean(as.numeric(str_split(replicationProjects$`Reported replication rate (statistically significant results in the same direction)`, "%", simplify = T)[,1], na.rm = T), weights2)), "%)"),
-                             ), sum(replicationProjects$`Included studies`))
+                             , "%"), sum(replicationProjects$`Included studies`))
 
-replicationProjects$`Percent performed replication studies included` <-paste0( round( (as.numeric(str_split(replicationProjects$`Included studies`, " ", simplify = T)) / as.numeric(str_split(replicationProjects$`Number of replication studies performed`, " ", simplify = T)[,1]))*100), "%")
+replicationProjects$`Percent of performed replication studies included` <-paste0( round( (as.numeric(str_split(replicationProjects$`Included studies`, " ", simplify = T)) / as.numeric(str_split(replicationProjects$`Number of replication studies performed`, " ", simplify = T)[,1]))*100), "%")
 
-replicationProjects$`Percent performed replication studies included`[5] <- paste0(replicationProjects$`Percent performed replication studies included`[5], " (", round((as.numeric(replicationProjects$`Included studies`[5])-3) /13 *100), "%)")
+replicationProjects$`Percent of performed replication studies included`[5] <- paste0(replicationProjects$`Percent of performed replication studies included`[5], " (", round((as.numeric(replicationProjects$`Included studies`[5])-3) /13 *100), "%)")
 
