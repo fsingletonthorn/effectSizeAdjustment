@@ -48,7 +48,7 @@ niceMLMESum <- function(REMod) {
              "Random effects" = c(NA, paste0("Project variance = ", round(REMod$sigma2[1], 3), ", n = ", 
                                              REMod$s.nlevels[1]),
                                   paste0("Article variance = ", round(REMod$sigma2[2], 3), ", n = ", REMod$s.nlevels[2]), 
-                                  paste0("Effect variance = ", round(REMod$sigma2[2], 3), ", n = ", REMod$s.nlevels[3]),
+                                  paste0("Effect variance = ", round(REMod$sigma2[3], 3), ", n = ", REMod$s.nlevels[3]),
                                   paste0("QE(",REMod$k-1, ") = ", round(REMod$QE, 2),  ", p ", ifelse(REMod$QEp <.001, "< .001", paste("=" , round(REMod$QEp, 2))))))
 }
 
@@ -260,27 +260,28 @@ tableAverageDecrease <- allData %>%
   dplyr::summarise(mean=mean(fisherZDiff, na.rm=T), sd=sd(fisherZDiff, na.rm=T))
 
 ### Leave one out cross validation for main model, excluding first each source ####
-# # Commented out to avoid having to run this each time I knit this document
-# LOOTracking <- list()
-# 
-# for(i in 1:length(unique(allData$source))) {
-#   # exlude <- unique(allData$source)[i]
-#   tempData <- allData[-which(allData$source == unique(allData$source)[i]),]
-#   LOOTracking[[i]]                                  <-  rma.mv(yi = tempData$fisherZDiff, V = tempData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id,  data = tempData)
-#   LOOTracking[[i+1*length(unique(allData$source))]] <-  rma.mv(yi = fisherZDiff, V = tempData$seDifference.ro^2, mod = cleanedpVal.r, random =  ~ 1|source/authorsTitle.o/id,  data = tempData)
-#   LOOTracking[[i+ 2*length(unique(allData$source))]] <-  rma.mv(yi = fisherZDiff, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id,  data = (tempData[tempData$statisticallyEquiv.ro==FALSE,]))
-#   LOOTracking[[i+ 3*length(unique(allData$source))]] <-  rma.mv(yi = fisherZDiff, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id,  data = tempData[tempData$significantSameDirection.r==TRUE,])
-#   
-# }
-# 
-# # extrating estiamtes from list
-#  LOOProject <- sapply(LOOTracking, function(m) {m[c(1,5, 108)]}, simplify = T)
-#  LOOProjectDF <- data.frame(as.data.frame(t(LOOProject)))
-#  LOOProjectDF[,1] <- str_remove_all(LOOProjectDF[,1], ",.+|c\\(")
-#  LOOProjectDF[,2] <- str_remove_all(LOOProjectDF[,2], ",.+|c\\(")
-#  LOOProjectDF <- data.frame(b = as.numeric(LOOProjectDF$b), p = as.numeric(LOOProjectDF$pval), call = as.character(LOOProjectDF$call))
+# Commented out to avoid having to run this each time I knit this document
+#  LOOTracking <- list()
+#  
+#  for(i in 1:length(unique(allData$source))) {
+#    # exlude <- unique(allData$source)[i]
+#    tempData <- allData[-which(allData$source == unique(allData$source)[i]),]
+#    LOOTracking[[i]]                                  <-  rma.mv(yi = tempData$fisherZDiff, V = tempData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id,  data = tempData)
+#    LOOTracking[[i+1*length(unique(allData$source))]] <-  rma.mv(yi = fisherZDiff, V = tempData$seDifference.ro^2, mod = cleanedpVal.r, random =  ~ 1|source/authorsTitle.o/id,  data = tempData)
+#    LOOTracking[[i+ 2*length(unique(allData$source))]] <-  rma.mv(yi = fisherZDiff, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id,  data = (tempData[tempData$statisticallyEquiv.ro==FALSE,]))
+#    LOOTracking[[i+ 3*length(unique(allData$source))]] <-  rma.mv(yi = fisherZDiff, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id,  data = tempData[tempData$significantSameDirection.r==TRUE,])
+#    
+#  }
+#  
+#  # extrating estiamtes from list
+#   LOOProject <- sapply(LOOTracking, function(m) {m[c(1,5, 108)]}, simplify = T)
+#   LOOProjectDF <- data.frame(as.data.frame(t(LOOProject)))
+#   LOOProjectDF[,1] <- str_remove_all(LOOProjectDF[,1], ",.+|c\\(")
+#   LOOProjectDF[,2] <- str_remove_all(LOOProjectDF[,2], ",.+|c\\(")
+#   LOOProjectDF <- data.frame(b = as.numeric(LOOProjectDF$b), p = as.numeric(LOOProjectDF$pval), call = as.character(LOOProjectDF$call))
  
-#  write.csv( LOOProjectDF, "Data/LOOProjectSimp.csv", row.names = F)
+# write.csv( LOOProjectDF, "Data/LOOProjectSimp.csv", row.names = F); beepr::beep(8)
+ 
 # This reads in the data from the LOO analysis above 
 LOOProjectDF <- read_csv("Data/LOOProjectSimp.csv")
 
@@ -289,7 +290,6 @@ LOOProjectDFSum <- LOOProjectDF %>%
   group_by(Subsample = call) %>%
   dplyr::summarise('Proportion significant'= mean(p<.05), 'Minimum estimate' = quantile(b)[1],  '25th percentile' = quantile(b)[2], 'Median' = quantile(b)[3], '75th percentile' = quantile(b)[4], 'Maximum estimate' = quantile(b)[5])
 
-maxDiffLOOProject <- max(abs(LOOProjectDFSum[,7] - LOOProjectDFSum[,3]))
 
 # Renaming files
 namesR <- as.character(LOOProjectDFSum$Subsample)
@@ -301,7 +301,7 @@ namesR[str_detect(LOOProjectDFSum$Subsample, "^((?!mods|statistic|signif).)*$")]
 LOOProjectDFSum$Subsample <- namesR
 
 # Again commented out to avoid knitting this every time
-# LOO removing studies - this takes ~ 20 mins to run, it was run once and then saved ####
+#LOO removing studies - this takes ~ 20 mins to run, it was run once and then saved ####
 #   for(i in 1:length(unique(allData$authorsTitle.o))) {
 #     tempData <- allData[-which(allData$authorsTitle.o == unique(allData$authorsTitle.o)[i]),]
 #     LOOTracking[[i]] <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id,  data = tempData)
@@ -309,15 +309,15 @@ LOOProjectDFSum$Subsample <- namesR
 #     LOOTracking[[i+ 2*(length(unique(allData$authorsTitle.o)))]] <-  rma.mv(yi = fisherZDiff, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id,  data = tempData[tempData$statisticallyEquiv.ro==FALSE,])
 #     LOOTracking[[i+ 3*(length(unique(allData$authorsTitle.o)))]] <-  rma.mv(yi = fisherZDiff, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id,  data = tempData[tempData$significantSameDirection.r==TRUE,])
 #   }
-
- 
+#
+# 
 # LOOStudy <- sapply(LOOTracking, function(m) {m[c(1,5, 108)]}, simplify = T)
 # LOOStudyDF <- data.frame(as.data.frame(t(LOOStudy)))
 # LOOStudyDF[,1] <- str_remove_all(LOOStudyDF[,1], ",.+|c\\(")
 # LOOStudyDF[,2] <- str_remove_all(LOOStudyDF[,2], ",.+|c\\(")
 # LOOStudyDF <- data.frame(b = as.numeric(LOOStudyDF$b), p = as.numeric(LOOStudyDF$pval), call = as.character(LOOStudyDF$call))
-#  
-#   write.csv(LOOStudyDF ,"Data/LOOStudyDFSimp.csv")
+##  
+#   write.csv(LOOStudyDF ,"Data/LOOStudyDFSimp.csv"); beepr::beep(8)
 # This reads in the data produced by the above  
 LOOStudyDF <- read.csv("Data/LOOStudyDFSimp.csv")
 LOOStudyDF <-LOOStudyDF[,c(2,3,4)]
@@ -337,7 +337,7 @@ LOOStudyDFSum$Subsample <- namesR
 # Loo on the effect level
 # Again commented out to avoid knitting this every time
 # LOO removing studies - this takes ~ 20 mins to run, it was run once and then saved ####
-# LOOTracking <- list()
+#  LOOTracking <- list()
 #   for(i in 1:nrow(allData)) {
 #        tempData <- allData[-i,]
 #        LOOTracking[[i]] <- rma.mv(yi = tempData$fisherZDiff, V = tempData$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id,  data = tempData)
@@ -351,8 +351,8 @@ LOOStudyDFSum$Subsample <- namesR
 #    LOOEffectDF[,1] <- str_remove_all(LOOEffectDF[,1], ",.+|c\\(")
 #    LOOEffectDF[,2] <- str_remove_all(LOOEffectDF[,2], ",.+|c\\(")
 #    LOOEffectDF <- data.frame(b = as.numeric(LOOEffectDF$b), p = as.numeric(LOOEffectDF$pval), call = as.character(LOOEffectDF$call))
- 
-#  write.csv(LOOEffectDF ,"Data/LOOSEffectSimp.csv")
+# 
+#  write.csv(LOOEffectDF ,"Data/LOOSEffectSimp.csv"); beep(8)
 # This reads in the data produced by the above  
 LOOEffectDF <- read.csv("Data/LOOSEffectSimp.csv")
 LOOEffectDF <- LOOEffectDF[,c(2,3,4)]
@@ -510,3 +510,8 @@ replicationProjects$`Percent of performed replication studies included` <-paste0
 
 replicationProjects$`Percent of performed replication studies included`[5] <- paste0(replicationProjects$`Percent of performed replication studies included`[5], " (", round((as.numeric(replicationProjects$`Included studies`[5])-3) /13 *100), "%)")
 
+#  I^2 for ML metas =  following Nakagawa, 2012 #1023}
+W <- diag(1/allData$seDifference.ro^2)
+X <- model.matrix(REMod)
+P <- W - W %*% X %*% solve(t(X) %*% W %*% X) %*% t(X) %*% W
+Io2 <- 100 * sum(REMod$sigma2) / (sum(REMod$sigma2) + (REMod$k-REMod$p)/sum(diag(P)))
