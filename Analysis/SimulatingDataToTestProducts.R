@@ -1,7 +1,7 @@
 simData <- allData[c("correlation.o", "fis.o", "n.o", "n.r","seFishAprox.o" ,"seFish.o", "seFish.r" ,"seFishAprox.r", "seDifference.ro", "pVal.o", "source", "authorsTitle.o")]
 
 # Must run data cleaning and analysis scripts before this one 
-nSim <- 10000
+nSim <- 12100 # must be divisible by 121 for this to work
 
 # Tracking vectors
 simEquivProp  <- rep(NA, length(nSim))
@@ -13,11 +13,16 @@ descriptivesTrackingSim <- data.frame(means=rep(NA, length(tableReductions$`n in
                                       propAttenuation = rep(NA, length(tableReductions$`n included`)*nSim), trueMeanDifference = rep(NA, length(tableReductions$`n included`)*nSim))
 
 # This controls whether you are adding or starting over again in the simulation - THIS HAS TO BE FALSE FOR THE FIRST ROUND 
-add <- TRUE
+add <- FALSE
 
-for(i in 1:nSim) {
-  propNull <- sample(x = seq(0,1,by=.1), 1)
-  propAttenuation <- sample(x = seq(0,1,by=.1), 1)
+# Setting it up for equal numbers of each combo 
+ temp <- expand.grid(seq(0,1,by=.1),seq(0,1,by=.1)) 
+combinations <- do.call("rbind", rep(list(temp), nSim/121))
+
+ 
+for(i in 1:nrow(combinations)) {
+  propNull <- combinations[i,1]
+  propAttenuation <- combinations[i,2]
 # Simulating selection from the true effect - i.e., adding random variability as the se of the original (i.e. finding the "true" effect) and replciation studies, 
 # this value assumes that if there were no Ns reported, the SE was actually the mean of all of the standard errors
 

@@ -448,7 +448,7 @@ data6 <- data.frame(authorsTitle.o = xPhi$PAPER_ID,
                     seCohenD.o =  NA,
                     fis.o = es.o$yi, 
                     seFish.o = es.o$seFish,
-                    n.o = xPhi$OriginalN_Effect,
+                    n.o = as.numeric(ifelse(is.na(xPhi$OriginalN_Effect),xPhi$OriginalN_Overall,xPhi$OriginalN_Effect)),
                     pVal.o =  xPhi$pVal.o,
                     testStatistic.o = xPhi$OriginalANALYSIS,
                     correlation.r = xPhi$ReplicationRES,
@@ -456,9 +456,13 @@ data6 <- data.frame(authorsTitle.o = xPhi$PAPER_ID,
                     seCohenD.r =  NA,
                     fis.r = es.r$yi,
                     seFish.r = es.r$seFish,
-                    n.r = xPhi$ReplicationN_Effect,
+                    n.r = ifelse(is.na(xPhi$ReplicationN_Effect),xPhi$ReplicationN_Overall,xPhi$ReplicationN_Effect),
                     pVal.r =  xPhi$pVal.r,
                     seDifference.ro = NA)
+
+# replacing missing values(these are reported only in the test statistics for some reason)
+data6$n.r[is.na(data6$n.r)] <- 2211
+data6$n.o[is.na(data6$n.o)] <- 15664
 
 data6$source <- as.character(projectNames[6,1])
   #"Cova, et al. (2018), Experimental Philosophy"

@@ -2,7 +2,6 @@ library(rjags)
 library(tidyverse)
 # Source these two before running to load data:
 # source(file = 'Data/data_collection_cleaning.R')
-# source(file = 'analysisScript.R')
 # https://osf.io/xhj4d/  - Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., . . . Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637-644. doi:10.1038/s41562-018-0399-z
 # Getting rid of missing data
 
@@ -40,8 +39,8 @@ jagData$trueRepEffect <- statsMeans[grepl(pattern = "trueRepEffect", rownames(su
 mean((jagData$trueRepEffect-jagData$fis.o)/jagData$fis.o)
 
 # Highest prob density interval on alpha 
+# Binding to treat as one MCMC chain 
 samplesDechained <- as.mcmc( do.call(rbind, samples))
-head(samplesDechained)
 
 intervalSamples <- HPDinterval(samplesDechained)
 
@@ -51,10 +50,8 @@ phiHPD <- intervalSamples[row.names(intervalSamples) == 'phi']
 trueRep <- samplesDechained[,which(str_detect(colnames(samplesDechained), "trueRep"))]
 clust <- samplesDechained[,which(str_detect(colnames(samplesDechained), "clust"))]
 
-meltedClust <- as.mcmc(stack(clust))
-meltedtrueRep <- as.mcmc(stack(trueRep))
-
-sum((meltedClust == 1) & (trueRep < .1))
+# meltedClust <- as.mcmc(stack(clust))
+# meltedtrueRep <- as.mcmc(stack(trueRep))
 
 propBelow.1.BMM <- sum(samplesDechained[,which(str_detect(colnames(samplesDechained), "trueRep"))] < .10036)/ (nrow((samplesDechained[,which(str_detect(colnames(samplesDechained), "trueRep"))] >= .1)) * ncol(samplesDechained[,which(str_detect(colnames(samplesDechained), "trueRep"))]))
 propBelow.1THA.BMM <- sum(samplesDechained[,which(str_detect(colnames(samplesDechained), "trueRep"))] < .10036)/ (nrow((samplesDechained[,which(str_detect(colnames(samplesDechained), "trueRep"))] >= .1)) * ncol(samplesDechained[,which(str_detect(colnames(samplesDechained), "trueRep"))]))
