@@ -473,8 +473,9 @@ mixtureModelPlot <- ggplot(jagData, aes(x = correlation.o, y = correlation.r,  c
   scale_size(trans = "log", breaks = c(150, 3000, 60000)) + geom_point(colour = "black", na.rm = T, size = .5, shape = 3) +
   xlab("Original correlation")+ ylab("Replication correlation") + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) 
 
+# decreaseCalc <- data_frame(o.div2 = allData$fis.o/2, r = allData$fis.r , "originalDiv2Less" = allData$fis.r > (allData$fis.o / 2))
 
-
+# sum(decreaseCalc$originalDiv2Less)
 
 # Summary table of included data
 
