@@ -171,7 +171,7 @@ plotAllData <- ggplot(allData, aes(correlation.o, correlation.r, size = n.r, col
   ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + 
   guides( size = guide_legend(title = "Replication\nSample size", values= trans_format("identity", function(x) round(exp(x),0)), order = 2),
           colour = guide_legend(title = "Replication projects"), override.aes = list(alpha = 1), order = 1) +
-  xlab("Original correlation")+ ylab("Replication correlation") + scale_size(trans = "log", breaks = c(150, 3000, 60000))
+  xlab("Original correlation")+ ylab("Replication correlation") + scale_size(trans = "log", breaks = c(10, 100, 1000, 10000))
 
 # Plotting only non-equivalent studies  
 plotNonequiv <- ggplot(allData[!allData$statisticallyEquiv.ro & !is.na(allData$statisticallyEquiv.ro),], aes(correlation.o, correlation.r, size = n.r, colour = as.factor(source))) +
@@ -179,7 +179,7 @@ plotNonequiv <- ggplot(allData[!allData$statisticallyEquiv.ro & !is.na(allData$s
   ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + 
   guides( size = guide_legend(title = "Replication\nSample size", values= trans_format("identity", function(x) round(exp(x),0)), order = 2),
           colour = guide_legend(title = "Replication projects"), override.aes = list(alpha = 1), order = 1) +
-  xlab("Original correlation")+ ylab("Replication correlation") + scale_size(trans = "log", breaks = c(150, 3000, 60000))
+  xlab("Original correlation")+ ylab("Replication correlation") + scale_size(trans = "log", breaks = c(10, 100, 1000, 10000))
 
 # Plotting just significant studies (sig and in same direction)
 plotSigR <- ggplot(allData[allData$significantSameDirection.r==TRUE,], aes(correlation.o, correlation.r, size = n.r, colour = as.factor(source))) +
@@ -187,7 +187,7 @@ plotSigR <- ggplot(allData[allData$significantSameDirection.r==TRUE,], aes(corre
   ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + 
   guides( size = guide_legend(title = "Replication\nSample size", values= trans_format("identity", function(x) round(exp(x),0)), order = 2),
           colour = guide_legend(title = "Replication projects"), override.aes = list(alpha = 1), order = 1) +
-  xlab("Original correlation")+ ylab("Replication correlation") + scale_size(trans = "log", breaks = c(150, 3000, 60000))
+  xlab("Original correlation")+ ylab("Replication correlation") + scale_size(trans = "log", breaks = c(10, 100, 1000, 10000))
 
 ### Descriptives
 nNotSig.r <- sum(allData$significant.r)
@@ -227,8 +227,6 @@ REMod.p.val.cleaned.sum <-   data_frame(" " = c("Estimate", "p value", NA,NA,NA,
                                                              paste0("Article variance = ", round(REMod.p.val.cleaned$sigma2[2], 3), ", n = ", REMod.p.val.cleaned$s.nlevels[2]), 
                                                              paste0("Effect variance = ", round(REMod.p.val.cleaned$sigma2[2], 3), ", n = ", REMod.p.val.cleaned$s.nlevels[3]), 
                                                              paste0("QE(",REMod.p.val.cleaned$k-1, ") = ", round(REMod.p.val.cleaned$QE, 2),  ", p ", ifelse(REMod.p.val.cleaned$QEp <.001, "< .001", paste("=" , round(REMod.p.val.cleaned$QEp, 2))))))
-
-
 
 REMod.p.val.cleaned.logit.sum <-   data_frame(" " = c("Estimate", "p value", NA,NA,NA,NA), Estimate = c(REMod.p.val.cleaned.logit$b, rep(NA, 4)), "95% CI LB" = c(REMod.p.val.cleaned.logit$ci.lb, rep(NA, 4)), "95% CI UB" = c(REMod.p.val.cleaned.logit$ci.ub, rep(NA, 4)), SE = c(REMod.p.val.cleaned.logit$se,  rep(NA, 4)), p = c(ifelse(REMod.p.val.cleaned.logit$pval<.001, "< .001", round(REMod.p.val.cleaned.logit$pval, 3)),  rep(NA, 4)), 
                                         "Random effects" = c(NA, NA, paste0("Project variance = ", round(REMod.p.val.cleaned.logit$sigma2[1], 3), ", n = ", REMod.p.val.cleaned.logit$s.nlevels[1]), 
@@ -395,8 +393,8 @@ LOOoutput$`LOO exclusions` <- c(rep("Replication project", 4),rep( "Study",4), r
 
 LooMaxDiff <- max(c(abs(REMod$b - LOOoutput$`Minimum estimate`[LOOoutput$Subsample == "All data"]), 
   abs(REMod$b - LOOoutput$`Maximum estimate`[LOOoutput$Subsample == "All data"]),
-  abs(REMod.p.val.cleaned$b[1] - LOOoutput$`Minimum estimate`[LOOoutput$Subsample == "P value as Moderator"]),
-  abs(REMod.p.val.cleaned$b[1] - LOOoutput$`Maximum estimate`[LOOoutput$Subsample == "P value as Moderator"]),
+  # abs(REMod.p.val.cleaned$b[1] - LOOoutput$`Minimum estimate`[LOOoutput$Subsample == "P value as Moderator"]),
+  # abs(REMod.p.val.cleaned$b[1] - LOOoutput$`Maximum estimate`[LOOoutput$Subsample == "P value as Moderator"]),
   abs(REModOnlySigR$b - LOOoutput$`Minimum estimate`[LOOoutput$Subsample == "Only significant replications"]),
   abs(REModOnlySigR$b - LOOoutput$`Maximum estimate`[LOOoutput$Subsample == "Only significant replications"]),
   abs(REModNonequiv$b - LOOoutput$`Minimum estimate`[LOOoutput$Subsample == "Only non-equivalent replications"]),
@@ -491,7 +489,7 @@ mixtureModelPlot <- ggplot(jagData, aes(x = correlation.o, y = correlation.r,  c
          shape = guide_legend(title = "True effect size < 0.1"),
          size = guide_legend(title = "Replication\nSample size",
                              values= trans_format("identity", function(x) round(exp(x),0)), order = 2)) +
-  scale_size(trans = "log", breaks = c(150, 3000, 60000)) + geom_point(colour = "black", na.rm = T, size = .5, shape = 3) +
+  scale_size(trans = "log", breaks = c(10, 100, 1000, 10000)) + geom_point(colour = "black", na.rm = T, size = .5, shape = 3) +
   xlab("Original correlation")+ ylab("Replication correlation") + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) 
 
 # decreaseCalc <- data_frame(o.div2 = allData$fis.o/2, r = allData$fis.r , "originalDiv2Less" = allData$fis.r > (allData$fis.o / 2))
