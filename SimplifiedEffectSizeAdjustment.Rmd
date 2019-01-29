@@ -64,7 +64,9 @@ The second method of estimating the expected effect size decrease assuming a non
 
 $difference_{j} = \gamma_0  + \gamma_1Pvalue  + u_{id} + u_{article} + u_{project} + e_{j}$
 
-This model acts as a convenient method of allowing the model to fit the effect size decreases in cases in which the effect in the replication study did not produce low p values, p values more likely under the alternative than null hypothesis, making $\beta_0$ an estimate of the difference between original and replication effects given a replication p value of 0. This approach is limited as the distribution of p values is uniform under the null hypothesis, and as the probability of obtaining low p values under the alternative hypothesis is determined by the (unknowable) statistical power of the replication study.
+This model acts as a convenient method of allowing the model to fit the effect size decreases in cases in which the effect in the replication study did not produce low p values, p values more likely under the alternative than null hypothesis, making $\gamma_0$ an estimate of the difference between original and replication effects given a replication p value of 0. 
+
+This approach is limited as the distribution of p values is uniform under the null hypothesis, as the probability of obtaining low p values under the alternative hypothesis is determined by the (unknowable) statistical power of the replication study, and as interpretation becomes difficult as we begin to involve hypothetical replication studies and p values that are impossible (i.e., p values of 0). In part to avoid the latter issue (i.e., getting a predicted score at an impossible p value), and in part as sensitivity analyses, this analysis was reperfored using logit transformed p values, and examining the estimated amount of effect size decrease at a replicaiton p value of the logit of the the smallest positive floating-point number possible using 32-bit integers and use IEC 60559 floating-point (double precision) arithmetic (2.220446e-16), returning values that are substantively identical to those reported below, see supplementary materials 4 for full model output.
 
 ##### Analysis 4: Bayesian mixture model
 
@@ -156,7 +158,7 @@ kable(data.frame(rowNames, modSumariesR), col.names = c("Inclusion rule", str_re
 
 #### Analysis 3: Including replication p values as a moderator in a mixed effects meta-analysis
 
-Including replication p values as a moderator in a mixed effects meta-analysis leads to similar conclusions to the models with exclusions, with an estimated effect size decease of r = `r ztor( REMod.p.val.cleaned$b[1] )`, 95% CI [`r ztor( REMod.p.val.cleaned[['ci.lb']][1] )`, `r ztor( REMod.p.val.cleaned[['ci.ub']][1] )`]. This represents a decrease of `r round((REMod.p.val.cleaned$b[1]/ mean(allData$fis.o, na.rm = T))*100)`%  (95% CI [`r round((REMod.p.val.cleaned[['ci.lb']][1] / mean(allData$fis.o, na.rm = T))*100)`%, `r round((REMod.p.val.cleaned[['ci.ub']][1] / mean(allData$fis.o, na.rm = T))*100)`%]) of the average original effect size. The project and article level variances are functionally identical to the model that does not include replication p values as a moderator.
+Including replication p values as a moderator in a mixed effects meta-analysis leads to similar conclusions to the models with exclusions, with an estimated effect size decease of r = `r ztor( REMod.p.val.cleaned$b[1] )`, 95% CI [`r ztor( REMod.p.val.cleaned[['ci.lb']][1] )`, `r ztor( REMod.p.val.cleaned[['ci.ub']][1] )`]. This represents a decrease of `r round((REMod.p.val.cleaned$b[1]/ mean(allData$fis.o, na.rm = T))*100)`%  (95% CI [`r round((REMod.p.val.cleaned[['ci.lb']][1] / mean(allData$fis.o, na.rm = T))*100)`%, `r round((REMod.p.val.cleaned[['ci.ub']][1] / mean(allData$fis.o, na.rm = T))*100)`%]) of the average original effect size. The project and article level variances are functionally identical to the model that does not include replication p values as a moderator. 
 
 Table [moderators]. Multilevel meta-regression results including the p value of the replication study as a moderator. 
 ```{r}
@@ -215,7 +217,7 @@ Three original studies which did not report that their findings were indicative 
 ##### {Camerer, 2018 #967}
 Original and replication effect sizes were extracted for all `r nrow(data4)` studies included in {Camerer, 2018 #967}. In some cases in the Nature Science reproducibility project {Camerer, 2018 #967} multiple replication studies were performed for a single effect. In each of these cases we performed a fixed effects meta-analysis using the metafor package {Viechtbauer, 2010 #796} to estimate a meta-analytic effect size estimate. The effect size, standard errors and sample sizes used in the current study reflect this pooled estimate. This method leads to one study more "replicating" according to the 'statistical significance in the same direction of the original study' criterion than was originally reported in {Camerer, 2018 #967}, where they used the p value from the largest performed study instead of a pooled estimate. 
 
-##### {LOOPR}
+##### Soto et al., (2019) 
 Effect sizes were extracted for original and replication studies for `r sum(!is.na(data7$correlation.o) & !is.na(data7$correlation.r))` out of `r nrow(loopr)` included studies, and one original study's sample size was not available. In [LOOPR study CITATION] Effect sizes which were only reported in this dataset as beta coefficients were not converted to Fisher z scores as not enough information was available in the data set. A total of `r sum(allData$abrev == "loopr")` of 121 effects were included in the current analysis. As some replication studies used shorter form versions of the original data collection instruments, all results presented have been disattenuated using the Spearman-Brown prediction formula and Spearman disattenuation formula to estimate the trait-outcome associations that would be expected if our outcome measure had used the same number of items as the original study (Lord & Novick, 1968). Following the other large scale replication studies, the signs of the original and replication study effects were switched if the original effect was negative. 
 
 ##### {Cova, 2018 #984}
@@ -228,7 +230,9 @@ Many labs 1 {Klein, 2014 #988} examined whether effects from 13 original papers 
 A total of `r nrow(data8)` of `r nrow(data8) + 6 ` paired original and replication effects sizes are included for this analysis. Four studies from {Klein, 2018 #1021}  were removed because the original and replication studies examined a difference in effect sizes seen in different conditions, and the effects were not directly tested against each other making it difficult to derive an appropriate effect size. Two additional studies were excluded because their effect sizes were only available as Cohen's q.
 
 ##### {Ebersole, 2016 #985}
-Original and replication effect sizes were extracted for all 9 original and replication studies from {Ebersole, 2016 #985}, excluding a study they term a "conceptual replication". Most effects (6/9) were converted to correlation coefficients from the Cohen's d values reported in this replication project. The results of three additional studies reported as partial Eta squared were converted to correlation coefficients from F statistics using the formula $r\  =\ \sqrt{\frac{F_{obs}\times(df_1 / df_2)}{((F_{obs} \times df_1) / df_2) + 1}}*\sqrt{\frac{1}{df_1}}$. 
+Original and replication effect sizes were extracted for all 9 original and replication studies from {Ebersole, 2016 #985}, excluding a study they term a "conceptual replication". Most effects (6/9) were converted to correlation coefficients from the Cohen's d values reported in this replication project. The results of three additional studies reported as partial Eta squared were converted to correlation coefficients from F statistics using the formula: 
+
+$r\  =\ \sqrt{\frac{F_{obs}\times(df_1 / df_2)}{F_{obs} \times (df_1 / df_2) + 1}} \times \sqrt{\frac{1}{df_1}}$
 
 ##### {Camerer, 2016 #983}
 The economics replication project {Camerer, 2016 #983}. Original and replication effect sizes for all `r sum(allData$abrev == 'econ')` studies were reported in correlation coefficients and all are included in this analysis.
@@ -278,8 +282,9 @@ plotNonequiv
 
 Figure SM`r figSMN <- figSMN+1; figSMN`. Scatter plot of replication effect sizes (in correlation coefficients) plotted against original effects including studies which are not statistically equivalent to the null, using equivalence bounds set as the minimum effect size that would have been statistically significant in the original study.
 
+
 ### SM3
-### LOO Cross validation output
+#### LOO Cross validation output
 
 #### Table [LOO cross validation output].
 0th, 25th, 50th, 75th and 100th percentiles from leave one out cross validation for each multilevel model, for each exclusion method an, including only the sample indicated in "LOO exclusions". 
@@ -289,7 +294,16 @@ kable(LOOoutput)
 ```
 
 ### SM4
-### Bayesian Mixture Model
+#### Logit transformed p value multilevel model
+
+`r knitr::kable(REMod.p.val.cleaned.logit.sum)`
+
+Predicted output at examining the estimated amount of effect size decrease at a replicaiton p value of the logit of the the smallest positive floating-point number possible using 32-bit integers and use IEC 60559 floating-point (double precision) arithmetic (2.220446e-16): 
+
+`r knitr::kable(predict(REMod.p.val.cleaned.logit, logit(.Machine$double.eps)))`
+
+### SM5
+#### Bayesian Mixture Model
 
 The mixture model results presented in text presents the model developed by Camerer et al,. (2018; see https://osf.io/xhj4d/ for their detailed description of this model).  All priors were chosen to be uninformative or vague. The mixture model assumes that the observed replication effect sizes either come from the null hypothesis, a true effect sampled from a normal distribution with a mean of zero and a estimated precision (tau). This model uses an errors-in-variables approach to account for possible attenuation of effect sizes due to measurement error and estimation uncertainty following {Matzke, 2017 #1012}, which means the effect size attenuation factor is the factor change between the estimated true effect of the original and replication study effect size. Although this may be reasonable in that the true effect size of the effect may not be the true effect size of a particular study and analysis set up, this poses an interpretative problem in that alpha now represents the difference between the estimated original effect and the replication effect.
 
@@ -320,4 +334,5 @@ mu[i] <- alpha * trueOrgEffect[i] * equals(clust[i], 1)
   }
 }
 ```
+
 

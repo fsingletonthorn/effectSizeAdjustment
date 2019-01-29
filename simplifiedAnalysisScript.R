@@ -12,6 +12,7 @@ library(plyr)
 library(RColorBrewer)
 library(bestNormalize)
 library(reshape2)
+library(car)
 source("https://gist.githubusercontent.com/benmarwick/2a1bb0133ff568cbe28d/raw/fb53bd97121f7f9ce947837ef1a4c65a73bffb3f/geom_flat_violin.R")
 
 # Excluding missind data
@@ -196,16 +197,27 @@ nNotSig.r <- sum(allData$significant.r)
 ######################################
 
 # Random effects model with random effects for authors nested within source
-REMod <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id/id,  data = allData)
+REMod <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id,  data = allData)
 
 # Checking if anything changes excluding those where the SE is approximated
-REModValidSE <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id/id,  data = allData[!is.na(allData$seFish.o) & !is.na(allData$seFish.r),])
+REModValidSE <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id,  data = allData[!is.na(allData$seFish.o) & !is.na(allData$seFish.r),])
 validSEDiff <- REMod$b - REModValidSE$b
 
 # cdREMOD <- cooks.distance(REMod, parallel = "snow", ncpus = parallel::detectCores())
-
 REMod.p.val.cleaned <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = cleanedpVal.r, random =  ~ 1|source/authorsTitle.o/id,  data = allData)
+
+REMod.p.val.cleaned.logit <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = logit(cleanedpVal.r), random =  ~ 1|source/authorsTitle.o/id,  data = allData)
+predict(REMod.p.val.cleaned.logit, logit(.Machine$double.neg.eps))
+
+plot( seq(0.001,.999,.001) , predict(REMod.p.val.cleaned.logit, logit(seq(0.001,.999,.001)))[[1]] )
+
+predict(REMod.p.val.cleaned.logit, logit(.Machine$double.eps))
+
 REMod.p.val.cleanedValidSE <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = cleanedpVal.r, random =  ~ 1|source/authorsTitle.o/id,  data = allData[!is.na(allData$seFish.o) & !is.na(allData$seFish.r),])
+
+
+REMod.p.val.cleanedValidSE <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = cleanedpVal.r, random =  ~ 1|source/authorsTitle.o/id,  data = allData[!is.na(allData$seFish.o) & !is.na(allData$seFish.r),])
+
 
 validSEDiff[c(2,3)] <- REMod.p.val.cleaned$b - REMod.p.val.cleanedValidSE$b
 
@@ -215,6 +227,15 @@ REMod.p.val.cleaned.sum <-   data_frame(" " = c("Estimate", "p value", NA,NA,NA,
                                                              paste0("Article variance = ", round(REMod.p.val.cleaned$sigma2[2], 3), ", n = ", REMod.p.val.cleaned$s.nlevels[2]), 
                                                              paste0("Effect variance = ", round(REMod.p.val.cleaned$sigma2[2], 3), ", n = ", REMod.p.val.cleaned$s.nlevels[3]), 
                                                              paste0("QE(",REMod.p.val.cleaned$k-1, ") = ", round(REMod.p.val.cleaned$QE, 2),  ", p ", ifelse(REMod.p.val.cleaned$QEp <.001, "< .001", paste("=" , round(REMod.p.val.cleaned$QEp, 2))))))
+
+
+
+REMod.p.val.cleaned.logit.sum <-   data_frame(" " = c("Estimate", "p value", NA,NA,NA,NA), Estimate = c(REMod.p.val.cleaned.logit$b, rep(NA, 4)), "95% CI LB" = c(REMod.p.val.cleaned.logit$ci.lb, rep(NA, 4)), "95% CI UB" = c(REMod.p.val.cleaned.logit$ci.ub, rep(NA, 4)), SE = c(REMod.p.val.cleaned.logit$se,  rep(NA, 4)), p = c(ifelse(REMod.p.val.cleaned.logit$pval<.001, "< .001", round(REMod.p.val.cleaned.logit$pval, 3)),  rep(NA, 4)), 
+                                        "Random effects" = c(NA, NA, paste0("Project variance = ", round(REMod.p.val.cleaned.logit$sigma2[1], 3), ", n = ", REMod.p.val.cleaned.logit$s.nlevels[1]), 
+                                                             paste0("Article variance = ", round(REMod.p.val.cleaned.logit$sigma2[2], 3), ", n = ", REMod.p.val.cleaned.logit$s.nlevels[2]), 
+                                                             paste0("Effect variance = ", round(REMod.p.val.cleaned.logit$sigma2[2], 3), ", n = ", REMod.p.val.cleaned.logit$s.nlevels[3]), 
+                                                             paste0("QE(",REMod.p.val.cleaned.logit$k-1, ") = ", round(REMod.p.val.cleaned.logit$QE, 2),  ", p ", ifelse(REMod.p.val.cleaned.logit$QEp <.001, "< .001", paste("=" , round(REMod.p.val.cleaned.logit$QEp, 2))))))
+
 
 # Empirical Bayes estimates for random Effects 
 BLUPsSource <- ranef(REMod)[1]
