@@ -606,3 +606,11 @@ projectNamesSingleLine <- data_frame(unique(allData$source), c("OSC (2015)",
 allData$cleanedpVal.r <- as.numeric(allData$pVal.r)
 allData$cleanedpVal.r[is.na(as.numeric(allData$pVal.r))] <-  as.numeric(str_remove_all(allData$pVal.r[is.na(as.numeric(allData$pVal.r))], "<|\\s"))- .Machine$double.eps
 allData$cleanedpVal.r[allData$cleanedpVal.r == 0] <- 0 +  .Machine$double.eps
+
+
+
+allData$cleanedpVal.o <- as.numeric(allData$pVal.o)
+allData$cleanedpVal.o[is.na(as.numeric(allData$pVal.o))] <-  as.numeric(str_remove_all(allData$pVal.o[is.na(as.numeric(allData$pVal.o))], "<|\\s"))- .Machine$double.eps
+allData$cleanedpVal.o[allData$cleanedpVal.o == 0] <- 0 +  .Machine$double.eps
+
+# pValSet <- filter(allData, !is.na(allData$cleanedpVal.o))
