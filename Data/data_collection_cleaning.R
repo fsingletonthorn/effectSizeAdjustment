@@ -122,7 +122,7 @@ data <- data[!(is.na(data$fis.o) | is.na(data$fis.r)),]
 data$pVal.r[data$pVal.r=="2.2 x 10-16"] <- 2.2 * 10^-16
 data$pVal.r[data$pVal.r=="prep > .99"] <- "< .0005" # estimated using psych::p.rep(.0005)
 data$pVal.r[data$pVal.r=="0"] <- "< .001"
-data$pVal.r[data$pVal.r=="X"] <- data$pValFish.r[data$pVal.r=="X"] # this one is a correlation, this p value should be accurate
+data$pVal.r[data$pVal.r=="X"] <- data$pValFish.r[data$pVal.r=="X"] # this one is a correlation, this p value should be accurate as test == correlation 
 
 # Checking that all NAs are non-significant 
 # data$pVal.r[is.na(as.numeric(data$pVal.r))]
@@ -179,7 +179,7 @@ es.r$se.z <- ifelse(!is.na(es.r$r),  sqrt(1/(ManyLabs1$N.r -3)), NA)
 es.r$se.z[str_detect(string = ManyLabs1$`Key statistics.r`,  "X")] <- NA
 es.r$pval.r[str_detect(string = ManyLabs1$`Key statistics.r`,  c("X"))] <- NA
 
-# Extracting p values from original studies
+# Extracting p values from original studies (ititalizing)
 ManyLabs1$pVal.o <- NA
 
 # Extracting the p values from the reported test stat strings
@@ -191,12 +191,9 @@ ManyLabs1$pVal.o <- str_split(ManyLabs1$testStatistic.o, "p [=]|[<]", simplify =
 ManyLabs1$pVal.o[str_detect(ManyLabs1$testStatistic.o, "p < .01")] <- "< .01"
 ManyLabs1$pVal.o[str_detect(ManyLabs1$testStatistic.o, "p < .05")] <- "< .05"
 
-
-# Caclulating these for ease p values 
+# brining into many labs 1 
 ManyLabs1$pVal.o[ManyLabs1$testStatistic.o == "r = .42"|ManyLabs1$testStatistic.o =="r = .42, n = 243"] <- 
-  es.o$pval.r[ManyLabs1$testStatistic.o == "r = .42"|ManyLabs1$testStatistic.o =="r = .42, n = 243"] 
-data.frame(ManyLabs1$pVal.o, ManyLabs1$testStatistic.o)
-
+  es.o$pval.r[ManyLabs1$testStatistic.o == "r = .42"|ManyLabs1$testStatistic.o =="r = .42, n = 243"]
 
 ########## End Many labs 1 data recollection ########
 data2 <- data.frame(authorsTitle.o = ManyLabs1ML_orig$Reference,
@@ -232,7 +229,7 @@ data2$abrev <- "ML1"
 # rm(list = c("es","ManyLabs1","ManyLabs1ML_orig"))
 
 ##### Many labs 3 data recollection ####
-ManyLabs3 <- read_csv("Data/ManyLabs3_Data_ManualAdditions.csv")
+ManyLabs3 <- read_csv("Data/ManyLabs3_Data_ManualAdditions.csv") # Original studies were manually checked
 
 # converting effect sizes 
 es.o <- des(d = ManyLabs3$ESOriginal, n.1 = ManyLabs3$n.o/2, n.2 = ManyLabs3$n.o/2, dig = 5)
@@ -302,8 +299,6 @@ rOSums <- escalc(measure = "ZCOR", ri = natSci$r_os, ni = natSci$n_os)
 
 natSci$fis.o <- rOSums$yi
 natSci$seFish.o <- sqrt(1/(natSci$n_os -3))
-
-summary(r1Sums )
 
 # intitialising data colls
 ess <- cbind(yi = c(1,2), xi = c(1,2))
@@ -601,13 +596,11 @@ projectNamesSingleLine <- data_frame(unique(allData$source), c("OSC (2015)",
                                                                "Soto (2019), Personality Psychology",
                                                                "Klein et al. (2018), Many Labs 2"))
 
-# cleaning replication p values - less than .05 (etc. are set to be just below that value)
+# cleaning replication p values - less than .05 (etc. are set to be just below that value) and values of "0" to 0 + floating point minimum
 
 allData$cleanedpVal.r <- as.numeric(allData$pVal.r)
 allData$cleanedpVal.r[is.na(as.numeric(allData$pVal.r))] <-  as.numeric(str_remove_all(allData$pVal.r[is.na(as.numeric(allData$pVal.r))], "<|\\s"))- .Machine$double.eps
 allData$cleanedpVal.r[allData$cleanedpVal.r == 0] <- 0 +  .Machine$double.eps
-
-
 
 allData$cleanedpVal.o <- as.numeric(allData$pVal.o)
 allData$cleanedpVal.o[is.na(as.numeric(allData$pVal.o))] <-  as.numeric(str_remove_all(allData$pVal.o[is.na(as.numeric(allData$pVal.o))], "<|\\s"))- .Machine$double.eps
