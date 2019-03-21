@@ -13,7 +13,6 @@ library(ochRe)
 
 
 ## Try to fill in the Chi square - 
-
 projectNames <- data_frame(c("OSC (2015) \n General Psychology",
                                                      "Klein et al. (2014)\n Many Labs 1", 
                                                      "Ebersole et al. (2016)\n Many Labs 3",
@@ -28,7 +27,6 @@ projectNames <- data_frame(c("OSC (2015) \n General Psychology",
 ####################################################################################################################
 ### Most of this first chunk of Code from https://github.com/CenterForOpenScience/rpp/blob/master/masterscript.R####
 ####################################################################################################################
-
 
 if(!require(Hmisc)){install.packages('Hmisc')}
 library(Hmisc)
@@ -132,7 +130,7 @@ data$source <- as.character(projectNames[1,1])
 data$abrev <- "OSCRPP"
 
 
-########## End RPP data recollection ########
+########## End RPP data re-collection ########
 
 # Removing everything apart from data from WS 
 # rm(list = c("RPP","MASTER","info"))
@@ -465,7 +463,7 @@ data6$abrev <- "xPhi"
 
 ########## End xPhi data recollection #########
 ########## Begin LOOPR data collection ############
-loopr <- read_excel('Data/EmbargoFolder/LOOPR_data.xlsx')
+loopr <- read_excel('Data/LOOPR_data.xlsx')
 
 # Effect sizes from study
 loopr$correlation.o <- as.numeric(loopr$OriginalEffect) 
@@ -522,7 +520,7 @@ data7$correlation.o & data7$correlation.r
 ####### end loopr data collection########
 ##### Begin ManyLabs  data collection #####
 
-ml2 <- read_xlsx("Data/EmbargoFolder/ML2_Data_extracted_from_tables.xlsx")
+ml2 <- read_xlsx("Data/ML2_Data_extracted_from_tables.xlsx")
 
 ## Removing six studies for which effect sizes cannot be derrived (i.e., 4 which are diffs b/w effects, only es for each reported, and 2 which were cohen's q's)
 ml2 <- ml2[-which(is.na(as.numeric(ml2$Original_effect_size_d))),]
