@@ -1,37 +1,35 @@
 library(tidyverse)
 library(readxl)
-library(MBESS)
+library(MBESS) # not needed for data_collection_cleaning, called for analysis script
 library(psych)
 library(compute.es)
-library(readr)
-library(metafor)
-library(ggplot2)
-library(knitr)
+library(readr) 
+library(metafor) 
+library(ggplot2) # not needed for data_collection_cleaning, called for analysis script
+library(knitr) # not needed for data_collection_cleaning, called for analysis script
 # devtools::install_github('hollylkirk/ochRe')
-library(ochRe)
+library(ochRe) # This is just for pretty colours in plots later
+
+
 # Setting up a dataframe of names of the source studies for easy plotting later
-
-
-## Try to fill in the Chi square - 
-projectNames <- data_frame(c("OSC (2015) \n General Psychology",
-                                                     "Klein et al. (2014)\n Many Labs 1", 
-                                                     "Ebersole et al. (2016)\n Many Labs 3",
-                                                     "Camerer, et al. (2018)\n Nature Science",
-                                                     "Camerer et al. (2016)\n Economics",
-                                                     "Cova, et al. (2018)\n Experimental Philosophy",
-                                                     "Soto (2019)\n Personality Psychology",
-                                                     "Klein et al. (2018)\n Many Labs 2"))
+projectNames <- data_frame(
+  c(
+    "OSC (2015) \n General Psychology",
+    "Klein et al. (2014)\n Many Labs 1",
+    "Ebersole et al. (2016)\n Many Labs 3",
+    "Camerer, et al. (2018)\n Nature Science",
+    "Camerer et al. (2016)\n Economics",
+    "Cova, et al. (2018)\n Experimental Philosophy",
+    "Soto (2019)\n Personality Psychology",
+    "Klein et al. (2018)\n Many Labs 2"
+  )
+)
 
 #### First extracting data from the OSC's RPP  ####
 
 ####################################################################################################################
 ### Most of this first chunk of Code from https://github.com/CenterForOpenScience/rpp/blob/master/masterscript.R####
 ####################################################################################################################
-
-if(!require(Hmisc)){install.packages('Hmisc')}
-library(Hmisc)
-if(!require(metafor)){install.packages('metafor')}
-library(metafor)
 
 MASTER <- read.csv("Data/rpp_data.csv")[1:167, ]
 colnames(MASTER)[1] <- "ID" # Change first column name to ID to be able to load .csv file
@@ -70,11 +68,21 @@ RPP$fis.r <- 0.5*log((1 + RPP$ri.r) / (1 - RPP$ri.r))
 ### Difference in Fisher's z scores
 RPP$yi <- 1:length(RPP$fis.o)
 for(i in 1:length(RPP$fis.o)) {
-  
-  if(is.na(RPP$fis.o[i]) == TRUE | is.na(RPP$fis.r[i]) == TRUE) { RPP$yi[i] <- NA }
-  else if(RPP$fis.o[i] < 0 & RPP$fis.r[i] < 0) { RPP$yi[i] <- RPP$fis.o[i]*-1-RPP$fis.r[i]*-1 } 
-  else if(RPP$fis.o[i] < 0 & RPP$fis.r[i] > 0) { RPP$yi[i] <- RPP$fis.o[i]*-1+RPP$fis.r[i] }
-  else {  RPP$yi[i] <- RPP$fis.o[i]-RPP$fis.r[i] }
+  if (is.na(RPP$fis.o[i]) == TRUE |
+      is.na(RPP$fis.r[i]) == TRUE) {
+    RPP$yi[i] <- NA
+  }
+  else if (RPP$fis.o[i] < 0 &
+           RPP$fis.r[i] < 0) {
+    RPP$yi[i] <- RPP$fis.o[i] * -1 - RPP$fis.r[i] * -1
+  }
+  else if (RPP$fis.o[i] < 0 &
+           RPP$fis.r[i] > 0) {
+    RPP$yi[i] <- RPP$fis.o[i] * -1 + RPP$fis.r[i]
+  }
+  else {
+    RPP$yi[i] <- RPP$fis.o[i] - RPP$fis.r[i]
+  }
 }
 
 ### Standard errors original and replication study
@@ -518,7 +526,7 @@ data7$abrev <- "loopr"
 data7$correlation.o & data7$correlation.r
 
 ####### end loopr data collection########
-##### Begin ManyLabs  data collection #####
+##### Begin Many Labs 2 data re-collection #####
 
 ml2 <- read_xlsx("Data/ML2_Data_extracted_from_tables.xlsx")
 
@@ -595,6 +603,7 @@ projectNamesSingleLine <- data_frame(unique(allData$source), c("OSC (2015)",
                                                                "Klein et al. (2018), Many Labs 2"))
 
 # cleaning replication p values - less than .05 (etc. are set to be just below that value) and values of "0" to 0 + floating point minimum
+
 
 allData$cleanedpVal.r <- as.numeric(allData$pVal.r)
 allData$cleanedpVal.r[is.na(as.numeric(allData$pVal.r))] <-  as.numeric(str_remove_all(allData$pVal.r[is.na(as.numeric(allData$pVal.r))], "<|\\s"))- .Machine$double.eps
