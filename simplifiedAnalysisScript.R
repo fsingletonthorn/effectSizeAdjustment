@@ -1,5 +1,3 @@
-# source(file = 'Data/data_collection_cleaning.R')
-
 source(file = "Analysis/Wilson score interval.R")
 # source(file = 'Data/data_collection_cleaning.R') # this sources the data
 library(readr)
@@ -52,7 +50,6 @@ niceMLMESum <- function(REMod) {
                                   paste0("Effect variance = ", round(REMod$sigma2[3], 3), ", n = ", REMod$s.nlevels[3]),
                                   paste0("QE(",REMod$k-1, ") = ", round(REMod$QE, 2),  ", p ", ifelse(REMod$QEp <.001, "< .001", paste("=" , round(REMod$QEp, 2))))))
 }
-
 
 # mean raw decrease
 meanDecrease <- mean(allData$percentageChangeES.ro, na.rm = T)
@@ -142,11 +139,6 @@ reductionEquiv <- allData %>%
 
 # Bringing all of the above together:
 tableReductions <- rbind(Overall = reductionAllData, StatisticalSignificance = reductionSignifcantR, Nonequivalence = reductionEquiv)
-
-# Calculating naive CIs around mean differences 
-# boundDist <- qt(0.975, df = tableReductions$nTrue - 1)*tableReductions$sdDiff/sqrt(tableReductions$nTrue)
-# tableReductions$lbMeanDiff <- tableReductions$meanDiff - boundDist
-# tableReductions$ubMeanDiff <- tableReductions$meanDiff + boundDist
 
 # Converting into Rs 
 tableReductions[,-which(str_detect(names(tableReductions), "Prop|nTrue|nValid"))] <- ztor(tableReductions[,-which(str_detect(names(tableReductions), "Prop|nTrue|nValid"))])
@@ -408,8 +400,7 @@ LooMaxDiff <- max(c(abs(REMod$b - LOOoutput$`Minimum estimate`[LOOoutput$Subsamp
 #####################
 
 # Fishers Z change 
-pdf(file = "Figures/ViolinPlotZscoreChange.pdf", width = 5)
-ggplot(allData,aes(y = fisherZDiff,x= source, 
+fisherZChangePlot <- ggplot(allData,aes(y = fisherZDiff,x= source, 
                    fill = source, colour = source)) + geom_hline(yintercept = 0, alpha = .1) + 
   geom_flat_violin(width=1.35,
                    position = position_nudge(x = .2, y = 0), alpha = .8) + 
@@ -421,42 +412,46 @@ ggplot(allData,aes(y = fisherZDiff,x= source,
   scale_color_brewer(palette = "Spectral") +
   scale_fill_brewer(palette = "Spectral") + 
   theme(legend.position =  'none', axis.text.y = element_text(size=8), 
-        axis.title.y = element_blank()) + ylab("Differences in Fisher's Z transformed effect sizes")
-dev.off()
+        axis.title.y = element_blank()) + 
+  ylab("Differences in Fisher's Z transformed effect sizes")
 
-pdf(file = "Figures/ViolinPlotPercentageChange.pdf")
+ggsave(plot =  fisherZChangePlot, 
+       file = "Figures/ViolinPlotZscoreChange.jpg", 
+       width = 6, height = 8, device = "jpeg", dpi = 320)
+
+# pdf(file = "Figures/ViolinPlotPercentageChange.pdf")
 # percentage change
-ggplot(allData, aes(y = percentageChangeES.ro,x= source, 
-                    fill = source, colour = source))+ geom_hline(yintercept = 0, alpha = .1) + 
-  geom_flat_violin(width=1.45,
-                   position = position_nudge(x = .2, y = 0), alpha = .8) + 
-  geom_boxplot(width = .3, guides = FALSE, outlier.shape = NA, alpha = 0.5) +
-  expand_limits(x = 5.25) +
-  geom_point(position = position_jitter(width = .15), size = .5, alpha = 0.8) +
-  coord_flip() + 
-  theme_classic() +
-  scale_color_brewer(palette = "Spectral") +
-  scale_fill_brewer(palette = "Spectral") + 
-  theme(legend.position =  'none', axis.text.y = element_text(size=8), 
-        axis.title.y = element_blank()) + ylab("Percentage change in effect sizes from original to replicaiton")
-dev.off()
+# ggplot(allData, aes(y = percentageChangeES.ro,x= source, 
+#                     fill = source, colour = source))+ geom_hline(yintercept = 0, alpha = .1) + 
+#   geom_flat_violin(width=1.45,
+#                    position = position_nudge(x = .2, y = 0), alpha = .8) + 
+#   geom_boxplot(width = .3, guides = FALSE, outlier.shape = NA, alpha = 0.5) +
+#   expand_limits(x = 5.25) +
+#   geom_point(position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+#   coord_flip() + 
+#   theme_classic() +
+#   scale_color_brewer(palette = "Spectral") +
+#   scale_fill_brewer(palette = "Spectral") + 
+#   theme(legend.position =  'none', axis.text.y = element_text(size=8), 
+#         axis.title.y = element_blank()) + ylab("Percentage change in effect sizes from original to replicaiton")
+# dev.off()
 
 # Correlation change 
-pdf(file = "Figures/ViolinPlotCorrelationDifference.pdf", width = 5)
-ggplot(allData,aes(y = correlationDifference.ro,x= source, 
-                   fill = source, colour = source)) + geom_hline(yintercept = 0, alpha = .1) + 
-  geom_flat_violin(width=1.35,
-                   position = position_nudge(x = .2, y = 0), alpha = .8) + 
-  geom_boxplot(width = .25, guides = FALSE, outlier.shape = NA, alpha = 0.5) +
-  expand_limits(x = 5.25) +
-  geom_point(position = position_jitter(width = .15), size = .5, alpha = 0.8) +
-  coord_flip() + 
-  theme_classic() +
-  scale_color_brewer(palette = "Spectral") +
-  scale_fill_brewer(palette = "Spectral") + 
-  theme(legend.position =  'none', axis.text.y = element_text(size=8), 
-        axis.title.y = element_blank()) + ylab("Differences in effect size (correlations)") 
-dev.off()
+# pdf(file = "Figures/ViolinPlotCorrelationDifference.pdf", width = 5)
+# ggplot(allData,aes(y = correlationDifference.ro,x= source, 
+#                    fill = source, colour = source)) + geom_hline(yintercept = 0, alpha = .1) + 
+#   geom_flat_violin(width=1.35,
+#                    position = position_nudge(x = .2, y = 0), alpha = .8) + 
+#   geom_boxplot(width = .25, guides = FALSE, outlier.shape = NA, alpha = 0.5) +
+#   expand_limits(x = 5.25) +
+#   geom_point(position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+#   coord_flip() + 
+#   theme_classic() +
+#   scale_color_brewer(palette = "Spectral") +
+#   scale_fill_brewer(palette = "Spectral") + 
+#   theme(legend.position =  'none', axis.text.y = element_text(size=8), 
+#         axis.title.y = element_blank()) + ylab("Differences in effect size (correlations)") 
+# dev.off()
 
 ## more plots - catapillar plot of correlation differences 
 plotDat <- allData[!is.na(allData$fisherZDiff),]
