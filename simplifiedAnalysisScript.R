@@ -42,6 +42,7 @@ modelOutputSummary <- function(REMod) {
        sourceEstimate = randEffREModSource)
 }
 
+# Function to create OK looking talbe of RMA output
 niceMLMESum <- function(REMod) {
   data_frame(Estimate = c(REMod$b, rep(NA, 4)), "95% CI LB" = c(REMod$ci.lb, rep(NA, 4)), "95% CI UB" = c(REMod$ci.ub, rep(NA, 4)), SE = c(REMod$se,  rep(NA, 4)), p = c(ifelse(REMod$pval<.001, "< .001", REMod$pval),  rep(NA, 4)), 
              "Random effects" = c(NA, paste0("Project variance = ", round(REMod$sigma2[1], 3), ", n = ", 
@@ -94,8 +95,8 @@ minimumEffectDetectableZ <- qnorm(.05, mean = 0, sd = allData$seFishAprox.o, low
 CIs90UB <-   allData$fis.r + (qnorm(0.95)*allData$seFishAprox.r)
 CIs90LB <-   allData$fis.r - (qnorm(0.95)*allData$seFishAprox.r)
 
-upper95.r <- allData$fis.r + ( 1.96 * allData$seFish.r )
-lower95.r <- allData$fis.r - ( 1.96 * allData$seFish.r )
+upper95.r <- allData$fis.r + ( 1.96 * allData$seFishAprox.r )
+lower95.r <- allData$fis.r - ( 1.96 * allData$seFishAprox.r )
 
 # Extracting all studies 
 nonMatchesStatisticalSig <- sum( c(lower95.r > 0 & !allData$significantSameDirection.r,lower95.r < 0 & allData$significantSameDirection.r), na.rm = T )
@@ -188,44 +189,13 @@ nNotSig.r <- sum(allData$significant.r)
 ###### Multilevel meta-analysis ######
 ######################################
 
+###### Analysis 1
 # Random effects model with random effects for authors nested within source
 REMod <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id,  data = allData)
 
 # Checking if anything changes excluding those where the SE is approximated
 REModValidSE <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id,  data = allData[!is.na(allData$seFish.o) & !is.na(allData$seFish.r),])
 validSEDiff <- REMod$b - REModValidSE$b
-
-# cdREMOD <- cooks.distance(REMod, parallel = "snow", ncpus = parallel::detectCores())
-REMod.p.val.cleaned <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = cleanedpVal.r, random =  ~ 1|source/authorsTitle.o/id,  data = allData)
-
-REMod.p.val.cleaned.logit <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = logit(cleanedpVal.r), random =  ~ 1|source/authorsTitle.o/id,  data = allData)
-predict(REMod.p.val.cleaned.logit, logit(.Machine$double.neg.eps))
-
-plot( seq(0.001,.999,.001) , predict(REMod.p.val.cleaned.logit, logit(seq(0.001,.999,.001)))[[1]] )
-
-predict(REMod.p.val.cleaned.logit, logit(.Machine$double.eps))
-
-REMod.p.val.cleanedValidSE <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = cleanedpVal.r, random =  ~ 1|source/authorsTitle.o/id,  data = allData[!is.na(allData$seFish.o) & !is.na(allData$seFish.r),])
-
-
-REMod.p.val.cleanedValidSE <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2 , mod = cleanedpVal.r, random =  ~ 1|source/authorsTitle.o/id,  data = allData[!is.na(allData$seFish.o) & !is.na(allData$seFish.r),])
-
-
-validSEDiff[c(2,3)] <- REMod.p.val.cleaned$b - REMod.p.val.cleanedValidSE$b
-
-
-REMod.p.val.cleaned.sum <-   data_frame(" " = c("Estimate", "p value", NA,NA,NA,NA), Estimate = c(REMod.p.val.cleaned$b, rep(NA, 4)), "95% CI LB" = c(REMod.p.val.cleaned$ci.lb, rep(NA, 4)), "95% CI UB" = c(REMod.p.val.cleaned$ci.ub, rep(NA, 4)), SE = c(REMod.p.val.cleaned$se,  rep(NA, 4)), p = c(ifelse(REMod.p.val.cleaned$pval<.001, "< .001", round(REMod.p.val.cleaned$pval, 3)),  rep(NA, 4)), 
-                                        "Random effects" = c(NA, NA, paste0("Project variance = ", round(REMod.p.val.cleaned$sigma2[1], 3), ", n = ", REMod.p.val.cleaned$s.nlevels[1]), 
-                                                             paste0("Article variance = ", round(REMod.p.val.cleaned$sigma2[2], 3), ", n = ", REMod.p.val.cleaned$s.nlevels[2]), 
-                                                             paste0("Effect variance = ", round(REMod.p.val.cleaned$sigma2[2], 3), ", n = ", REMod.p.val.cleaned$s.nlevels[3]), 
-                                                             paste0("QE(",REMod.p.val.cleaned$k-1, ") = ", round(REMod.p.val.cleaned$QE, 2),  ", p ", ifelse(REMod.p.val.cleaned$QEp <.001, "< .001", paste("=" , round(REMod.p.val.cleaned$QEp, 2))))))
-
-REMod.p.val.cleaned.logit.sum <-   data_frame(" " = c("Estimate", "p value", NA,NA,NA,NA), Estimate = c(REMod.p.val.cleaned.logit$b, rep(NA, 4)), "95% CI LB" = c(REMod.p.val.cleaned.logit$ci.lb, rep(NA, 4)), "95% CI UB" = c(REMod.p.val.cleaned.logit$ci.ub, rep(NA, 4)), SE = c(REMod.p.val.cleaned.logit$se,  rep(NA, 4)), p = c(ifelse(REMod.p.val.cleaned.logit$pval<.001, "< .001", round(REMod.p.val.cleaned.logit$pval, 3)),  rep(NA, 4)), 
-                                        "Random effects" = c(NA, NA, paste0("Project variance = ", round(REMod.p.val.cleaned.logit$sigma2[1], 3), ", n = ", REMod.p.val.cleaned.logit$s.nlevels[1]), 
-                                                             paste0("Article variance = ", round(REMod.p.val.cleaned.logit$sigma2[2], 3), ", n = ", REMod.p.val.cleaned.logit$s.nlevels[2]), 
-                                                             paste0("Effect variance = ", round(REMod.p.val.cleaned.logit$sigma2[2], 3), ", n = ", REMod.p.val.cleaned.logit$s.nlevels[3]), 
-                                                             paste0("QE(",REMod.p.val.cleaned.logit$k-1, ") = ", round(REMod.p.val.cleaned.logit$QE, 2),  ", p ", ifelse(REMod.p.val.cleaned.logit$QEp <.001, "< .001", paste("=" , round(REMod.p.val.cleaned.logit$QEp, 2))))))
-
 
 # Empirical Bayes estimates for random Effects 
 BLUPsSource <- ranef(REMod)[1]
@@ -234,24 +204,52 @@ niceREModSum<- niceMLMESum(REMod)
 
 REModSum <- modelOutputSummary(REMod)
 
-
+## Analysis 2
 # The first model but with only significant replications
 REModOnlySigR <- rma.mv(yi = fisherZDiff, V = allData[allData$significantSameDirection.r==TRUE,]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id, data = allData[allData$significantSameDirection.r==TRUE,])
 # Checking if anything changes excluding those where the SE is approximated
 REModOnlySigRValidSE <- rma.mv(yi = fisherZDiff, V = allData[allData$significantSameDirection.r==TRUE,]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id, data = allData[allData$significantSameDirection.r==TRUE & !is.na(allData$seFish.o) & !is.na(allData$seFish.r),])
-validSEDiff[4] <- REModOnlySigR$b - REModOnlySigRValidSE$b
+validSEDiff[2] <- REModOnlySigR$b - REModOnlySigRValidSE$b
 
+## Analysis 3
 # The first model but with only non-equiv 
 REModNonequiv <- rma.mv(yi = fisherZDiff, V = allData[allData$statisticallyEquiv.ro==FALSE & !is.na(allData$statisticallyEquiv.ro==FALSE),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id, data = allData[allData$statisticallyEquiv.ro==FALSE & !is.na(allData$statisticallyEquiv.ro==FALSE),])
 # Checking if anything changes excluding those where the SE is approximated
 REModNonequivValidSE <- rma.mv(yi = fisherZDiff, V = allData[allData$statisticallyEquiv.ro==FALSE & !is.na(allData$statisticallyEquiv.ro==FALSE),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id, data = allData[allData$statisticallyEquiv.ro==FALSE & !is.na(allData$statisticallyEquiv.ro==FALSE) & !is.na(allData$seFish.o) & !is.na(allData$seFish.r),])
-validSEDiff[5] <- REModNonequiv$b - REModNonequivValidSE$b
+validSEDiff[3] <- REModNonequiv$b - REModNonequivValidSE$b
 
+
+### Analysis 4
+# Running a meta analysis of each study to then extract a hetrogeneity test for each pair of studies
+out <- list()
+outFE <- list()
+allData$QEp <- NA
+FEQEp <- allData$QEp
+
+for(i in 1:nrow(allData)) {
+  out[[i]] <- metafor::rma(  yi = c(allData$fis.o[i], allData$fis.r[i]), sei = c(allData$seFishAprox.o[i], allData$seFishAprox.r[i]),method = "REML" )
+  outFE[[i]] <- metafor::rma(  yi = c(allData$fis.o[i], allData$fis.r[i]), sei = c(allData$seFishAprox.o[i], allData$seFishAprox.r[i]),method = "FE" )
+  allData$QEp[i] <- out[[i]]$QEp
+  FEQEp[i] <- out[[i]]$QEp
+}
+
+# random effects and fixed effects both should match in each case (and do, r)
+# To check that FE and RE are equal 
+QTestsAgree <- all((FEQEp <= .05) ==  (allData$QEp <= .05))
+
+# Getting rid of studies if p < .05
+allData$QEpSig <- allData$QEp < .05
+
+analysis_4 <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id, data = allData[which(!allData$QEpSig),])
+# Checking if anything changes excluding those where the SE is approximated
+analysis_4_valid_SE <-  rma.mv(yi = fisherZDiff, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id, data = allData[which(!allData$QEpSig & !is.na(allData$seFish.o) & !is.na(allData$seFish.r)),])
+validSEDiff[4] <- analysis_4$b - analysis_4_valid_SE$b
+
+# brining these together
 modRes <- data.frame( modelN = REMod$k, modelEstimate = REMod$b, MLM95lb = REMod$ci.lb, MLM95ub = REMod$ci.ub, row.names = "Overall")
 modRes1 <- data.frame(modelN = REModOnlySigR$k, modelEstimate = REModOnlySigR$b, MLM95lb = REModOnlySigR$ci.lb, MLM95ub = REModOnlySigR$ci.ub, row.names = "StatisticalSignificance")
 modRes2 <- data.frame(modelN = REModNonequiv$k, modelEstimate = REModNonequiv$b, MLM95lb = REModNonequiv$ci.lb, MLM95ub = REModNonequiv$ci.ub, row.names = "Nonequivalence")
 
-# brining these together
 modSumaries <- rbind(modRes, modRes1, modRes2)
 # Estiating the degree of effect size change as a proportion of the average effect size in psychology 
 modSumaries$`Estimated % attenuation` <- (modSumaries$modelEstimate/mean(allData$fis.o, na.rm = T))*100
@@ -269,6 +267,7 @@ tableAllEstimates <- merge.data.frame(tableReductions, modSumaries, by = "row.na
 tableAverageDecrease <- allData %>%
   group_by(source) %>%
   dplyr::summarise(mean=mean(fisherZDiff, na.rm=T), sd=sd(fisherZDiff, na.rm=T))
+
 
 ### Leave one out cross validation for main model, excluding first each source ####
 # Commented out to avoid having to run this each time I knit this document

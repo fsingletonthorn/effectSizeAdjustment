@@ -245,12 +245,13 @@ es.o$r[c(7,8,9)] <- es.o$seFish[9] <- NA
 
 # Converting rep ESs 
 es.r <- des(d = ManyLabs3$ReplicationES, n.1 = ManyLabs3$N.r/2,  n.2 = ManyLabs3$N.r/2, dig = 5)
+es.r$seFish <-  sqrt(1/(ManyLabs3$N.r -3))
 # removing invalids (eta squared and df1 > 2 for SEs)
-es.r$r[c(7,8,9)] <- es.r$seFish[9] <- NA 
+es.r$r[c(7,8,9)] <- NA 
 
 # removing Boroditsky, L. (2000). Metaphoric structuring: Understanding time through spatial metaphors. Cognition, 75(1), 1-28. who used a chi square test, making SEs for Fisher's z wrong
-es.r$seFish[str_detect(string = ManyLabs3$Effect,  c("MetaphoricRestructuring"))] <- NA
-es.o$seFish[str_detect(string = ManyLabs3$Effect,  c("MetaphoricRestructuring"))] <- NA
+es.r$seFish[str_detect(string = ManyLabs3$Effect,  c("MetaphoricRestructuring|AvailabilityHeuristic"))] <- NA
+es.o$seFish[str_detect(string = ManyLabs3$Effect,  c("MetaphoricRestructuring|AvailabilityHeuristic"))] <- NA
 
 # Extracting test stats from rep study
 testStats.r <- data.frame(str_split(ManyLabs3$KeyStatistics.r, " =", simplify = T)[,1],
@@ -486,7 +487,7 @@ loopr$correlationPositive.o <- ifelse(loopr$correlation.o<0, -loopr$correlation.
 es.o <- escalc(ri = loopr$correlationPositive.o, ni = loopr$OriginalSampleSize, measure = "ZCOR")
 es.r <- escalc(ri = loopr$DisattenuatedCorrelationPositive.r, ni = loopr$ReplicationSampleSize, measure = "ZCOR")
 
-### Standard errors original and replication study - None appear to use techniques for which SEs can be meaningfully extracted
+### Standard errors original and replication study
 es.o$seFish <- sqrt(1/(loopr$OriginalSampleSize-3))
 es.r$seFish <- sqrt(1/(loopr$ReplicationSampleSize-3))
 
@@ -494,12 +495,12 @@ es.r$seFish <- sqrt(1/(loopr$ReplicationSampleSize-3))
 loopr$DisattenuatedCorrelationPositive.r[loopr$ReplicationEffectType == "B"] <- loopr$correlationPositive.o[loopr$ReplicationEffectType == "B"] <- loopr$DisattenuatedCorrelation.r[loopr$ReplicationEffectType == "B"] <- loopr$correlation.o[loopr$ReplicationEffectType == "B"] <- loopr$correlation.r[(loopr$ReplicationEffectType == "B")] <- es.r[(loopr$ReplicationEffectType == "B"),] <- es.o[(loopr$ReplicationEffectType == "B"),] <- NA
 
 # Removing additional invalid SEs
-es.r$seFish[str_detect(loopr$OriginalAnalysis,"Structural equation model")] <- es.o$seFish[str_detect(loopr$OriginalAnalysis,"Structural equation model")] <- NA
+es.r$seFish[str_detect(loopr$OriginalAnalysis,"Structural equation model|ANOVA|Chi-squared|Partial")] <- es.o$seFish[str_detect(loopr$OriginalAnalysis,"Structural equation model|Chi-squared|ANOVA|Partial")] <- NA
 
 # Amalgomating 
 data7 <- data.frame(authorsTitle.o = loopr$OriginalStudyCitation,
                     correlation.o = loopr$correlationPositive.o, 
-                    cohenD.o = NA, 
+                    cohenD.o = NA,
                     seCohenD.o =  NA,
                     fis.o = es.o$yi, 
                     seFish.o = es.o$seFish,
