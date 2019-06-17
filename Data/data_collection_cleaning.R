@@ -26,7 +26,6 @@ projectNames <- data_frame(
 )
 
 #### First extracting data from the OSC's RPP  ####
-
 ####################################################################################################################
 ### Most of this first chunk of Code from https://github.com/CenterForOpenScience/rpp/blob/master/masterscript.R####
 ####################################################################################################################
@@ -221,7 +220,8 @@ data2 <- data.frame(authorsTitle.o = ManyLabs1ML_orig$Reference,
                     pValFish.r = es.r$pval.r,
                     pVal.r = ManyLabs1$p.r,
                     testStatistic.r = ManyLabs1$`Key statistics.r`,
-                    seDifference.ro = NA)
+                    seDifference.ro = NA, 
+                    n_studies = ManyLabs1$n_studies)
 
 data2$source <- as.character(projectNames[2,1])
 data2$abrev <- "ML1"
@@ -283,7 +283,8 @@ data3 <- data.frame(authorsTitle.o = ManyLabs3$originalEffects,
                     n.r = ManyLabs3$N.r,
                     pVal.r =  es.r$pval.r,
                     seDifference.ro = NA,
-                    testStatistic.r = ManyLabs3$testStatistic.r)
+                    testStatistic.r = ManyLabs3$testStatistic.r,
+                    n_studies = ManyLabs3$n_studies)
 
 data3$source <- as.character(projectNames[3,1])
   #"Ebersole et al. (2016), Many Labs 3"
@@ -298,7 +299,9 @@ data3$abrev <- "ML3"
 
 natSci <- read_csv(file ="Data/socialScienceExperimentsInNatureAndScience.csv")
 # View(natSci)
-
+# Noting which effects had multiple studies
+natSci$n_studies <- ifelse(!is.na(natSci$n_rs2),  2, 1)
+  
 # calcualting z values and sampling variances 
 r1Sums <- escalc(measure = "ZCOR", ri = natSci$r_rs1, ni = natSci$n_rs1)
 r2Sums <- escalc(measure = "ZCOR", ri = natSci$r_rs2, ni = natSci$n_rs2)
@@ -357,7 +360,8 @@ natSci$correlation.r <- ztor(natSci$fis.r)
                       n.r = natSci$nTotal.r,
                       seCohenD.r = NA,
                       pVal.r = natSci$pVal.r,
-                      seDifference.ro = NA)
+                      seDifference.ro = NA,
+                      n_studies = natSci$n_studies)
   
 data4$source <- as.character(projectNames[4,1])
   #"Camerer, et al. (2018), Nature Science"
@@ -562,7 +566,8 @@ data8 <- data.frame(authorsTitle.o = ml2$ArticleRef,
                     n.r = es.r$N.total,
                     pVal.r = as.character(ml2$`replication_sample_size,_p_<_.0001`),
                     seDifference.ro = NA,
-                    testStatistic.r = ml2$ReplicationTest)
+                    testStatistic.r = ml2$ReplicationTest,
+                    n_studies = ml2$n_studies_included)
 
 data8$source <- as.character(projectNames[8,1])
   #"Klein et al. (2018), Many Labs 2"
@@ -605,7 +610,6 @@ projectNamesSingleLine <- data_frame(unique(allData$source), c("OSC (2015)",
 
 # cleaning replication p values - less than .05 (etc. are set to be just below that value) and values of "0" to 0 + floating point minimum
 
-
 allData$cleanedpVal.r <- as.numeric(allData$pVal.r)
 allData$cleanedpVal.r[is.na(as.numeric(allData$pVal.r))] <-  as.numeric(str_remove_all(allData$pVal.r[is.na(as.numeric(allData$pVal.r))], "<|\\s"))- .Machine$double.eps
 allData$cleanedpVal.r[allData$cleanedpVal.r == 0] <- 0 +  .Machine$double.eps
@@ -615,3 +619,7 @@ allData$cleanedpVal.o[is.na(as.numeric(allData$pVal.o))] <-  as.numeric(str_remo
 allData$cleanedpVal.o[allData$cleanedpVal.o == 0] <- 0 +  .Machine$double.eps
 
 # pValSet <- filter(allData, !is.na(allData$cleanedpVal.o))
+
+# Setting number of studies to be correct
+allData$n_studies[is.na(allData$n_studies)] <- 1
+
