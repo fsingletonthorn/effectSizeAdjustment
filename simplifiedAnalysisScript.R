@@ -1,4 +1,4 @@
-source(file = "Analysis/Wilson score interval.R")
+source(file = "Analysis/Wilson score interval and flat violin.R")
 # source(file = 'Data/data_collection_cleaning.R') # this sources the data
 library(readr)
 library(MASS)
@@ -11,7 +11,7 @@ library(RColorBrewer)
 library(bestNormalize)
 library(reshape2)
 library(car)
-source("https://gist.githubusercontent.com/benmarwick/2a1bb0133ff568cbe28d/raw/fb53bd97121f7f9ce947837ef1a4c65a73bffb3f/geom_flat_violin.R")
+library(broom)
 
 # Excluding missind data
 allData <- allData[!is.na(allData$fis.o) & !is.na(allData$fis.r) & !is.na(allData$n.o) & !is.na(allData$n.r),]
@@ -196,6 +196,7 @@ REMod <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2, random =  ~ 1|source/au
 # Checking if anything changes excluding those where the SE is approximated
 REModValidSE <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id,  data = allData[!is.na(allData$seFish.o) & !is.na(allData$seFish.r),])
 validSEDiff <- REMod$b - REModValidSE$b
+validSEDiff <- abs(REMod$sigma2 - REModValidSE$sigma2)
 
 # Empirical Bayes estimates for random Effects 
 BLUPsSource <- ranef(REMod)[1]
@@ -218,50 +219,22 @@ REModNonequiv <- rma.mv(yi = fisherZDiff, V = allData[allData$statisticallyEquiv
 REModNonequivValidSE <- rma.mv(yi = fisherZDiff, V = allData[allData$statisticallyEquiv.ro==FALSE & !is.na(allData$statisticallyEquiv.ro==FALSE),]$seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id, data = allData[allData$statisticallyEquiv.ro==FALSE & !is.na(allData$statisticallyEquiv.ro==FALSE) & !is.na(allData$seFish.o) & !is.na(allData$seFish.r),])
 validSEDiff[3] <- REModNonequiv$b - REModNonequivValidSE$b
 
-
-### Analysis 4
-# Running a meta analysis of each study to then extract a hetrogeneity test for each pair of studies
-out <- list()
-outFE <- list()
-allData$QEp <- NA
-FEQEp <- allData$QEp
-
-for(i in 1:nrow(allData)) {
-  out[[i]] <- metafor::rma(  yi = c(allData$fis.o[i], allData$fis.r[i]), sei = c(allData$seFishAprox.o[i], allData$seFishAprox.r[i]),method = "REML" )
-  outFE[[i]] <- metafor::rma(  yi = c(allData$fis.o[i], allData$fis.r[i]), sei = c(allData$seFishAprox.o[i], allData$seFishAprox.r[i]),method = "FE" )
-  allData$QEp[i] <- out[[i]]$QEp
-  FEQEp[i] <- out[[i]]$QEp
-}
-
-# random effects and fixed effects both should match in each case (and do, r)
-# To check that FE and RE are equal 
-QTestsAgree <- all((FEQEp <= .05) ==  (allData$QEp <= .05))
-
-# Getting rid of studies if p < .05
-allData$QEpSig <- allData$QEp < .05
-
-analysis_4 <- rma.mv(yi = fisherZDiff, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id, data = allData[which(!allData$QEpSig),])
-# Checking if anything changes excluding those where the SE is approximated
-analysis_4_valid_SE <-  rma.mv(yi = fisherZDiff, V = seDifference.ro^2, random =  ~ 1|source/authorsTitle.o/id, data = allData[which(!allData$QEpSig & !is.na(allData$seFish.o) & !is.na(allData$seFish.r)),])
-validSEDiff[4] <- analysis_4$b - analysis_4_valid_SE$b
-
-# brining these together
+# Collecting things for easy reporting
 modRes <- data.frame( modelN = REMod$k, modelEstimate = REMod$b, MLM95lb = REMod$ci.lb, MLM95ub = REMod$ci.ub, row.names = "Overall")
 modRes1 <- data.frame(modelN = REModOnlySigR$k, modelEstimate = REModOnlySigR$b, MLM95lb = REModOnlySigR$ci.lb, MLM95ub = REModOnlySigR$ci.ub, row.names = "StatisticalSignificance")
 modRes2 <- data.frame(modelN = REModNonequiv$k, modelEstimate = REModNonequiv$b, MLM95lb = REModNonequiv$ci.lb, MLM95ub = REModNonequiv$ci.ub, row.names = "Nonequivalence")
 
 modSumaries <- rbind(modRes, modRes1, modRes2)
+
 # Estiating the degree of effect size change as a proportion of the average effect size in psychology 
 modSumaries$`Estimated % attenuation` <- (modSumaries$modelEstimate/mean(allData$fis.o, na.rm = T))*100
 modSumaries$`LB % attenuation` <- (modSumaries$MLM95lb/mean(allData$fis.o, na.rm = T)*100)
 modSumaries$`UB % attenuation` <- (modSumaries$MLM95ub/mean(allData$fis.o, na.rm = T)*100)
 modSumariesR <- modSumaries
-# converting to z
+# converting from r to z
 modSumariesR[2:4] <- ztor(modSumaries[2:4])
-
 niceModelSums <- lapply(X = list("All Data" = REMod, "Non-equivalent studies" = REModNonequiv, "Only Signficant replications" = REModOnlySigR), niceMLMESum)
 
-# 
 tableAllEstimates <- merge.data.frame(tableReductions, modSumaries, by = "row.names", sort = F)
 
 tableAverageDecrease <- allData %>%
@@ -299,7 +272,6 @@ LOOProjectDF <- read_csv("Data/LOOProjectSimp.csv")
 LOOProjectDFSum <- LOOProjectDF %>%
   group_by(Subsample = call) %>%
   dplyr::summarise('Proportion significant'= mean(p<.05), 'Minimum estimate' = quantile(b)[1],  '25th percentile' = quantile(b)[2], 'Median' = quantile(b)[3], '75th percentile' = quantile(b)[4], 'Maximum estimate' = quantile(b)[5])
-
 
 # Renaming files
 namesR <- as.character(LOOProjectDFSum$Subsample)
@@ -393,6 +365,18 @@ LooMaxDiff <- max(c(abs(REMod$b - LOOoutput$`Minimum estimate`[LOOoutput$Subsamp
 ))
 
 
+# Adding something to adjust for the hetrogeneity of multistudy papers -
+adjustedDat <- allData
+adjustedDat$adjusted_n.r <- adjustedDat$n.r/adjustedDat$n_studies
+adjustedDat$adjustedSE.ro <-  sqrt(1/(adjustedDat$n.o-3) + 1/(adjustedDat$adjusted_n.r-3))
+adjustedDat$id2 <- 1:nrow(adjustedDat)
+
+# Analysis 1
+REModAdjusted <- rma.mv(yi = fisherZDiff, V = adjustedSE.ro^2, random =  ~ 1|source/authorsTitle.o/id2,  data = adjustedDat)
+# Analysis 2
+REModOnlySigAdjusted <- rma.mv(yi = fisherZDiff, V = adjustedSE.ro^2, random =  ~ 1|source/authorsTitle.o/id2,  data = adjustedDat[allData$significantSameDirection.r==TRUE,])
+# Analysis 3
+REModNonequivAdjusted <- rma.mv(yi = fisherZDiff, V = adjustedSE.ro^2, random =  ~ 1|source/authorsTitle.o/id2,  data = adjustedDat[adjustedDat$statisticallyEquiv.ro==FALSE & !is.na(adjustedDat$statisticallyEquiv.ro==FALSE),])
 
 #####################
 ###### Figures ######
@@ -418,39 +402,6 @@ ggsave(plot =  fisherZChangePlot,
        file = "Figures/ViolinPlotZscoreChange.jpg", 
        width = 6, height = 8, device = "jpeg", dpi = 320)
 
-# pdf(file = "Figures/ViolinPlotPercentageChange.pdf")
-# percentage change
-# ggplot(allData, aes(y = percentageChangeES.ro,x= source, 
-#                     fill = source, colour = source))+ geom_hline(yintercept = 0, alpha = .1) + 
-#   geom_flat_violin(width=1.45,
-#                    position = position_nudge(x = .2, y = 0), alpha = .8) + 
-#   geom_boxplot(width = .3, guides = FALSE, outlier.shape = NA, alpha = 0.5) +
-#   expand_limits(x = 5.25) +
-#   geom_point(position = position_jitter(width = .15), size = .5, alpha = 0.8) +
-#   coord_flip() + 
-#   theme_classic() +
-#   scale_color_brewer(palette = "Spectral") +
-#   scale_fill_brewer(palette = "Spectral") + 
-#   theme(legend.position =  'none', axis.text.y = element_text(size=8), 
-#         axis.title.y = element_blank()) + ylab("Percentage change in effect sizes from original to replicaiton")
-# dev.off()
-
-# Correlation change 
-# pdf(file = "Figures/ViolinPlotCorrelationDifference.pdf", width = 5)
-# ggplot(allData,aes(y = correlationDifference.ro,x= source, 
-#                    fill = source, colour = source)) + geom_hline(yintercept = 0, alpha = .1) + 
-#   geom_flat_violin(width=1.35,
-#                    position = position_nudge(x = .2, y = 0), alpha = .8) + 
-#   geom_boxplot(width = .25, guides = FALSE, outlier.shape = NA, alpha = 0.5) +
-#   expand_limits(x = 5.25) +
-#   geom_point(position = position_jitter(width = .15), size = .5, alpha = 0.8) +
-#   coord_flip() + 
-#   theme_classic() +
-#   scale_color_brewer(palette = "Spectral") +
-#   scale_fill_brewer(palette = "Spectral") + 
-#   theme(legend.position =  'none', axis.text.y = element_text(size=8), 
-#         axis.title.y = element_blank()) + ylab("Differences in effect size (correlations)") 
-# dev.off()
 
 ## more plots - catapillar plot of correlation differences 
 plotDat <- allData[!is.na(allData$fisherZDiff),]
@@ -477,13 +428,14 @@ propBelow.1.BMM <- readRDS("Data/mixtureModelOutput/ValuesBelow.1.rds")
 jagData <- read_csv("Data/mixtureModelOutput/jagData.csv")
 
 # Ploting the results
-mixtureModelPlot <- ggplot(jagData, aes(x = correlation.o, y = correlation.r,  color = probRealEffect, size = n.r)) +
-  geom_abline( slope = 1, intercept = 0) + geom_point(alpha = .8, na.rm = T)+ theme_classic() +
+mixtureModelPlot <- ggplot(jagData, aes(x = correlation.o, y = correlation.r,  color = probRealEffect, size = n.r)) + # scale_colour_continuous(low = "#ece2f0", high = "#1c9099")+
+  geom_abline( slope = 1, intercept = 0) + geom_point(alpha = 1, na.rm = T)+ scale_fill_brewer()+theme_classic() +
   guides(color = guide_legend(title = "Posterior\nassignment\nrate"),
          shape = guide_legend(title = "True effect size < 0.1"),
          size = guide_legend(title = "Replication\nSample size",
                              values= trans_format("identity", function(x) round(exp(x),0)), order = 2)) +
-  scale_size(trans = "log", breaks = c(10, 100, 1000, 10000)) + geom_point(colour = "black", na.rm = T, size = .5, shape = 3) +
+  # scale_color_continuous(breaks = c(.5,.75, .999)) +
+  scale_size(trans = "log", breaks = c(10, 100, 1000, 10000)) + geom_point(colour = "black", na.rm = T, size = .1, shape = 3) +
   xlab("Original correlation")+ ylab("Replication correlation") + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) 
 
 # decreaseCalc <- data_frame(o.div2 = allData$fis.o/2, r = allData$fis.r , "originalDiv2Less" = allData$fis.r > (allData$fis.o / 2))
@@ -529,3 +481,6 @@ W <- diag(1/allData$seDifference.ro^2)
 X <- model.matrix(REMod)
 P <- W - W %*% X %*% solve(t(X) %*% W %*% X) %*% t(X) %*% W
 Io2 <- 100 * sum(REMod$sigma2) / (sum(REMod$sigma2) + (REMod$k-REMod$p)/sum(diag(P)))
+
+# Estimates of the variability 
+confIntsREMod <- confint(REMod)
