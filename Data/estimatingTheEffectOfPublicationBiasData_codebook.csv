@@ -1,0 +1,27 @@
+﻿authorsTitle.o,Author and title of the original study
+correlation.o,original effect size in correlation units
+fis.o,original effect size in fisher z transformed correlation units
+seFish.o,"standard error for the original effect size in fisher z transformed correlation units, not included for some studies"
+n.o,sample size of the original study
+pValFish.o,original p value using a two tailed t test of the fisher z transformed correlation assuming the null of z = 0
+pVal.o,original p value as per the original test (these are those reported in the replication projects' data)
+testStatistic.o,"original study's reported test statistic, degrees of freedom and p value, or failing that they type of statistical test"
+correlation.r,replication effect size in correlation units
+fis.r,replication effect size in fisher z transformed correlation units
+n.r,sample size of the replication study
+seFish.r,"standard error for the replication effect size in fisher z transformed correlation units, not included for some studies"
+pValFish.r,replication p value using a two tailed t test of the fisher z transformed correlation assuming the null of z = 0
+pVal.r,replication p value as per the replication test (these are those reported in the replication projects' data)
+testStatistic.r,"replication study's reported test statistic, degrees of freedom and p value, or failing that they type of statistical test"
+seDifference.ro,the standard error of the fisher z score difference between original and replication studies
+source,Replication project the replication study was performed as a part of
+abrev,abbreviated replication project name
+cohenD.o,original effect size in cohen's d units (only when reported in replication projects)
+cohenD.r,replication effect size in cohen's d units (only when reported in replication projects)
+significant.r,Binary for whether the result was statistically significant according to the replication project
+significantSameDirection.r,Binary for whether the result was statistically significant according to the replication project and whether the effect was in the same direction as the original effect 
+fisherZDiff.ro,fisher z score difference between original and replication study  effect sizes 
+correlationDifference.ro,correlation difference between the original and replication study effect sizes 
+percentageChangeES.ro,percentage change between original and replication study effect size
+cleanedpVal.r,Cleaned p value of the replication study
+cleanedpVal.o,"cleaned p value of the original study (note that there is quite a lot missing here, do not use without filling in the blanks)"

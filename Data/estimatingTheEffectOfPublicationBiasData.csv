@@ -1,0 +1,613 @@
+authorsTitle.o,correlation.o,fis.o,seFish.o,n.o,pValFish.o,pVal.o,testStatistic.o,correlation.r,fis.r,n.r,seFish.r,pValFish.r,pVal.r,testStatistic.r,seDifference.ro,source,abrev,cohenD.o,cohenD.r,seCohenD.r,significant.r,significantSameDirection.r,fisherZDiff.ro,correlationDifference.ro,percentageChangeES.ro,cleanedpVal.r,cleanedpVal.o
+A Roelofs-Tracing attention and the activation flow in spoken word planning using eye movements.,0.594605285,0.684760158,0.288675135,15,0.00884416,0.02,"F(1, 13) = 7.11",0.148340453,0.14944312,30,0.19245009,0.218718284,0.435,"F(1,28) = 0.63",0.346944333,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.535317038,-0.446264832,-0.781758447,0.435,0.02
+"AL Morris, ML Still-Now you see it, now you don't: repetition blindness for nonwords",0.611120054,0.710707114,0.213200716,25,0.000428785,<0.005,"F(1, 23) = 13.71",0.229604631,0.233772055,25,0.213200716,0.136432608,0.269,"F(1, 23) = 1.28",0.301511345,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.476935059,-0.381515423,-0.671071177,0.269,0.005
+"B Liefooghe, P Barrouillet, A Vandierendonck, V Camos-Working memory costs of task switching.",0.424979665,0.453753709,0.208514414,26,0.014772907,<0.05,"F(1, 24) = 5.29",-0.215243835,-0.218663486,33,0.182574186,0.884477095,0.229,"F(1, 31) = 1.506",0.277149047,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.672417194,-0.6402235,-1.48189906,0.229,0.05
+"BC Storm, EL Bjork, RA Bjork-Accelerated relearning after retrieval-induced forgetting: The benefit of being forgotten.",0.228739615,0.23285909,0.072739297,192,0.000684085,<0.001,"F(1, 190) = 10.49",-0.006108358,-0.006108434,270,0.061199006,0.539753461,0.94,"F(1,268)=.01",0.095059579,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.238967524,-0.234847973,-1.026232319,0.94,0.001
+"C Mitchell, S Nash, G Hall-The intermixed-blocked effect in human perceptual learning is not the consequence of trial spacing.",0.461300742,0.498962392,0.182574186,33,0.003138688,X,"F(1,31) = 8.38",0.134811802,0.135637525,49,0.147441956,0.178802462,0.335,"F(1, 47) = 0.87",0.23467523,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.363324868,-0.32648894,-0.728160826,0.335,NA
+"CJ Berry, DR Shanks, RN Henson-A single-system account of the relationship between priming, recognition, and fluency.",0.594960462,0.68530977,0.213200716,25,0.000653615,0.002,t(23) = 3.55,0.395843475,0.418710421,33,0.182574186,0.010913315,0.023,t(31) = 2.40,0.280691786,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,-0.266599349,-0.199116987,-0.389020208,0.023,0.002
+"CP Beaman, I Neath, AM Surprenant-Modeling distributions of immediate memory effects: No strategies needed?",0.715143728,0.897633709,0.101015254,101,3.16E-19,<0.05,t(99) = 10.18,0.131411981,0.132176373,16,0.277350098,0.316834642,0.314,t(14) = 0.496,0.295173099,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.765457336,-0.583731747,-0.852750212,0.314,0.05
+"CS Dodson, J Darragh, A Williams-Stereotypes and retrieval-provoked illusory source recollections.",0.561422534,0.634908054,0.166666667,39,6.96E-05,<.001,"F(1, 37) = 17.03",-0.110614348,-0.111068831,33,0.182574186,0.728522,0.54,"F(1, 31) = .384",0.247206616,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.745976885,-0.672036882,-1.174936875,0.54,0.001
+"D Ganor-Stern, J Tzelgov-Across-notation automatic numerical processing.",0.698586719,0.864534746,0.19245009,30,3.52E-06,<.001,"F(1, 28) = 26.69",0.780725807,1.047226674,31,0.188982237,1.50E-08,0.001,"F(1, 29) = 45.27",0.269724531,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,0.182691927,0.082139088,0.211318201,0.001,0.001
+"D Mirman, JS Magnuson-Attractor dynamics and semantic neighborhood density: Processing is slowed by near neighbors and speeded by distant neighbors.",0.672084167,0.814534581,0.223606798,23,0.000134892,<.001,"F(1, 21) = 17.3",0.466443576,0.505515293,31,0.188982237,0.003737181,0.008,"F (1, 29) = 8.064",0.292770022,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,-0.309019289,-0.205640591,-0.379381423,0.008,0.001
+"JE Marsh, F Vachon, DM Jones-When does between-sequence phonological similarity promote irrelevant sound disruption?",0.178477629,0.180409785,NA,94,0.042625442,<.05,"F(2, 92) = 3.13",0.08323764,0.083430681,234,NA,0.102392447,0.1986,"F(2, 232) = 1.63",0.12376597,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.096979105,-0.095239989,-0.537549028,0.1986,0.05
+"JI Campbell, ND Robert-Bidirectional associations in multiplication memory: Conditions of negative and positive transfer.",0.52450217,0.582530436,NA,70,9.29E-07,<.001,"F(2, 68) = 41.59",0.524539034,0.582581291,70,NA,9.27E-07,0.0001,"F(2, 68) = 41.603",0.172773685,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,5.09E-05,3.69E-05,8.73E-05,1.00E-04,0.001
+"JR Schmidt, D Besner-The Stroop effect: Why proportion congruent has nothing to do with congruency and everything to do with contingency.",0.195136354,0.197671341,0.103695169,96,0.028307373,0.028,t(94) = 1.929,0.24687812,0.252085564,243,0.064549722,4.71E-05,0.0001,t(241) = 3.955,0.122144811,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,0.054414223,0.051741766,0.275276237,1.00E-04,0.028
+K Fiedler-The ultimate sampling dilemma in experience-based decision making.,0.304772411,0.314772324,NA,78,0.003205269,<.001,"F(2, 76) = 8.67",0.434510306,0.465443374,74.4,0.118345267,4.20E-05,0.00003,"F(1.58, 72.4) = 19.48",0.165344899,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,0.15067105,0.129737895,0.478666765,3.00E-05,0.001
+K Oberauer-How to say no: Single-and dual-process theories of short-term recognition tested on negative probes.,0.560499145,0.633560676,0.182574186,33,0.000260079,<.001,"F(1, 31) = 14.2",0.401939168,0.425959601,21,0.23570226,0.035366054,0.071,"F(1,19)=3.661",0.298142397,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.207601074,-0.158559977,-0.327673548,0.071,0.001
+"L Sahakyan, PF Delaney, ER Waldum-Intentional forgetting is easier after two ""shots"" than one.",0.224092029,0.227960364,0.103695169,96,0.01396137,<.05,"F(1,94) = 4.97",0.019422053,0.019424496,108,0.097590007,0.421115004,0.84,"F(1, 106) = 0.04",0.142395568,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.208535868,-0.204669976,-0.914790031,0.84,0.05
+"LS Colzato, MT Bajo, W van den Wildenberg, D Paolieri, S Nieuwenhuis, W La Heij, B Hommel-How does bilingualism improve executive control? A comparison of active and reactive inhibition mechanisms.",0.219359299,0.22298292,NA,95,0.016226865,0.002,"F(3, 93) = 5.23",0.064661345,0.06475169,92,NA,0.270644074,0.72,"F(2.33, 90) = .38",0.148679253,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.15823123,-0.154697954,-0.709611436,0.72,0.002
+"M Bassok, SF Pedigo, AT Oskarsson-Priming addition facts with semantic relations.",0.363732358,0.381180653,0.081378846,154,1.41E-06,<.001,"F(1, 152) = 23.176",0.284274426,0.292326186,50,0.145864991,0.022530352,0.045,"F(1, 48) = 4.22",0.167030274,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,-0.088854467,-0.079457932,-0.233103296,0.045,0.001
+"M Couture, D Lafond, S Tremblay-Learning correct responses and errors in the Hebb repetition effect: two faces of the same coin.",0.348120689,0.36330369,NA,50,0.006374862,<.001,"F(3, 48) = 9.14",0.2733272,0.280456144,61,NA,0.016344176,0.002,"F(3, 59) = 5.681",0.196259968,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,-0.082847546,-0.074793489,-0.228039373,0.002,0.001
+"MJ Yap, DA Balota, CS Tse, D Besner-On the additive effects of stimulus quality and word frequency in lexical decision: Evidence for opposing interactive influences revealed by RT distributional analyses.",0.378068955,0.397804632,0.182574186,33,0.014670823,0.03,"F(1, 31) = 5.17",0.379573968,0.399561811,72,0.120385853,0.000451687,0.001,"F(1,70)=11.783",0.218691762,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,0.001757179,0.001505013,0.00441719,0.001,0.03
+"N Janssen, W Schirm, BZ Mahon, A Caramazza-Semantic interference in a delayed naming task: Evidence for the response exclusion hypothesis.",0.341773488,0.356099201,0.182574186,33,0.025562108,<.06,"F(1,31) = 4.1",0.103261105,0.103630491,92,0.105999788,0.164124201,0.33,"F1(1, 90) = .97",0.211114396,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.25246871,-0.238512383,-0.708984209,0.33,0.06
+"NB Turk-Browne, PJ Isola, BJ Scholl, TA Treat-Multidimensional visual statistical learning.",0.73782079,0.945679455,0.40824829,9,0.010267343,0.023,t(7) = 2.892,0.703904904,0.874998613,16,0.277350098,0.000802897,0.002,t(14) = 3.708,0.493548117,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,-0.070680842,-0.033915886,-0.074740804,0.002,0.023
+PA White-Accounting for occurrences: A new view of the use of contingency information in causal judgment.,0.623367433,0.730493922,0.169030851,38,7.74E-06,<.001,"F(1, 36) = 22.88",0.480717115,0.523916497,39,0.166666667,0.000834705,0.002,"F(1, 37) =11.12",0.237379878,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,-0.206577425,-0.142650318,-0.282791436,0.002,0.001
+S Farrell-Multiple roles for time in short-term memory: Evidence from serial recall of order and timing.,0.516812354,0.571980599,0.162221421,41,0.000211003,0.001,t(39) = 3.77,0.315999964,0.327197057,41,0.162221421,0.021848898,0.044,t(39) = 2.08,0.229415734,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,-0.244783541,-0.20081239,-0.42795777,0.044,0.001
+"S Pacton, P Perruchet-An attention-based associative account of adjacent and nonadjacent dependency learning.",0.713921386,0.895136293,0.229415734,22,4.77E-05,<.01,"F(1, 20) = 20.79",0.681560537,0.832022572,22,0.229415734,0.000143532,0.00048,"F(1, 20)=17.35",0.324442842,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,-0.06311372,-0.032360849,-0.070507386,0.00048,0.01
+"T Makovski, R Sussman, YV Jiang-Orienting attention in visual working memory reduces interference from memory probes.",0.551178255,0.620072141,0.316227766,13,0.024948829,<.05,"F(1,11) = 4.8",0.349791589,0.365206269,19,0.25,0.072031726,0.142,"F(1,17)=2.37",0.403112887,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.254865872,-0.201386666,-0.411026162,0.142,0.05
+"B Monin, PJ Sawyer, MJ Marquez-The rejection of moral rebels: Resenting those who do the right thing.",0.347251138,0.362314569,NA,66,0.002015135,<.01,"F(2, 64) = 10.17",0.161063754,0.162478589,74,NA,0.085488865,0.1469,"F(2, 72) = 1.97",0.173082417,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.19983598,-0.186187384,-0.551553807,0.1469,0.01
+"BK Payne, MA Burkley, MB Stokes-Why do implicit and explicit attitude tests diverge? The role of structural fit.",0.352175067,0.36792462,0.123091491,69,0.001399306,<.01,t(67) = 3.08,0.150236955,0.151382854,178,0.075592895,0.022609748,0.045,t(176)= 2.016,0.144449994,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,-0.216541766,-0.201938112,-0.588549269,0.045,0.01
+"CJ Soto, OP John, SD Gosling, J Potter-The developmental psychometrics of big five self-reports: Acquiescence, factor structure, coherence, and differentiation from ages 10 to 20.",0.022542373,0.022546193,NA,230027,1.49E-27,<.001,"F(21, 230025) = 118.15",0.023841537,0.023846056,455306,NA,1.49E-58,2.20E-16,"F(21, 455304) = 261.93",0.002558068,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,0.001299863,0.001299164,0.057653341,2.20E-16,0.001
+"CR Cox, J Arndt, T Pyszczynski, J Greenberg, A Abdollahi, S Solomon-Terror management and adults' attachment to their parents: The safe haven remains.",0.225490086,0.229432826,0.104828484,94,0.014311156,0.03,t(92)= -2.22,-0.052290282,-0.052338019,194,0.072357461,0.765260131,0.47,t(192) = -.73,0.127375873,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.281770845,-0.277780368,-1.22811914,0.47,0.03
+"D AlbarracÕn, IM Handley, K Noguchi, KC McCulloch, H Li, J Leeper, RD Brown, A Earl, WP Hart-Increasing and decreasing motor and cognitive output: A model of general action and inaction goals.",0.378345294,0.398127096,0.174077656,36,0.011095984,0.02,"F(1, 34) = 5.68",-0.030485538,-0.030494987,88,0.108465229,0.610702282,0.77,"F(1, 86) = .08",0.205104208,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.428622084,-0.408830832,-1.076596111,0.77,0.02
+"D AlbarracÕn, IM Handley, K Noguchi, KC McCulloch, H Li, J Leeper, RD Brown, A Earl, WP Hart-Increasing and decreasing motor and cognitive output: A model of general action and inaction goals.",0.208058463,0.211141101,NA,94,0.021996488,0.02,"F(2, 92) = 4.36",0.155043132,0.156303692,105,NA,0.057215076,0.085,"F(2, 99) = 2.601",0.144197547,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.054837409,-0.053015331,-0.259719253,0.085,0.02
+"DB Centerbar, S Schnall, GL Clore, ED Garvin-Affective incoherence: When affective concepts and embodied reactions clash.",0.20573686,0.208715672,0.087705802,133,0.008662786,<.02,"F(1, 131) = 5.79",0.094021673,0.094300205,113,0.095346259,0.161324503,0.322,"F(1, 111) = .99",0.129550055,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.114415467,-0.111715187,-0.548188194,0.322,0.02
+"DM Amodio, PG Devine, E Harmon-Jones-Individual differences in the regulation of intergroup bias: The role of conflict monitoring and neural signals for control.",0.377126878,0.396705897,0.182574186,33,0.014895892,0.03,"F(1, 31) = 5.14",0.076700677,0.07685162,75,0.11785113,0.257165874,0.513,"F(1, 73) = 0.432",0.217306747,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.319854277,-0.300426201,-0.806275579,0.513,0.03
+"E Harmon-Jones, C Harmon-Jones, M Fearn, JD Sigelman, P Johnson-Left frontal cortical activation and spreading of alternatives: Tests of the action-based model of dissonance.",0.229852265,0.234033486,NA,56,0.044210211,<.05,"F(2, 54) = 3.19",0.066130007,0.06622666,70,NA,0.293878744,0.74,"F(2, 68) = .3",0.183829534,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.167806825,-0.163722258,-0.717020579,0.74,0.05
+"E van Dijk, GA van Kleef, W Steinel, I van Beest-A social functional approach to emotions in bargaining: when communicating anger pays and when it backfires.",0.379139495,0.399054301,0.101015254,101,3.90E-05,<.0001,"F(1, 99) = 16.62",-0.042140104,-0.042165075,40,0.164398987,0.601209942,0.796,t(38) = -0.260,0.192953644,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.441219376,-0.421279599,-1.105662499,0.796,1.00E-04
+"EP Lemay, MS Clark-Walking on eggshells: How expressing relationship insecurities perpetuates them.",0.167288593,0.168875882,0.074329415,184,0.011543478,<.05,"F(1, 182) = 5.24",0.03675175,0.03676831,280,0.060084177,0.270286531,0.54,"F(1, 278) = .376",0.095577038,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.132107572,-0.130536843,-0.782276133,0.54,0.05
+"H Ersner-Hershfield, JA Mikels, SJ Sullivan, LL Carstensen-Poignancy: Mixed emotional experience in the face of meaningful endings.",0.219666896,0.22330609,0.096673649,110,0.010446952,<.05,t(108) = -2.34,-0.004719346,-0.004719381,222,0.067573738,0.527839679,0.94,t(220) = 0.07,0.11794916,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.228025471,-0.224386242,-1.021134135,0.94,0.05
+J Correll-1/f noise and effort on implicit measures of bias.,0.274010238,0.28119448,0.122169444,70,0.010676725,<.02,"F(1, 68) = 5.52",0.073797292,0.073931699,147,0.083333333,0.187490894,0.374,"F(1,145) = .794",0.147884474,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.207262781,-0.200212946,-0.737079834,0.374,0.02
+"J F_rster, N Liberman, S Kuschel-The effect of global versus local processing styles on assimilation versus contrast in social judgment.",0.425496777,0.45438497,NA,78,4.16E-05,<.0001,"F(2, 76) = 21.57",0.11385379,0.114349602,67,NA,0.180149153,0.426,"F(2, 65) = 0.865",0.170171482,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.340035368,-0.311642987,-0.748342023,0.426,1.00E-04
+"JJ Exline, RF Baumeister, AL Zell, AJ Kraft, CV Witvliet-Not so innocent: Does seeing one's own capacity for wrongdoing predict forgiveness?",0.431865646,0.462187796,0.158113883,43,0.001732646,<.01,"F(1, 41) = 9.40",0.011721165,0.011721702,133,0.087705802,0.446840477,0.89,"F(1, 131)=.018",0.180810143,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.450466094,-0.420144481,-0.97463866,0.89,0.01
+"JL Risen, T Gilovich-Why people are reluctant to tempt fate.",0.185849827,0.188035057,0.093250481,118,0.021876401,<.05,"F(1, 116) = 4.15",0.003001488,0.003001497,224,0.067267279,0.482204917,0.961,"F(1, 222) = 0.002",0.114980603,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.18503356,-0.182848339,-0.984037567,0.961,0.05
+"KE Stanovich, RF West-On the relative independence of thinking biases and cognitive ability.",0.222131584,0.225897217,0.051847585,375,6.59E-06,<.001,t(373) = 4.40,0.073353737,0.07348573,177,0.075809804,0.166186953,0.332,t(175) = .973,0.091843881,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.152411487,-0.148777847,-0.674693957,0.332,0.001
+"KL Blankenship, DT Wegener-Opening the mind to close it: Considering a message in light of important values increases message processing and later resistance to change.",0.207643072,0.210706954,0.0625,259,0.000374056,0.002,"F(1, 257) = 11.58",0.04449582,0.04452522,249,0.063757671,0.24247892,0.49,"F(1, 247) = .49",0.089282085,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.166181733,-0.163147252,-0.788686517,0.49,0.002
+"MD Henderson, Y de Liver, PM Gollwitzer-The effects of an implemental mind-set on attitude strength.",0.259958534,0.266063935,NA,45,0.042327628,<.05,"F(2, 43) = 3.36",0.15539539,0.156664646,69,0.123091491,0.101553455,0.19,"F (2, 67) = 1.70",0.197385508,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.109399289,-0.104563144,-0.411176692,0.19,0.05
+"N Shnabel, A Nadler-A needs-based model of reconciliation: Satisfying the differential emotional needs of victim and perpetrator as a key to promoting reconciliation.",0.268278965,0.275008387,0.105999788,92,0.004737479,<.05,"F(1, 90) = 6.98",-0.101637251,-0.101989412,139,0.085749293,0.882857022,0.235,"F(1, 137) = 1.43",0.136341103,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.376997798,-0.369916216,-1.370859278,0.235,0.05
+"NO Rule, N Ambady-The face of success: inferences from chief executive officers' appearance predict company profits.",0.3,0.309519604,0.158113883,43,0.025140019,<.05,r(41) = .30,0.27,0.276863823,43,0.158113883,0.039969462,0.086,r(41) = .27,0.223606798,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.032655782,-0.03,-0.105504728,0.086,0.05
+"P Fischer, T Greitemeyer, D Frey-Self-regulation and selective exposure: The impact of depleted self-regulation resources on confirmatory information processing.",0.212014281,0.215279491,NA,84,0.026341185,0.02,"F(2, 82) = 4.05",0.118808574,0.11937237,139,NA,0.081944682,0.14,"F(2, 137) = 1.99",0.140351773,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.095907122,-0.093205707,-0.445500502,0.14,0.02
+"PA Goff, CM Steele, PG Davies-The space between us: Stereotype threat and distance in interracial contexts.",0.395559206,0.418373378,0.141421356,53,0.001546471,<.01,"F(1, 51) = 9.46",0.013045451,0.013046191,49,0.147441956,0.46474617,0.928,"F(1, 47)= .008",0.204301567,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.405327187,-0.382513755,-0.968816871,0.928,0.01
+"SL Murray, JL Derrick, S Leder, JG Holmes-Balancing connectedness and self-protection goals in close relationships: A levels-of-processing perspective on risk regulation.",0.317462994,0.328823223,0.110431526,85,0.001452475,<.01,t(83) = 3.05,-0.1351,-0.135931069,70,0.122169444,0.86706927,0.265,t(68) = -1.124,0.164683014,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.464754292,-0.452562994,-1.413386464,0.265,0.01
+"SM McCrea-Self-handicapping, excuse making, and counterfactual thinking: Consequences for self-esteem and future motivation.",0.344312999,0.358977419,0.2,28,0.036335845,<.05,t(26) = 1.87,0.28970838,0.298247896,61,0.131306433,0.011561741,0.01175,t(59)=2.325,0.239251707,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,-0.060729523,-0.054604619,-0.169173658,0.01175,0.05
+"V Purdie-Vaughns, CM Steele, PG Davies, R Ditlmann, JR Crosby-Social identity contingencies: How diversity cues signal threat or safety for African Americans in mainstream institutions.",0.378274916,0.398044964,0.11785113,75,0.000365708,0.001,"F(1, 73) = 12.19",-0.036935346,-0.036952156,1488,0.025949965,0.92277345,0.154,"F(1,1486)=2.03",0.120674312,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.434997119,-0.415210262,-1.092834125,0.154,0.001
+"B Dessalegn, B Landau-More than meets the eye: the role of language in binding and maintaining feature conjunctions.",0.381744212,0.402099817,0.174077656,36,0.010447189,<.05,"F(1, 34) = 5.8",-0.222920955,-0.226727713,47,0.150755672,0.933701786,0.132,t(45) = 1.534,0.230283093,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.628827529,-0.604665167,-1.563859279,0.132,0.05
+"B Eitam, RR Hassin, Y Schul-Nonconscious goal pursuit in novel environments: The case of implicit learning.",0.222330235,0.226106189,0.10976426,86,0.019702836,prep = .92,t(84) = 2.09,0.104941786,0.105329585,158,0.080321933,0.094870994,0.189,t(156) = 1.318,0.136013991,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.120776603,-0.117388449,-0.534158769,0.189,NA
+"C Farris, TA Treat, RJ Viken, RM McFall-Perceptual mechanisms that characterize gender differences in decoding women's sexual intent",0.554427187,0.624750857,0.060084177,280,1.27E-25,<.001,"F(1, 278) = 123.38",0.091162691,0.091416498,144,0.084215192,0.138847749,0.28,"F(1, 142) = 1.19",0.103451954,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.533334359,-0.463264496,-0.853675274,0.28,0.001
+"C Janiszewski, D Uy-Precision of the anchor influences the amount of adjustment.",0.333441051,0.346694778,0.136082763,57,0.005422158,prep = .947,"F(1, 55) = 6.88",0.225764222,0.229721667,118,0.093250481,0.006879579,0.014,"F(1,116) = 6.28",0.164967181,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,-0.116973111,-0.107676829,-0.337395076,0.014,NA
+"C McKinstry, R Dale, MJ Spivey-Action dynamics reveal parallel competition in decision making",0.701088742,0.869438514,0.353553391,11,0.006963447,<.05,"F(1, 9) = 8.7",0.750404422,0.973880109,11,0.353553391,0.002938655,0.01,"F(1, 9) = 11.6",0.5,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,0.104441595,0.04931568,0.120125338,0.01,0.05
+"DA Armor, C Massey, AM Sackett-Prescribed optimism: Is it right to be wrong about the future?",0.681152182,0.831260365,0.090166963,126,1.50E-20,prep > .99,t(124) =10.36,0.763508789,1.004574845,177,0.075809804,2.22E-40,1.00E-12,t(175) = 15.64,0.117801561,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,0.173314479,0.082356607,0.208496022,1.00E-12,NA
+"DR Addis, AT Wong, DL Schacter-Age-related changes in the episodic simulation of future events",0.570693584,0.648550827,0.185695338,32,0.000239213,prep = .99,"F(1,30) = 14.49",0.652730428,0.780041331,32,0.185695338,1.33E-05,0.0001,"F (1,30) = 22.27",0.262612866,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,0.131490504,0.082036844,0.202745102,1.00E-04,NA
+"E Nurmsoo, P Bloom-Preschoolers' perspective taking in word learning: do they blindly follow eye gaze?",0.501799075,0.551707796,0.182574186,33,0.001256266,prep = .97,t(31) = 3.23,-0.450187899,-0.484935914,10,0.377964473,0.900257435,0.197,t(7) = -1.426,0.419750493,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-1.03664371,-0.951986974,-1.878972378,0.197,NA
+"E Vul, H Pashler-Measuring the crowd within: Probabilistic representations within individuals.",0.28771881,0.296077402,0.076471911,174,5.40E-05,<.01,t(172) = 3.94,0.322727228,0.334688431,141,0.085125653,4.22E-05,0.001,t(139) = 4.02,0.114430459,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,0.038611028,0.035008418,0.130408563,0.001,0.01
+"E Vul, M Nieuwenstein, N Kanwisher-Temporal selection is suppressed, delayed, and diffused during the attentional blink.",0.130782132,0.13153551,NA,662,0.000366875,<.00001,"F(18, 660) = 16.31",0.120519146,0.121107793,662,NA,0.000938743,1.00E-12,"F(18, 660) = 12.98",0.055089939,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,-0.010427717,-0.010262986,-0.079276821,1.00E-12,1.00E-05
+"EJ Masicampo, RF Baumeister-Toward a physiology of dual-process reasoning and judgment: lemonade, willpower, and expensive rule-based analysis.",0.21368683,0.217031412,0.095346259,113,0.011415685,prep = .92,"F(1, 111) = 5.311",-0.048918238,-0.048957314,160,0.079808688,0.730205094,0.539,"F(1, 158) = 0.379",0.124339599,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.265988727,-0.262605068,-1.22557709,0.539,NA
+"G Hajcak, D Foti-Errors Are Aversive: Defensive Motivation and the Error-Related Negativity",0.38,0.40005965,0.188982237,31,0.01713346,<.05,r = -.38,0.25,0.255412812,43,0.158113883,0.05311503,0.11,r = -.25,0.24640269,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.144646838,-0.13,-0.361563177,0.11,0.05
+"G Tabibnia, AB Satpute, MD Lieberman-The sunny side of fairness: Preference for fairness activates reward circuitry (and disregarding unfairness activates self-control circuitry)",0.851679354,1.262235904,0.333333333,12,7.63E-05,prep = .99,t(11) = 5.39,0.828997685,1.184923144,24,0.21821789,2.82E-08,< .0005,z = 5.43,0.398409536,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,-0.07731276,-0.022681669,-0.061250642,0.0005,NA
+"GA Alvarez, A Oliva-The representation of simple ensemble visual features outside the focus of attention",0.721890032,0.911580609,0.40824829,9,0.012777527,0.028,t(7) = 2.76,0.922934494,1.608475947,18,0.25819889,2.34E-10,0.0001,t(16)= -9.59,0.483045892,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,0.696895337,0.201044462,0.764491182,1.00E-04,0.028
+"GP Lau, AC Kay, SJ Spencer-Loving those who justify inequality: the effects of system threat on attraction to women who embody benevolent sexist ideals.",0.384260399,0.40504856,0.174077656,36,0.009987242,prep = .93,"F(1, 34) = 5.89",-0.034279559,-0.034292996,70,0.122169444,0.610529848,0.79,"F(1, 68) = 0.08",0.212669705,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.439341555,-0.418539958,-1.084663912,0.79,NA
+"J Winawer, AC Huk, L Boroditsky-A motion aftereffect from still photographs depicting motion",0.685347348,0.839128812,0.19245009,30,6.50E-06,0.00003,t(28) = -4.978,0.527307869,0.586408806,27,0.204124145,0.002034228,0.00471,t(25)=-3.103,0.280541804,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,-0.252720007,-0.158039479,-0.301169502,0.00471,3.00E-05
+"JA Richeson, S Trawalter-The threat of appearing prejudiced and race-based attentional biases.",0.371775163,0.390481398,0.2,28,0.025444952,prep = .92,"F(1, 26) = 4.17",0.017674908,0.017676749,66,0.125988158,0.444209568,0.89,"F(1, 64) = .02",0.236374736,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.372804649,-0.354100255,-0.954730881,0.89,NA
+"JR Crosby, B Monin, D Richardson-Where do we look during potentially offensive behavior?",0.246947019,0.252158936,NA,71,0.018792327,<.005,"F(3, 69) = 5.15",0.179397898,0.181360495,43.458,0.157216381,0.124337738,0.254,"F(1.48, 41.458) = 1.401",0.19855194,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.070798442,-0.067549121,-0.280769115,0.254,0.005
+"JS Nairne, JN Pandeirada, SR Thompson-Adaptive memory: The comparative value of survival processing.",0.445652636,0.479262324,0.213200716,25,0.012290022,"""significant""","F(1, 23) = 5.7",0.423363806,0.451783336,39,0.166666667,0.003357067,0.007,"F(1, 37) = 8.08",0.270614714,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,-0.027478988,-0.02228883,-0.057336008,0.007,NA
+"JT Larsen, AR McKibban-Is happiness having what you want, wanting what you have, or both?",0.20996855,0.213138446,0.093658581,117,0.01143211,prep = .92,pr = .21,0.500179963,0.549546124,236,0.065512178,2.46E-17,0.001,pr = 0.497,0.114296874,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,0.336407678,0.290211413,1.578352871,0.001,NA
+"KD Vohs, JW Schooler-The value of believing in free will: Encouraging a belief in determinism increases cheating.",0.498149178,0.546841418,0.19245009,30,0.002245294,<.01,t(28) = 3.04,0.102355162,0.10271487,58,0.134839972,0.223103461,0.44,t(56) = -.77,0.234986926,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.444126548,-0.395794016,-0.812166989,0.44,0.01
+"L Demany, W Trost, M Serman, C Semal-Auditory change detection: simple sounds are not memorized better than complex sounds",0.496363588,0.544469283,NA,11,0.06178119,0.005,"F(3, 9) = 8.5",0.505151268,0.556198279,14,NA,0.032540523,< .001,"F(3,12)= 13.06",0.464660189,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,0.011728996,0.00878768,0.021542071,0.001,0.005
+"LE Williams, JA Bargh-Keeping one's distance: The influence of spatial distance cues on affect and evaluation.",0.233776428,0.238180507,NA,83,0.016571314,prep = .95,"F(2, 81) = 4.97",0.044266281,0.044295228,124,NA,0.31304147,0.787,"F(2,122) = 0.24",0.144098795,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.193885279,-0.189510147,-0.814026644,0.787,NA
+"M Tamir, C Mitchell, JJ Gross-Hedonic and instrumental motives in anger regulation.",0.593405778,0.682906656,NA,164,2.26E-18,<.001,"F(2, 162) = 192.89",0.609913782,0.708784059,176,NA,5.68E-21,< .0001,"F(2, 174) = 252.83",0.109505831,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,0.025877403,0.016508004,0.037893031,1.00E-04,0.001
+"N Epley, S Akalis, A Waytz, JT Cacioppo-Creating social connection through inferential reproduction: Loneliness and perceived agency in gadgets, gods, and greyhounds.",0.172960188,0.174716537,NA,110,0.035359168,0.01,"F(4, 108) = 3.67",0.061707156,0.061785658,152,NA,0.225367551,0.68,"F(4, 150) = .58",0.126717022,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.112930879,-0.111253032,-0.646366287,0.68,0.01
+"N Halevy, G Bornstein, L Sagiv-ñIn_Group Loveî and ñOut_Group Hateî as Motives for Individual Participation in Intergroup Conflict: A New Game Paradigm",0.768651993,1.017024924,0.115470054,78,6.39E-19,0,"F(1, 76) = 109.74",0.652982567,0.780480767,38,0.169030851,1.94E-06,0.0001,"F(1, 36) = 26.76",0.204706526,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,-0.236544158,-0.115669426,-0.232584425,1.00E-04,2.22E-16
+"N Janssen, FX Alario, A Caramazza-A word-order constraint on phonological activation",0.649955571,0.775221777,0.277350098,16,0.002594168,<.007,t(14) = 3.2,0.497082522,0.545423705,13,0.316227766,0.042283456,0.09,t(11) = 1.9,0.42062225,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.229798071,-0.152873049,-0.296428813,0.09,0.007
+"P Bressan, D Stranieri-The Best Men Are (Not Always) Already Taken: Female Preference for Single Versus Attached Males Depends on Conception Risk",0.188662549,0.190949993,0.071981575,196,0.003991806,0.008,"F(1, 194) = 7.16",-0.030172295,-0.030181456,261,0.062257281,0.686085911,0.628,"F(1,259) = 0.236",0.095169933,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.221131449,-0.218834844,-1.158059477,0.628,0.008
+"P Bressan, D Stranieri-The Best Men Are (Not Always) Already Taken: Female Preference for Single Versus Attached Males Depends on Conception Risk",0.188662549,0.190949993,0.071981575,196,0.003991806,0.008,"F(1, 194) = 7.16",0.018283411,0.018285449,316,0.056523342,0.373157315,0.746,"F(1,314) = 0.105",0.091521775,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.172664544,-0.170379138,-0.904239595,0.746,0.008
+"S Forti, GW Humphreys-Sensitivity to object viewpoint and action instructions during search for targets in the lower visual field",0.722536382,0.912931653,0.288675135,15,0.000782136,prep = .99,"F(1, 13) = 14.2",0.207514339,0.210572424,20,0.242535625,0.192639048,0.369,"F(1,18)=0.81",0.377036951,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.702359229,-0.515022043,-0.76934481,0.369,NA
+"S Schnall, J Benton, S Harvey-With a clean conscience: Cleanliness reduces the severity of moral judgments.",0.400010244,0.423661125,0.158113883,43,0.00368696,prep = .97,"F(1, 41) = 7.81",0.002839798,0.002839806,126,0.090166963,0.487437403,0.97,"F(1, 124) = 0.001",0.182016706,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.42082132,-0.397170446,-0.993296988,0.97,NA
+"SE Palmer, T Ghose-Extremal edge: a powerful cue to depth perception and figure-ground organization",0.859552403,1.291628325,0.40824829,9,0.000778538,<.001,t(7) = 4.45,0.120073568,0.120655672,9,0.40824829,0.383788855,0.76,t(7) = 0.32,0.577350269,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-1.170972653,-0.739478835,-0.906586384,0.76,0.001
+"SJ Heine, EE Buchtel, A Norenzayan-What Do Cross_National Comparisons of Personality Traits Tell Us? The Case of Conscientiousness",0.43,0.459896681,0.122169444,70,8.35E-05,X,r = -0.43,0.11,0.110446916,16,0.277350098,0.345233269,0.345233269,r=.-11,0.303065092,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.349449765,-0.32,-0.759844069,0.345233269,NA
+"SK Moeller, MD Robinson, DL Zabelina-Personality dominance and preferential use of the vertical dimension of space",0.31,0.320545409,0.141421356,53,0.011707387,<.05,r = -.31,-0.034,-0.03401311,72,0.120385853,0.611233004,0.78,r = 0.034,0.185722249,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.35455852,-0.344,-1.106110116,0.78,0.05
+"T Goschke, G Dreisbach-Conflict-triggered goal shielding: Response conflicts attenuate background monitoring for prospective memory cues.",0.374787884,0.393981877,0.164398987,40,0.008276287,prep = .927,"F(1, 38) = 6.21",0.411336583,0.437218947,95,0.104257207,1.37E-05,0.000035,"F(1, 93)=18.94",0.194670471,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,TRUE,TRUE,0.04323707,0.036548699,0.109743803,3.50E-05,NA
+"V Lobue, JS DeLoache-Detecting the snake in the grass: attention to fear-relevant stimuli by adults and young children.",0.483442318,0.527466798,0.15249857,46,0.000271262,<.01,"F(1, 44) = 13.42",0.177837588,0.179748763,46,0.15249857,0.119260528,0.237,"F(1, 44) = 1.437",0.215665546,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.347718034,-0.30560473,-0.659222601,0.237,0.01
+"Z Estes, M Verges, LW Barsalou-Head up, foot down: Object words orient attention to the objects' typical location.",0.595271914,0.685792015,0.25,19,0.003042477,prep = .97,"F(1, 17) = 9.33",0.25414164,0.259835475,23,0.223606798,0.122613758,0.24,"F(1, 21) = 1.45",0.335410197,"OSC (2015) 
+ General Psychology",OSCRPP,NA,NA,NA,FALSE,FALSE,-0.425956541,-0.341130274,-0.621116215,0.24,NA
+"Jacowitz & Kahneman, 1995",0.42,0.45,0.1,103,0,0,r = .42,0.77,1.02,5609,0.013355909,0,<.001,t=90.49,0.100887959,"Klein et al. (2014)
+ Many Labs 1",ML1,0.93,2.42,NA,TRUE,TRUE,0.57,0.35,1.266666667,0.001,2.22E-16
+"Jacowitz & Kahneman, 1995",0.42,0.45,0.1,103,0,0,r = .42,0.74,0.96,5627,0.013334519,0,<.001,t=83.66,0.10088513,"Klein et al. (2014)
+ Many Labs 1",ML1,0.93,2.23,NA,TRUE,TRUE,0.51,0.32,1.133333333,0.001,2.22E-16
+"Rugg, 1941",0.31,0.32,NA,2600,0,NA,No statistical test reported,0.7,0.87,6292,NA,NA,<.001,X^2=3088.7,0.023325254,"Klein et al. (2014)
+ Many Labs 1",ML1,0.65,1.96,NA,TRUE,TRUE,0.55,0.39,1.71875,0.001,NA
+"Jacowitz & Kahneman, 1995",0.42,0.45,0.1,103,0,0,r = .42,0.67,0.81,5284,0.013760744,0,<.001,t=65.00,0.10094235,"Klein et al. (2014)
+ Many Labs 1",ML1,0.93,1.79,NA,TRUE,TRUE,0.36,0.25,0.8,0.001,2.22E-16
+"Jacowitz & Kahneman, 1995",0.42,0.45,0.1,103,0,0,r = .42,0.5,0.56,5362,0.013660233,0,<.001,t=42.86,0.100928697,"Klein et al. (2014)
+ Many Labs 1",ML1,0.93,1.17,NA,TRUE,TRUE,0.11,0.08,0.244444444,0.001,2.22E-16
+"Nosek, Banaji, & Greenwald, 2002",0.42,0.45,0.064549722,243,0,0,"r = .42, n = 243",0.37,0.39,5623,0.013339263,0,<.001,r=.38,0.0659136,"Klein et al. (2014)
+ Many Labs 1",ML1,0.93,0.79,NA,TRUE,TRUE,-0.06,-0.05,-0.133333333,0.001,2.22E-16
+"Oppenheimer & Monin, 2009",0.33,0.34,0.133630621,59,0.01,< .05,"t(57) = 2.65, p < .05, Cohen’s d = 0.69",0.29,0.3,5942,0.012976075,0,<.001,t=24.01,0.134259157,"Klein et al. (2014)
+ Many Labs 1",ML1,0.69,0.61,NA,TRUE,TRUE,-0.04,-0.04,-0.117647059,0.001,0.05
+"Tversky & Kahneman, 1981",0.49,0.54,NA,307,0,NA,No statistical test reported,0.29,0.3,6271,NA,NA,<.001,X^2=516.4,0.058728308,"Klein et al. (2014)
+ Many Labs 1",ML1,1.13,0.6,NA,TRUE,TRUE,-0.24,-0.2,-0.444444444,0.001,NA
+"Nosek, Banaji, & Greenwald, 2002",0.45,0.49,0.114707867,79,0,1.00E-04,"t(77) = 4.42, p = 10e-5 , d = 1.01",0.26,0.26,5842,0.013086719,0,<.001,t=19.28,0.115451968,"Klein et al. (2014)
+ Many Labs 1",ML1,1.01,0.53,NA,TRUE,TRUE,-0.23,-0.19,-0.469387755,0.001,1.00E-04
+"Schwarz et al., 1985",0.24,0.25,NA,132,0.01,< .01,"<U+03C7>2(1)= 7.7, p < .01",0.24,0.24,5899,NA,NA,<.001,X^2=342.4,0.089003059,"Klein et al. (2014)
+ Many Labs 1",ML1,0.5,0.49,NA,TRUE,TRUE,-0.01,0,-0.04,0.001,0.01
+"Hyman and Sheatsley, 1950",0.08,0.08,NA,1618,0,NA,No statistical test reported,0.15,0.15,6276,NA,NA,<.001,X^2=135.3,0.027903555,"Klein et al. (2014)
+ Many Labs 1",ML1,0.16,0.3,NA,TRUE,TRUE,0.07,0.07,0.875,0.001,NA
+"Oppenheimer et al., 2009",0.11,0.11,0.069006556,213,0.1,0.1,"F(1, 211) = 2.74, p = .1, partial <U+03B7>2=.01",0.13,0.13,6330,0.012571905,0,<.001,t=10.83,0.070142409,"Klein et al. (2014)
+ Many Labs 1",ML1,0.227912862,0.27,NA,TRUE,TRUE,0.02,0.02,0.181818182,0.001,0.1
+"Husnu & Crisp, 2010",0.39,0.42,0.182574186,33,0.03,0.023,"t(31) = -2.39, p = .023, d = .86",0.06,0.06,6336,0.012565948,0,<.001,t=5.05,0.18300611,"Klein et al. (2014)
+ Many Labs 1",ML1,0.86,0.13,NA,TRUE,TRUE,-0.36,-0.33,-0.857142857,0.001,0.023
+"Carter et al., 2011; Study 2",0.24,0.25,0.125988158,66,0.05,< .05,"t(64) = -2.04, p < .05",0.01,0.01,4896,0.014295929,0.29,0.379,t=0.88,0.126796646,"Klein et al. (2014)
+ Many Labs 1",ML1,0.5,0.03,NA,FALSE,FALSE,-0.24,-0.23,-0.96,0.379,0.05
+"Caruso et al., 2012",0.37,0.39,0.19245009,30,0.05,0.043,"t(28) = 2.12, p = .043, d = 0.80",-0.01,-0.01,6333,0.012568925,0.43,0.831,t=-0.79,0.192860092,"Klein et al. (2014)
+ Many Labs 1",ML1,0.8,-0.02,NA,FALSE,FALSE,-0.4,-0.38,-1.025641026,0.831,0.043
+"Stroop Task (originally from Stroop, 1935, adapted for this project from Inzlicht, M., & Gutsell, J. N. (2007). Running on empty neural signals for self-control failure. Psychological Science, 18(11), 933-937.)",0.71407,0.89545,0.182574186,33,NA,prep = .97,"t(31)= 3.05, prep = .97, d = 1.10",0.41415,0.44061,3337,NA,NA,0,t (3336) =  49.795,0.183393766,"Ebersole et al. (2016)
+ Many Labs 3",ML3,2.04,0.91,NA,TRUE,TRUE,-0.45484,-0.29992,-0.507945726,2.22E-16,NA
+"Boroditsky, L. (2000). Metaphoric structuring: Understanding time through spatial metaphors. Cognition, 75(1), 1-28.",0.30045,0.31001,NA,281,NA,<.05,"chi^2,(1,  N= 56) = 5.2, p < 0.05",0.1435,0.1445,1335,NA,NA,0,chi^2 (1) =  21.90,0.065938403,"Ebersole et al. (2016)
+ Many Labs 3",ML3,0.63,0.29,NA,TRUE,TRUE,-0.16551,-0.15695,-0.533886004,2.22E-16,0.05
+"Tversky, A., & Kahneman, D. (1973). Availability: A heuristic for judging frequency and probability. Cognitive psychology, 5(2), 207-232.",0.37935,0.3993,0.081923192,152,NA,< .001,"p < .001, by sign test",0.04495,0.04498,3088,NA,NA,0.01252,Psdep  (NA) =  .522,0.083878236,"Ebersole et al. (2016)
+ Many Labs 3",ML3,0.82,0.09,NA,TRUE,TRUE,-0.35432,-0.3344,-0.887352868,0.01252,0.001
+"Galinsky, A. D., Magee, J. C., Inesi, M. E., & Gruenfeld, D. H. (2006). Power and perspectives not taken. Psychological Science, 17(12), 1068-1074.",0.35929,0.37607,0.160128154,42,NA,prep = .93,"t(40) = 2.47, prep = .93, d = 0.77.",0.015,0.015,2969,NA,NA,0.41406,t (2967) =  .89,0.16117748,"Ebersole et al. (2016)
+ Many Labs 3",ML3,0.77,0.03,NA,FALSE,FALSE,-0.36107,-0.34429,-0.960113809,0.41406,NA
+"Jostmann, N. B., Lakens, D., & Schubert, T. W. (2009). Weight as an embodiment of importance. Psychological science, 20(9), 1169-1174.",0.28295,0.29088,0.145864991,50,NA,<.05,"F(1, 49) 5 4.33, p < .05, prep 5 .92, partial eta^2 = .08.",0.015,0.015,2285,NA,NA,0.47374,t (2283) =  .61,0.147359451,"Ebersole et al. (2016)
+ Many Labs 3",ML3,0.59,0.03,NA,FALSE,FALSE,-0.27588,-0.26795,-0.948432343,0.47374,0.05
+"Szymkow, A., Chandler, J., IJzerman, H., Parzuchowski, M., & Wojciszke, B. (2013). Warmer hearts, warmer rooms. Social Psychology, 44(2), 167-176.",0.39503,0.41774,0.113960576,80,NA,< .001,"t(78) = 3.85, p < .001, d = .86",0.005,0.005,3119,NA,NA,0.78018,t (3117) =  .22,0.115360033,"Ebersole et al. (2016)
+ Many Labs 3",ML3,0.86,0.01,NA,FALSE,FALSE,-0.41274,-0.39003,-0.988030833,0.78018,0.001
+"Cacioppo, J. T., Petty, R. E., & Morris, K. J. (1983). Effects of need for cognition on message evaluation, recall, and persuasion. Journal of personality and social psychology, 45(4), 805.",0.411701255,0.0849,0.0949158,114,NA,< .001,"F(1, 110) = 22.45, p< .001",0.007391541,0,2365,NA,NA,0.99998,"F (1, 2361) =  .129",0.097120436,"Ebersole et al. (2016)
+ Many Labs 3",ML3,0.17,1.00E-06,NA,FALSE,FALSE,-0.0849,-0.404309714,-1,0.99998,0.001
+"Monin, B., & Miller, D. T. (2001). Moral credentials and the expression of prejudice. Journal of personality and social psychology, 81(1), 33.",0.147296478,0.02,NA,200,NA,<.05,"F(2, 194) = 4.4, p < .05",0.000357485,0.00015,3134,NA,NA,0.9933,"F (1, 3130) = .0004",0.073454264,"Ebersole et al. (2016)
+ Many Labs 3",ML3,0.04,3.00E-04,NA,FALSE,FALSE,-0.01985,-0.146938993,-0.9925,0.9933,0.05
+"Ackerman et al. (2010), Science",0.26972803,0.27657049,0.140028008,54,NA,0.048559953,"F(1,52)=4.0799999",0.086246702,0.08646151,858,0.034259435,NA,0.01161176,NA,0.144143795,"Camerer, et al. (2018)
+ Nature Science",natSci,NA,NA,NA,TRUE,TRUE,-0.19010898,-0.183481328,-0.687379842,0.01161176,0.048559953
+"Aviezer et al. (2012), Science",0.9613806,1.963824576,0.288675135,15,NA,3.10E-09,t(14)=13.07,0.82887018,1.184515609,14,0.090909091,NA,0.000133822,NA,0.417423555,"Camerer, et al. (2018)
+ Nature Science",natSci,NA,NA,NA,TRUE,TRUE,-0.779308967,-0.13251042,-0.396832271,0.000133822,3.10E-09
+"Balafoutas and Sutter (2012), Science",0.27788922,0.285393193,NA,72,NA,0.017756648,Chi2(1)=5.6199999,0.14641742,0.14747739,243,NA,NA,0.022329835,NA,0.136599489,"Camerer, et al. (2018)
+ Nature Science",natSci,NA,NA,NA,TRUE,TRUE,-0.137915804,-0.1314718,-0.483248398,0.022329835,0.017756648
+"Derex et al. (2013), Nature",0.52465248,0.582737812,NA,51,NA,5.41E-05,Chi2(1)=16.299999,0.36050302,0.37746394,65,NA,NA,0.002957182,NA,0.19225599,"Camerer, et al. (2018)
+ Nature Science",natSci,NA,NA,NA,TRUE,TRUE,-0.205273872,-0.16414946,-0.352257684,0.002957182,5.41E-05
+"Duncan et al. (2012), Science",0.67359084,0.817287557,0.288675135,15,NA,0.00422795,t(14)=3.4100001,0.372475708,0.391294546,128,0.090535746,NA,1.55E-05,NA,0.302214052,"Camerer, et al. (2018)
+ Nature Science",natSci,NA,NA,NA,TRUE,TRUE,-0.425993011,-0.301115132,-0.52122782,1.55E-05,0.00422795
+"Gervais and Norenzayan (2012), Science",0.28914034,0.297627923,0.136082763,57,NA,0.029151877,t(55)=2.24,-0.041177437,-0.041200734,755,0.036539205,NA,0.259498984,NA,0.140884015,"Camerer, et al. (2018)
+ Nature Science",natSci,NA,NA,NA,FALSE,FALSE,-0.338828657,-0.330317777,-1.138430338,0.259498984,0.029151877
+"Gneezy et al. (2014), Science",0.2229694,0.226778692,0.075592895,178,NA,0.002699796,z=3,0.18233825,0.184400291,407,0.002475248,NA,0.000210226,NA,0.09049604,"Camerer, et al. (2018)
+ Nature Science",natSci,NA,NA,NA,TRUE,TRUE,-0.042378401,-0.04063115,-0.186871175,0.000210226,0.002699796
+"Hauser et al. (2014), Nature",0.81581438,1.144172643,0.164398987,40,NA,1.43E-10,t(38)=8.6960001,0.83205014,1.194762716,22,0.052631579,NA,1.58E-06,NA,0.282238562,"Camerer, et al. (2018)
+ Nature Science",natSci,NA,NA,NA,TRUE,TRUE,0.050590072,0.01623576,0.044215419,1.58E-06,1.43E-10
+"Janssen et al. (2010), Science",0.63140059,0.743741869,0.129099445,63,NA,8.36E-09,z=5.7610002,0.34381703,0.358414853,42,0.025641026,NA,0.025201498,NA,0.205688338,"Camerer, et al. (2018)
+ Nature Science",natSci,NA,NA,NA,TRUE,TRUE,-0.385327016,-0.28758356,-0.518092408,0.025201498,8.36E-09
+"Karpicke and Blunt (2011), Science",0.60227638,0.696711646,0.164398987,40,NA,3.93E-05,"F(1,38)=21.629999",0.38413259,0.404898618,49,0.02173913,NA,0.005886077,NA,0.220830608,"Camerer, et al. (2018)
+ Nature Science",natSci,NA,NA,NA,TRUE,TRUE,-0.291813028,-0.21814379,-0.418843333,0.005886077,3.93E-05
+"Kidd and Castano (2013), Science",0.26906911,0.275860006,0.10976426,86,NA,0.013326087,"F(1,82)=6.4000001",-0.038186311,-0.038204888,999,0.031734041,NA,0.228624869,NA,0.114246264,"Camerer, et al. (2018)
+ Nature Science",natSci,NA,NA,NA,FALSE,FALSE,-0.314064894,-0.307255421,-1.138493754,0.228624869,0.013326087
+"Kovacs et al. (2010), Science",0.45049948,0.485326762,0.21821789,24,NA,0.023826132,t(23)=2.4200001,0.58620399,0.671862945,95,0.010869565,NA,3.50E-10,NA,0.241844191,"Camerer, et al. (2018)
+ Nature Science",natSci,NA,NA,NA,TRUE,TRUE,0.186536183,0.13570451,0.384351734,3.50E-10,0.023826132
+"Lee and Schwarz (2010), Science",0.38813424,0.40960147,0.164398987,40,NA,0.013330429,"F(1,38)=6.7399998",-0.052877366,-0.052926731,409,0.049813548,NA,0.288010253,NA,0.171726763,"Camerer, et al. (2018)
+ Nature Science",natSci,NA,NA,NA,FALSE,FALSE,-0.4625282,-0.441011606,-1.129215188,0.288010253,0.013330429
+"Morewedge et al. (2010), Science",0.45311347,0.488611207,0.185695338,32,NA,0.009205938,t(30)=2.7839999,0.3546918,0.370800611,89,0.011627907,NA,0.000648563,NA,0.214733941,"Camerer, et al. (2018)
+ Nature Science",natSci,NA,NA,NA,TRUE,TRUE,-0.117810596,-0.09842167,-0.241113168,0.000648563,0.009205938
+"Nishi et al. (2015), Nature",0.2005827,0.203339607,0.07124705,200,NA,0.004401038,t(198)=2.881,0.11604169,0.116566799,480,0.002096436,NA,0.010949132,NA,0.084691075,"Camerer, et al. (2018)
+ Nature Science",natSci,NA,NA,NA,TRUE,TRUE,-0.086772808,-0.08454101,-0.426738348,0.010949132,0.004401038
+"Pyc and Rawson (2010), Science",0.37653738,0.396018834,0.174077656,36,NA,0.023603488,t(34)=2.3699999,0.149356689,0.150482382,438,0.048112522,NA,0.001761694,NA,0.180559909,"Camerer, et al. (2018)
+ Nature Science",natSci,NA,NA,NA,TRUE,TRUE,-0.245536452,-0.227180691,-0.620012056,0.001761694,0.023603488
+"Ramirez and Beilock (2011), Science",0.79315537,1.079882096,0.242535625,20,NA,3.02E-05,"F(1,18)=30.530001",-0.09286841,-0.093136783,105,0.100503782,NA,0.354082687,NA,0.261968416,"Camerer, et al. (2018)
+ Nature Science",natSci,NA,NA,NA,FALSE,FALSE,-1.173018879,-0.88602378,-1.086247178,0.354082687,3.02E-05
+"Rand et al. (2012), Nature",0.14098142,0.141926757,0.054232614,343,NA,0.008870634,z=2.6170001,0.026633484,0.026639785,3150,0.017834409,NA,0.135246318,NA,0.057087121,"Camerer, et al. (2018)
+ Nature Science",natSci,NA,NA,NA,FALSE,FALSE,-0.115286973,-0.114347936,-0.812299068,0.135246318,0.008870634
+"Shah et al. (2012), Science",0.267445,0.274109959,0.137360564,56,NA,0.046294663,"F(1,54)=4.1599998",-0.03736263,-0.03738003,897,0.033501261,NA,0.264516399,NA,0.141373593,"Camerer, et al. (2018)
+ Nature Science",natSci,NA,NA,NA,FALSE,FALSE,-0.311489989,-0.30480763,-1.136368741,0.264516399,0.046294663
+"Sparrow et al. (2011), Science",0.36764622,0.385698719,0.123091491,69,NA,0.001742118,t(68)=3.26,0.067974005,0.068078986,338,0.05488213,NA,0.214805979,NA,0.134672157,"Camerer, et al. (2018)
+ Nature Science",natSci,NA,NA,NA,FALSE,FALSE,-0.317619733,-0.299672215,-0.823491801,0.214805979,0.001742118
+"Wilson et al. (2014), Science,",0.67416495,0.818339255,0.19245009,30,NA,4.41E-05,t(28)=4.8299999,0.5935989,0.683204797,39,0.027777778,NA,6.80E-05,NA,0.254587539,"Camerer, et al. (2018)
+ Nature Science",natSci,NA,NA,NA,TRUE,TRUE,-0.135134459,-0.08056605,-0.165132563,6.80E-05,4.41E-05
+Abeler et al. (AER 2011),0.18,0.181982689,NA,120,NA,0.046,regression model,0.08,0.080171325,318,NA,NA,0.16,NA,0.108266392,"Camerer et al. (2016)
+ Economics",econ,NA,NA,NA,FALSE,FALSE,-0.101811364,-0.1,-0.559456311,0.16,0.046
+Ambrus and Greiner (AER 2012),0.31,0.320545409,NA,117,NA,0.057,regression model,0.23,0.234189467,357,NA,NA,0.012,NA,0.107688386,"Camerer et al. (2016)
+ Economics",econ,NA,NA,NA,TRUE,TRUE,-0.086355943,-0.08,-0.269403149,0.012,0.057
+Bartling et al. (AER 2012),0.72,0.907644983,NA,216,NA,0.007,"Wilcoxon-Mann-Whitney test, p = .007",0.66,0.792813632,360,NA,NA,0.001,NA,0.08657919,"Camerer et al. (2016)
+ Economics",econ,NA,NA,NA,TRUE,TRUE,-0.114831351,-0.06,-0.126515712,0.001,0.007
+Charness and Dufwenberg (AER 2011),0.38,0.40005965,NA,162,NA,0.01,regression z = 2.56 (p <0.01),0.36,0.376885901,264,NA,NA,0.003,NA,0.100601818,"Camerer et al. (2016)
+ Economics",econ,NA,NA,NA,TRUE,TRUE,-0.023173749,-0.02,-0.057925734,0.003,0.01
+Chen and Chen (AER 2011),0.84,1.221173518,NA,72,NA,0.033,"comparison of regression coefficents, p = .023",0.17,0.171666664,168,NA,NA,0.571,NA,0.14336443,"Camerer et al. (2016)
+ Economics",econ,NA,NA,NA,FALSE,FALSE,-1.049506854,-0.67,-0.859424839,0.571,0.033
+de Clippel et al. (AER 2014),0.12,0.120581028,NA,158,NA,0.001,mean-comparison test,0.27,0.276863823,156,NA,NA,<0.001,NA,0.113962979,"Camerer et al. (2016)
+ Economics",econ,NA,NA,NA,TRUE,TRUE,0.156282794,0.15,1.296081119,0.001,0.001
+Duffy and Puzzello (AER 2014),0.76,0.996215082,NA,54,NA,0.01,Wilcoxon-Mann-Whitney test,0.12,0.120581028,96,NA,NA,0.674,NA,0.174242737,"Camerer et al. (2016)
+ Economics",econ,NA,NA,NA,FALSE,FALSE,-0.875634054,-0.64,-0.878960848,0.674,0.01
+Dulleck et al. (AER 2011),0.72,0.907644983,NA,168,NA,<0.001,Wilcoxon-Mann-Whitney test,0.73,0.928727364,128,NA,NA,0.001,NA,0.118577426,"Camerer et al. (2016)
+ Economics",econ,NA,NA,NA,TRUE,TRUE,0.021082381,0.01,0.023227563,0.001,0.001
+Ericson and Fuster (QJE 2011),0.21,0.213171347,NA,112,NA,0.03,t-test (unclear dfs etc.),0.12,0.120581028,262,NA,NA,0.055,NA,0.114172307,"Camerer et al. (2016)
+ Economics",econ,NA,NA,NA,FALSE,FALSE,-0.092590318,-0.09,-0.434346922,0.055,0.03
+Fehr et al. (AER 2013),0.45,0.484700279,NA,60,NA,0.011,Wilcoxon-Mann-Whitney test,0.31,0.320545409,102,NA,NA,0.026,NA,0.166267464,"Camerer et al. (2016)
+ Economics",econ,NA,NA,NA,TRUE,TRUE,-0.164154869,-0.14,-0.338672942,0.026,0.011
+Friedman and Oprea (AER 2012),0.64,0.758173745,NA,78,NA,<0.001,logistic regression,0.44,0.472230804,40,NA,NA,0.004,NA,0.200898881,"Camerer et al. (2016)
+ Economics",econ,NA,NA,NA,TRUE,TRUE,-0.28594294,-0.2,-0.377146983,0.004,0.001
+Fudenberg et al. (AER 2012),0.3,0.309519604,NA,124,NA,0.001,Wilcoxon-Mann-Whitney test,0.33,0.342828254,128,NA,NA,<0.001,NA,0.127532203,"Camerer et al. (2016)
+ Economics",econ,NA,NA,NA,TRUE,TRUE,0.03330865,0.03,0.107614024,0.001,0.001
+Huck et al. (AER 2011),0.83,1.188136404,NA,120,NA,0.004,Wilcoxon-Mann-Whitney test,0.37,0.3884231,160,NA,NA,0.142,NA,0.122132859,"Camerer et al. (2016)
+ Economics",econ,NA,NA,NA,FALSE,FALSE,-0.799713305,-0.46,-0.673082065,0.142,0.004
+Ifcher and Zarghamee (AER 2011),0.28,0.287682072,NA,58,NA,0.031,regression,0.01,0.010000333,131,NA,NA,0.933,NA,0.161227535,"Camerer et al. (2016)
+ Economics",econ,NA,NA,NA,FALSE,FALSE,-0.277681739,-0.27,-0.965238246,0.933,0.031
+Kessler and Roth (AER 2012),0.49,0.536060337,NA,288,NA,<0.001,"regression z = 9.3415, p = <.01",0.34,0.354092529,48,NA,NA,0.016,NA,0.160408834,"Camerer et al. (2016)
+ Economics",econ,NA,NA,NA,TRUE,TRUE,-0.181967808,-0.15,-0.339453967,0.016,0.001
+Kirchler et al (AER 2012),0.66,0.792813632,NA,120,NA,0.016,regression z test,0.53,0.59014516,220,NA,NA,0.01,NA,0.114696571,"Camerer et al. (2016)
+ Economics",econ,NA,NA,NA,TRUE,TRUE,-0.202668472,-0.13,-0.255631921,0.01,0.016
+Kogan et al. (AER 2011),0.32,0.331647109,NA,126,NA,<0.001,probit regression,0.3,0.309519604,90,NA,NA,0.001,NA,0.140086881,"Camerer et al. (2016)
+ Economics",econ,NA,NA,NA,TRUE,TRUE,-0.022127505,-0.02,-0.066720028,0.001,0.001
+Kuziemko et al. (QJE 2014),0.28,0.287682072,NA,42,NA,0.07,z-testof the marginal effect from a probit regression,0.12,0.120581028,144,NA,NA,0.154,NA,0.180923255,"Camerer et al. (2016)
+ Economics",econ,NA,NA,NA,FALSE,FALSE,-0.167101044,-0.16,-0.580853171,0.154,0.07
+Knobe (2003a),0.59,0.677666068,NA,78,NA,<.01,"X2(1, N = 78) = 27.2, p < .01",0.61,0.708921359,100,NA,NA,0.001,NA,0.153761542,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,0.031255292,0.02,0.046121966,0.001,0.01
+Knobe (2003b),0.46,0.497311288,NA,37,NA,<.01,"X2(1, N=37) = 7.7, df = 1, p < .01",0.6,0.693147181,145,NA,NA,<.001,NA,0.190929354,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,0.195835893,0.14,0.393789359,0.001,0.01
+Machery et al. (2004),0.29,0.298566264,0.120385853,72,NA,<.05,t(70) = 2.55 p < .05,0,0,181,0.074953169,NA,0.99,NA,0.14181231,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,FALSE,FALSE,-0.298566264,-0.29,-1,0.99,0.05
+Knobe (2004),0.29,0.298566264,0.116247639,77,NA,0.01,"t(75) = 2.65, p = 0.01",0.54,0.604155603,127,0.089802651,NA,<0.001,NA,0.146894621,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,0.305589339,0.25,1.02352267,0.001,0.01
+Nichols (2004),0.83,1.188136404,0.377964473,10,NA,0.01,"F(1,8) = 18, p = 0.01",0.77,1.020327758,9,0.40824829,NA,0.008,NA,0.55634864,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,-0.167808646,-0.06,-0.141236852,0.008,0.01
+Nadelhoffer (2004),0.68,0.829114038,NA,44,NA,<.001,"X2(1, N = 44) = 20.53, p <.001",0.83,1.188136404,47,NA,NA,<.001,NA,0.217065697,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,0.359022366,0.15,0.433019283,0.001,0.001
+Nahmias et al. (2005),0.52,0.576339755,NA,21,NA,0.016,"X2(1, N = 21) = 5.76, p = 0.016",0.6,0.693147181,186,NA,NA,<.001,NA,0.24702234,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,0.116807426,0.08,0.202671123,0.001,0.016
+Nadelhoffer (2005),0.45,0.484700279,NA,40,NA,0.004,"X2(1, N = 40) = 8.10,  p = .004",0.38,0.40005965,128,NA,NA,<.001,NA,0.187155088,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,-0.084640629,-0.07,-0.174624675,0.001,0.004
+Nahmias et al. (2006),0.32,0.331647109,NA,82,NA,0.004089,"X2(1, N = 82) = 8.2439, p = 0.004089)",0.12,0.120581028,161,NA,NA,0.1343,NA,0.137794564,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,FALSE,FALSE,-0.21106608,-0.2,-0.63641767,0.1343,0.004089
+Knobe & Burra (2006),0.61,0.708921359,NA,41,NA,<.001,"X2(1, N = 41) = 15.3, p <.001",0.61,0.708921359,48,NA,NA,<.001,NA,0.22031344,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,0,0,0,0.001,0.001
+Nichols (2006),0.75,0.972955075,NA,8,NA,0.03,"X2(1, N = 8) = 4.5, p = 0.03",0.44,0.472230804,50,NA,NA,0.001863,NA,0.470400463,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,-0.50072427,-0.31,-0.514642745,0.001863,0.03
+Nadelhoffer (2006),0.25,0.255412812,NA,126,NA,<.01,"X2(1, N = 126) = 7.62, p < .01",0.41,0.435611223,259,NA,NA,<0.001,NA,0.109710215,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,0.180198411,0.16,0.705518294,0.001,0.01
+Nichols & Knobe (2007),0.38,0.40005965,NA,41,NA,<0.05,"X2(1, N = 41) = 6.034, p < 0.05",0.73,0.928727364,80,NA,NA,<.001,NA,0.198249344,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,0.528667714,0.35,1.321472221,0.001,0.05
+Nahmias et al. (2007),0.33,0.342828254,0.057353933,307,NA,<.001,"F(1, 298) = 36.375, p < .001",0.32,0.331647109,183,0.074535599,NA,<.001,NA,0.094048016,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,-0.011181146,-0.01,-0.032614423,0.001,0.001
+Livengood & Machery (2007),0.21,0.213171347,0.104257207,95,NA,<.05,"t(93) = 2.07, p < .05",0.28,0.287682072,272,0.060971076,NA,<.001,NA,0.120776808,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,0.074510726,0.07,0.349534434,0.001,0.05
+Nadelhoffer & Feltz (2008),0.3,0.309519604,NA,85,NA,0.005,"X2(1, N = 85) = 7.873, p = .005",0.002,0.002000003,150,NA,NA,0.56,NA,0.137832663,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,FALSE,FALSE,-0.307519602,-0.298,-0.993538365,0.56,0.005
+Hitchcock & Knobe (2009),0.35,0.365443754,0.017124694,3413,NA,<.001,"t(3411) = 21.5, p < .001",0.3,0.309519604,200,0.07124705,NA,<0.001,NA,0.073276171,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,-0.05592415,-0.05,-0.1530308,0.001,0.001
+Roxborough & Cumby (2009),0.33,0.342828254,0.093250481,118,NA,<.001(Welcht-testreconstructed:t3.3532df27.093,"t(117) = 7.47, p < .001 (Welch t-test, reconstructed: t = 3.3532, df = 27.093, p = .002370)",-0.1,-0.100335348,204,0.070534562,NA,0.917,NA,0.116922096,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,FALSE,FALSE,-0.443163602,-0.43,-1.292669424,0.917,NA
+De Brigard (2010),0.36,0.376885901,NA,48,NA,,"X2(1, N = 48) = 6.2061, p < .05",0.27,0.276863823,60,NA,NA,0.04,NA,0.199414347,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,-0.100022079,-0.09,-0.265390874,0.04,NA
+Beebe & Buckwalter (2010),0.35,0.365443754,0.036612601,749,NA,<.001,"t = -10.126, df = 747, p<.001",0.31,0.320545409,514,0.044237396,NA,<.001,NA,0.057423251,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,-0.044898345,-0.04,-0.122859796,0.001,0.001
+Sytsma & Machery (2010),0.39,0.411800034,0.08304548,148,NA,,Not reported,0.25,0.255412812,180,NA,NA,0.018,NA,0.11201013,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,-0.156387223,-0.14,-0.379764958,0.018,NA
+Alicke et al. (2011),0.24,0.244774113,0.068358593,217,NA,<.001,"Interaction effect, F(1, 213) = 13.05, p < .001",0.07,0.070114671,217,0.068358593,NA,0.32,NA,0.096673649,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,FALSE,FALSE,-0.174659442,-0.17,-0.71355357,0.32,0.001
+Reuter (2011),0.31,0.320545409,NA,15664,NA,NA,"X2(1, N = 15664) = 1512.4, p < 0.001",0.27,0.276863823,2211,NA,NA,<0.001,NA,0.022732167,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,-0.043681587,-0.04,-0.136272695,0.001,NA
+Sarkissian et al. (2011),0.4,0.42364893,NA,223,NA,<0.001,"F (2, 218) = 20.7, p < 0.001",0.32,0.331647109,363,NA,NA,<0.001,NA,0.085575886,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,-0.092001821,-0.08,-0.21716524,0.001,0.001
+Paxton et al. (2012),0.21,0.213171347,0.105999788,92,NA,0.05,"t(90) = 2.03, p = .05",0.07,0.070114671,298,0.058222251,NA,0.24,NA,0.120937114,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,FALSE,FALSE,-0.143056676,-0.14,-0.671087734,0.24,0.05
+Schaffer & Knobe (2012),0.32,0.331647109,0.101534617,100,NA,0.001,"t(98) = 3.4, p = .001",0.28,0.287682072,150,0.08247861,NA,<.001,NA,0.130812841,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,-0.043965036,-0.04,-0.132565715,0.001,0.001
+May & Holton (2012),0.19,0.192337169,0.093658581,117,NA,0.045,"F(1, 113) = 4.10, p = .045",0.14,0.140925576,368,NA,NA,0.008,NA,0.107292385,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,-0.051411593,-0.05,-0.267299313,0.008,0.045
+Beebe & Shea (2013),0.28,0.287682072,0.051778037,376,NA,<0.001,"F(1, 368) = 31.127, p < 0.001",0.34,0.354092529,418,0.049088069,NA,<.001,NA,0.071348467,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,0.066410457,0.06,0.230846698,0.001,0.001
+Grau & Pury (2014),0.2,0.202732554,0.079305159,162,NA,.01<U+03B7>20.040,"t(160)=2.58, p = .01, <U+03B7>2=0.040",0.09,0.090244188,387,0.051031036,NA,0.092,NA,0.094305222,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,FALSE,FALSE,-0.112488366,-0.11,-0.554860894,0.092,NA
+Liao et al. (2014),0.54,0.604155603,0.19245009,30,NA,0.002,"t = 3.42, df = 29, p = .002",0.55,0.618381314,99,0.102062073,NA,<.001,NA,0.21783871,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,0.014225711,0.01,0.023546435,0.001,0.002
+Bjornsson et al. (2015),0.3,0.309519604,NA,162,NA,<.001,"X2(1, N = 162) = 14.421, df = 1, p < .001",0.26,0.266108407,302,NA,NA,<.001,NA,0.098151871,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,-0.043411197,-0.04,-0.140253466,0.001,0.001
+Buckwalter & Schaffer (2015),0.52,0.576339755,0.061898446,264,NA,0.01,"F(1, 260) = 99.46, p < .001",0.41,0.435611223,442,0.047727396,NA,<.001,NA,0.078162152,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,-0.140728532,-0.11,-0.24417634,0.001,0.01
+Kominsky et al. (2015),0.27,0.276863823,0.132453236,60,NA,0.031,"t(58) = -2.210, p = .031",0.28,0.287682072,200,0.07124705,NA,<.001,NA,0.150399474,"Cova, et al. (2018)
+ Experimental Philosophy",xPhi,NA,NA,NA,TRUE,TRUE,0.01081825,0.01,0.039074263,0.001,0.031
+"McCullough, M. E., Emmons, R. A., & Tsang, J. A. (2002). The grateful disposition: A conceptual and empirical topography. Journal of Personality and Social Psychology, 82, 112-127.",0.32,0.331647109,0.028571429,1228,NA,1.23E-30,Correlation,0.370540692,0.389049699,1559,0.025351006,NA,6.34E-52,NA,0.038196859,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.05740259,0.050540692,0.173083343,6.34E-52,1.23E-30
+"McCullough, M. E., Emmons, R. A., & Tsang, J. A. (2002). The grateful disposition: A conceptual and empirical topography. Journal of Personality and Social Psychology, 82, 112-127.",0.41,0.435611223,0.028571429,1228,NA,5.58E-51,Correlation,0.541016425,0.605591534,1559,0.025351006,NA,3.08E-119,NA,0.038196859,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.169980311,0.131016425,0.390211046,3.08E-119,5.58E-51
+"Breen, W. E., Kashdan, T. B., Lenser, M. L., & Fincham, F. D. (2010). Gratitude and forgiveness: Convergence and divergence on self-report and informant ratings. Personality and Individual Differences, 49, 932-937.",0.58,0.662462707,0.085435766,140,NA,5.93E-14,Correlation,0.568249891,0.644934294,1550,0.025424642,NA,9.89E-90,NA,0.089138558,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.017528413,-0.011750109,-0.026459472,9.89E-90,5.93E-14
+"Thrash, T. M., & Elliot, A. J. (2003). Inspiration as a psychological construct. Journal of Personality and Social Psychology, 84, 871-889.",0.2,0.202732554,0.081923192,152,NA,0.013495322,Correlation,0.39140108,0.413453513,1514,0.025725734,NA,1.33E-56,NA,0.085867472,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.210720959,0.19140108,1.039403662,1.33E-56,0.013495322
+"Thrash, T. M., & Elliot, A. J. (2003). Inspiration as a psychological construct. Journal of Personality and Social Psychology, 84, 871-889.",0.43,0.459896681,0.081923192,152,NA,3.23E-08,Correlation,0.351348412,0.366981234,1514,0.025725734,NA,3.20E-45,NA,0.085867472,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.092915447,-0.078651588,-0.20203548,3.20E-45,3.23E-08
+"DeNeve, K. M., & Cooper, H. (1998). The happy personality: A meta-analysis of 137 personality traits and subjective well-being. Psychological Bulletin, 124, 197-229.",0.17,0.171666664,0.008550445,13681,NA,3.12E-89,Correlation,0.477233908,0.519396258,1559,0.025351006,NA,3.42E-60,NA,0.026754133,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.347729594,0.307233908,2.025609324,3.42E-60,3.12E-89
+"DeNeve, K. M., & Cooper, H. (1998). The happy personality: A meta-analysis of 137 personality traits and subjective well-being. Psychological Bulletin, 124, 197-229.",0.2,0.202732554,0.008876012,12696,NA,1.06E-114,Correlation,0.404650224,0.429197254,1559,0.025351006,NA,1.73E-62,NA,0.026859954,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.2264647,0.204650224,1.117061347,1.73E-62,1.06E-114
+"DeNeve, K. M., & Cooper, H. (1998). The happy personality: A meta-analysis of 137 personality traits and subjective well-being. Psychological Bulletin, 124, 197-229.",0.07,0.070114671,0.01192506,7035,NA,4.17E-09,Correlation,0.28935001,0.297856736,1559,0.025351006,NA,1.90E-31,NA,0.02801572,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.227742065,0.21935001,3.248137133,1.90E-31,4.17E-09
+"DeNeve, K. M., & Cooper, H. (1998). The happy personality: A meta-analysis of 137 personality traits and subjective well-being. Psychological Bulletin, 124, 197-229.",0.27,0.276863823,0.017931632,3113,NA,3.87E-53,Correlation,0.398430415,0.42178177,1558,0.025359156,NA,1.98E-60,NA,0.031058497,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.144917948,0.128430415,0.52342681,1.98E-60,3.87E-53
+"DeNeve, K. M., & Cooper, H. (1998). The happy personality: A meta-analysis of 137 personality traits and subjective well-being. Psychological Bulletin, 124, 197-229.",0.24,0.244774113,0.009050608,12211,NA,1.57E-159,Correlation,0.553946262,0.624056758,1559,0.025351006,NA,4.69E-83,NA,0.026918154,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.379282646,0.313946262,1.549521072,4.69E-83,1.57E-159
+"DeNeve, K. M., & Cooper, H. (1998). The happy personality: A meta-analysis of 137 personality traits and subjective well-being. Psychological Bulletin, 124, 197-229.",0.14,0.140925576,0.010784531,8601,NA,6.68E-39,Correlation,0.369287949,0.387598359,1559,0.025351006,NA,1.47E-51,NA,0.027549585,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.246672783,0.229287949,1.750376263,1.47E-51,6.68E-39
+"DeNeve, K. M., & Cooper, H. (1998). The happy personality: A meta-analysis of 137 personality traits and subjective well-being. Psychological Bulletin, 124, 197-229.",0.23,0.234189467,0.011577921,7463,NA,3.53E-90,Correlation,0.618851973,0.723142348,1559,0.025351006,NA,1.83E-165,NA,0.027869729,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.488952881,0.388851973,2.08785172,1.83E-165,3.53E-90
+"DeNeve, K. M., & Cooper, H. (1998). The happy personality: A meta-analysis of 137 personality traits and subjective well-being. Psychological Bulletin, 124, 197-229.",0.25,0.255412812,0.017688728,3199,NA,8.82E-47,Correlation,0.602163087,0.696533885,1558,0.025359156,NA,2.28E-154,NA,0.030918893,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.441121073,0.352163087,1.727090627,2.28E-154,8.82E-47
+"Clancy, S. M., & Dollinger, S. J. (1993). Identity, self, and personality: I. Identity status and the five-factor model of personality. Journal of Research on Adolescence, 3, 227-245.",0.3,0.309519604,0.071611487,198,NA,1.76E-05,Correlation,0.251769665,0.257301348,1550,0.025424642,NA,8.33E-20,NA,0.075990904,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.052218256,-0.048230335,-0.168707428,8.33E-20,1.76E-05
+"Clancy, S. M., & Dollinger, S. J. (1993). Identity, self, and personality: I. Identity status and the five-factor model of personality. Journal of Research on Adolescence, 3, 227-245.",0.5,0.549306144,0.071611487,198,NA,6.40E-14,Correlation,0.345084233,0.359852644,1550,0.025424642,NA,1.71E-41,NA,0.075990904,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.1894535,-0.154915767,-0.344896015,1.71E-41,6.40E-14
+"MacDonald, D. A. (2000). Spirituality: Description, measurement, and relation to the five factor model of personality. Journal of Personality, 68, 153-197.",0.32,0.331647109,0.041099747,595,NA,1.24E-15,Correlation,0.37342492,0.392397117,1550,0.025424642,NA,4.89E-47,NA,0.048328062,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.060750008,0.05342492,0.183176656,4.89E-47,1.24E-15
+"MacDonald, D. A. (2000). Spirituality: Description, measurement, and relation to the five factor model of personality. Journal of Personality, 68, 153-197.",0.66,0.792813632,0.041099747,595,NA,1.10E-75,Correlation,0.629832666,0.741138737,1550,0.025424642,NA,1.32E-150,NA,0.048328062,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.051674895,-0.030167334,-0.06517912,1.32E-150,1.10E-75
+"MacDonald, D. A. (2000). Spirituality: Description, measurement, and relation to the five factor model of personality. Journal of Personality, 68, 153-197.",0.3,0.309519604,0.041099747,595,NA,7.71E-14,Correlation,0.191301091,0.193687336,1550,0.025424642,NA,1.33E-11,NA,0.048328062,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.115832269,-0.108698909,-0.374232414,1.33E-11,7.71E-14
+"MacDonald, D. A. (2000). Spirituality: Description, measurement, and relation to the five factor model of personality. Journal of Personality, 68, 153-197.",0.25,0.255412812,0.041099747,595,NA,6.26E-10,Correlation,0.191498063,0.193891799,1550,0.025424642,NA,4.98E-13,NA,0.048328062,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.061521013,-0.058501937,-0.24086894,4.98E-13,6.26E-10
+"MacDonald, D. A. (2000). Spirituality: Description, measurement, and relation to the five factor model of personality. Journal of Personality, 68, 153-197.",0.26,0.266108407,0.041099747,595,NA,1.20E-10,Correlation,0.127428719,0.12812525,1550,0.025424642,NA,7.20E-06,NA,0.048328062,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.137983156,-0.132571281,-0.51852235,7.20E-06,1.20E-10
+"MacDonald, D. A. (2000). Spirituality: Description, measurement, and relation to the five factor model of personality. Journal of Personality, 68, 153-197.",0.21,0.213171347,0.041099747,595,NA,2.35E-07,Correlation,0.181340744,0.183368674,1550,0.025424642,NA,8.11E-12,NA,0.048328062,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.029802673,-0.028659256,-0.139806186,8.11E-12,2.35E-07
+"MacDonald, D. A. (2000). Spirituality: Description, measurement, and relation to the five factor model of personality. Journal of Personality, 68, 153-197.",0.33,0.342828254,0.041099747,595,NA,1.39E-16,Correlation,0.220466084,0.224145951,1550,0.025424642,NA,1.97E-14,NA,0.048328062,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.118682303,-0.109533916,-0.346185886,1.97E-14,1.39E-16
+"MacDonald, D. A. (2000). Spirituality: Description, measurement, and relation to the five factor model of personality. Journal of Personality, 68, 153-197.",0.37,0.3884231,0.041099747,595,NA,9.65E-21,Correlation,0.186783405,0.189002208,1550,0.025424642,NA,8.35E-12,NA,0.048328062,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.199420891,-0.183216595,-0.513411513,8.35E-12,9.65E-21
+"Jost, J. T., Glaser, J., Kruglanski, A. W., & Sulloway, F. J. (2003). Political conservatism as motivated social cognition. Psychological Bulletin, 129, 339-375.",0.35,0.365443754,0.048737018,424,NA,1.16E-13,Correlation,0.323465452,0.335512701,1549,0.025432863,NA,1.69E-30,NA,0.05497388,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.029931053,-0.026534548,-0.081903309,1.69E-30,1.16E-13
+"Jost, J. T., Glaser, J., Kruglanski, A. W., & Sulloway, F. J. (2003). Political conservatism as motivated social cognition. Psychological Bulletin, 129, 339-75.",0.24,0.244774113,0.105409255,93,NA,0.020495572,Correlation,0.18090519,0.182918346,1559,0.025351006,NA,7.07E-08,NA,0.108414873,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.061855766,-0.05909481,-0.252705508,7.07E-08,0.020495572
+"Jost, J. T., Glaser, J., Kruglanski, A. W., & Sulloway, F. J. (2003). Political conservatism as motivated social cognition. Psychological Bulletin, 129, 339-75.",0.34,0.354092529,0.024655684,1648,NA,7.11E-46,Correlation,0.254723448,0.260457553,1550,0.025424642,NA,9.41E-12,NA,0.035416312,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.093634976,-0.085276552,-0.264436463,9.41E-12,7.11E-46
+"Paunonen, S. V. (2003). Big Five factors of personality and replicated predictions of behavior. Journal of Personality and Social Psychology, 84, 411-422.",0.41,0.435611223,0.049088069,418,NA,2.45E-18,"Partial correlation, controlling for sex",0.348990139,0.364293378,1549,0.025432863,NA,1.45E-45,NA,0.055285342,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.071317845,-0.061009861,-0.163719026,1.45E-45,2.45E-18
+"Paunonen, S. V. (2003). Big Five factors of personality and replicated predictions of behavior. Journal of Personality and Social Psychology, 84, 411-422.",0.24,0.244774113,0.049088069,418,NA,7.09E-07,"Partial correlation, controlling for sex",0.327852299,0.340419997,1550,0.025424642,NA,3.89E-40,NA,0.055281561,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.095645884,0.087852299,0.390751633,3.89E-40,7.09E-07
+"Anderson, C., John, O. P., Keltner, D., & Kring, A. M. (2001). Who attains social status? Effects of personality and physical attractiveness in social groups. Journal of Personality and Social Psychology, 81, 116-132.",0.44,0.472230804,0.160128154,42,NA,0.003993259,"Correlation, separately by sex",0.363941576,0.381421792,749,0.036612601,NA,7.65E-25,NA,0.164260489,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.090809012,-0.076058424,-0.192297943,7.65E-25,0.003993259
+"Anderson, C., John, O. P., Keltner, D., & Kring, A. M. (2001). Who attains social status? Effects of personality and physical attractiveness in social groups. Journal of Personality and Social Psychology, 81, 116-132.",0.38,0.40005965,0.185695338,32,NA,0.034976204,"Correlation, separately by sex",0.406129052,0.430966909,801,0.035399616,NA,4.02E-33,NA,0.189039391,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.030907259,0.026129052,0.077256627,4.02E-33,0.034976204
+"Anderson, C., John, O. P., Keltner, D., & Kring, A. M. (2001). Who attains social status? Effects of personality and physical attractiveness in social groups. Journal of Personality and Social Psychology, 81, 116-132.",0.43,0.459896681,0.160128154,42,NA,0.005016403,"Correlation, separately by sex",0.308136199,0.318484769,749,0.036612601,NA,6.46E-18,NA,0.164260489,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.141411913,-0.121863801,-0.307486265,6.46E-18,0.005016403
+"Paunonen, S. V. (2003). Big Five factors of personality and replicated predictions of behavior. Journal of Personality and Social Psychology, 84, 411-422.",0.17,0.171666664,0.049088069,418,NA,0.000489407,"Partial correlation, controlling for sex",0.12430484,0.124951082,1284,0.027939938,NA,7.99E-06,NA,0.056482552,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.046715582,-0.04569516,-0.272129607,7.99E-06,0.000489407
+"Watson, D., Hubbard, B., & Wiese, D. (2000). General traits of personality and affectivity as predictors of satisfaction in intimate relationships: Evidence from self-and partner-ratings. Journal of Personality, 68, 413-449.",0.4,0.42364893,0.08304548,148,NA,5.18E-07,"Correlation, separately by sex and relationship status",0.200779634,0.203544805,832,0.034731436,NA,4.37E-07,NA,0.090015689,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.220104125,-0.199220366,-0.519543682,4.37E-07,5.18E-07
+"Watson, D., Hubbard, B., & Wiese, D. (2000). General traits of personality and affectivity as predictors of satisfaction in intimate relationships: Evidence from self-and partner-ratings. Journal of Personality, 68, 413-449.",0.15,0.151140436,0.060971076,272,NA,0.013439759,"Correlation, separately by sex and relationship status",0.156579864,0.15787866,757,0.036417852,NA,0.000404083,NA,0.071019237,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.006738224,0.006579864,0.044582536,0.000404083,0.013439759
+"Watson, D., Hubbard, B., & Wiese, D. (2000). General traits of personality and affectivity as predictors of satisfaction in intimate relationships: Evidence from self-and partner-ratings. Journal of Personality, 68, 413-449.",0.35,0.365443754,0.060971076,272,NA,3.15E-09,"Correlation, separately by sex and relationship status",0.224558956,0.228452033,757,0.036417852,NA,3.47E-07,NA,0.071019237,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.136991722,-0.125441044,-0.374864038,3.47E-07,3.15E-09
+"Watson, D., Hubbard, B., & Wiese, D. (2000). General traits of personality and affectivity as predictors of satisfaction in intimate relationships: Evidence from self-and partner-ratings. Journal of Personality, 68, 413-449.",0.35,0.365443754,0.060971076,272,NA,3.15E-09,"Correlation, separately by sex and relationship status",0.192838968,0.19528412,757,0.036417852,NA,1.27E-05,NA,0.071019237,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.170159634,-0.157161032,-0.465624689,1.27E-05,3.15E-09
+"Watson, D., Hubbard, B., & Wiese, D. (2000). General traits of personality and affectivity as predictors of satisfaction in intimate relationships: Evidence from self-and partner-ratings. Journal of Personality, 68, 413-449.",0.33,0.342828254,0.08304548,148,NA,4.47E-05,"Correlation, separately by sex and relationship status",0.358531343,0.375199589,832,0.034731436,NA,4.26E-20,NA,0.090015689,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.032371334,0.028531343,0.094424347,4.26E-20,4.47E-05
+"Watson, D., Hubbard, B., & Wiese, D. (2000). General traits of personality and affectivity as predictors of satisfaction in intimate relationships: Evidence from self-and partner-ratings. Journal of Personality, 68, 413-449.",0.3,0.309519604,0.060971076,272,NA,4.85E-07,"Correlation, separately by sex and relationship status",0.097736418,0.09804942,757,0.036417852,NA,0.027634676,NA,0.071019237,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.211470184,-0.202263582,-0.683220646,0.027634676,4.85E-07
+"Robins, R. W., Caspi, A., & Moffitt, T. E. (2002). It's not just who you're with, it's who you are: Personality and relationship experiences across multiple relationships. Journal of Personality, 70, 925-964.",0.32,0.331647109,0.037555788,712,NA,2.16E-18,"Partial correlation, controlling for sex and same vs. new partner",0.006996897,0.006997011,1154,0.029475579,NA,0.824762264,NA,0.04774146,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,FALSE,FALSE,-0.324650098,-0.313003103,-0.97890224,0.824762264,2.16E-18
+"Robins, R. W., Caspi, A., & Moffitt, T. E. (2002). It's not just who you're with, it's who you are: Personality and relationship experiences across multiple relationships. Journal of Personality, 70, 925-964.",0.25,0.255412812,0.037555788,712,NA,1.36E-11,"Partial correlation, controlling for sex and same vs. new partner",0.093285669,0.093557688,1154,0.029475579,NA,0.002695922,NA,0.04774146,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.161855124,-0.156714331,-0.633700097,0.002695922,1.36E-11
+"Shiner, R. L., Masten, A. S., & Tellegen, A. (2002). A developmental perspective on personality in Young adulthood: Childhood antecedents and concurrent adaptation. Journal of Personality and Social Psychology, 83, 1165-1177.",0.28,0.287682072,0.073720978,187,NA,0.000103946,Correlation,0.29180016,0.300532842,1550,0.025424642,NA,6.31E-25,NA,0.077982017,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.01285077,0.01180016,0.044670041,6.31E-25,0.000103946
+"Shiner, R. L., Masten, A. S., & Tellegen, A. (2002). A developmental perspective on personality in Young adulthood: Childhood antecedents and concurrent adaptation. Journal of Personality and Social Psychology, 83, 1165-1177.",0.28,0.287682072,0.073720978,187,NA,0.000103946,Correlation,0.066621333,0.066720161,1550,0.025424642,NA,0.020548468,NA,0.077982017,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.220961912,-0.213378667,-0.768076752,0.020548468,0.000103946
+"Wiebe, R. P. (2004). Delinquent behavior and the Five-Factor Model: Hiding in the adaptive landscape. Individual Differences Research, 2, 38-62.",0.2,0.202732554,0.071795816,197,NA,0.004945799,"Correlation, separately by sex",0.232395915,0.236720683,1550,0.025424642,NA,1.18E-19,NA,0.076164635,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.033988129,0.032395915,0.167650081,1.18E-19,0.004945799
+"Wiebe, R. P. (2004). Delinquent behavior and the Five-Factor Model: Hiding in the adaptive landscape. Individual Differences Research, 2, 38-62.",0.31,0.320545409,0.071795816,197,NA,9.79E-06,"Correlation, separately by sex",0.188199018,0.190469398,1550,0.025424642,NA,2.63E-13,NA,0.076164635,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.130076012,-0.121800982,-0.405795896,2.63E-13,9.79E-06
+"Clark, L. A., Vorhies, L. & McEwen, J. L. (2002). Personality disorder symptomatology from the Five-Factor Model perspective. In P. T. Costa & T. A. Widiger (Eds.), Personality disorders and the Five-Factor Model of personality (2nd ed., pp. 125-147). Washington, DC: American Psychological Association.",0.58,0.662462707,0.072357461,194,NA,7.85E-19,Correlation,0.498571498,0.547403285,1505,0.025802693,NA,1.29E-52,NA,0.076820447,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.115059422,-0.081428502,-0.173684376,1.29E-52,7.85E-19
+"Clark, L. A., Vorhies, L. & McEwen, J. L. (2002). Personality disorder symptomatology from the Five-Factor Model perspective. In P. T. Costa & T. A. Widiger (Eds.), Personality disorders and the Five-Factor Model of personality (2nd ed., pp. 125-147). Washington, DC: American Psychological Association.",0.24,0.244774113,0.072357461,194,NA,0.000750019,Correlation,0.464168546,0.502611577,1505,0.025802693,NA,3.13E-48,NA,0.076820447,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.257837464,0.224168546,1.053369008,3.13E-48,0.000750019
+"Clark, L. A., Vorhies, L. & McEwen, J. L. (2002). Personality disorder symptomatology from the Five-Factor Model perspective. In P. T. Costa & T. A. Widiger (Eds.), Personality disorders and the Five-Factor Model of personality (2nd ed., pp. 125-147). Washington, DC: American Psychological Association.",0.25,0.255412812,0.072357461,194,NA,0.000438785,Correlation,0.033355342,0.03336772,1505,0.025802693,NA,0.333512824,NA,0.076820447,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,FALSE,FALSE,-0.222045092,-0.216644658,-0.869357688,0.333512824,0.000438785
+"Clark, L. A., Vorhies, L. & McEwen, J. L. (2002). Personality disorder symptomatology from the Five-Factor Model perspective. In P. T. Costa & T. A. Widiger (Eds.), Personality disorders and the Five-Factor Model of personality (2nd ed., pp. 125-147). Washington, DC: American Psychological Association.",0.6,0.693147181,0.072357461,194,NA,2.35E-20,Correlation,0.568327906,0.645049522,1505,0.025802693,NA,1.01E-56,NA,0.076820447,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.048097659,-0.031672094,-0.069390254,1.01E-56,2.35E-20
+"Clark, L. A., Vorhies, L. & McEwen, J. L. (2002). Personality disorder symptomatology from the Five-Factor Model perspective. In P. T. Costa & T. A. Widiger (Eds.), Personality disorders and the Five-Factor Model of personality (2nd ed., pp. 125-147). Washington, DC: American Psychological Association.",0.53,0.59014516,0.072357461,194,NA,1.91E-15,Correlation,0.664192808,0.800279161,1505,0.025802693,NA,2.55E-91,NA,0.076820447,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.210134001,0.134192808,0.356071718,2.55E-91,1.91E-15
+"Clark, L. A., Vorhies, L. & McEwen, J. L. (2002). Personality disorder symptomatology from the Five-Factor Model perspective. In P. T. Costa & T. A. Widiger (Eds.), Personality disorders and the Five-Factor Model of personality (2nd ed., pp. 125-147). Washington, DC: American Psychological Association.",0.41,0.435611223,0.072357461,194,NA,2.91E-09,Correlation,0.588597394,0.675517226,1505,0.025802693,NA,2.28E-73,NA,0.076820447,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.239906002,0.178597394,0.550734209,2.28E-73,2.91E-09
+"Clark, L. A., Vorhies, L. & McEwen, J. L. (2002). Personality disorder symptomatology from the Five-Factor Model perspective. In P. T. Costa & T. A. Widiger (Eds.), Personality disorders and the Five-Factor Model of personality (2nd ed., pp. 125-147). Washington, DC: American Psychological Association.",0.37,0.3884231,0.072357461,194,NA,1.10E-07,Correlation,0.469712231,0.50970104,1505,0.025802693,NA,2.74E-38,NA,0.076820447,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.12127794,0.099712231,0.312231535,2.74E-38,1.10E-07
+"Clark, L. A., Vorhies, L. & McEwen, J. L. (2002). Personality disorder symptomatology from the Five-Factor Model perspective. In P. T. Costa & T. A. Widiger (Eds.), Personality disorders and the Five-Factor Model of personality (2nd ed., pp. 125-147). Washington, DC: American Psychological Association.",0.52,0.576339755,0.072357461,194,NA,7.83E-15,Correlation,0.356998095,0.373441284,1505,0.025802693,NA,1.23E-16,NA,0.076820447,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.202898471,-0.163001905,-0.352046634,1.23E-16,7.83E-15
+"Clark, L. A., Vorhies, L. & McEwen, J. L. (2002). Personality disorder symptomatology from the Five-Factor Model perspective. In P. T. Costa & T. A. Widiger (Eds.), Personality disorders and the Five-Factor Model of personality (2nd ed., pp. 125-147). Washington, DC: American Psychological Association.",0.25,0.255412812,0.072357461,194,NA,0.000438785,Correlation,0.397244185,0.420372485,1505,0.025802693,NA,6.35E-32,NA,0.076820447,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.164959674,0.147244185,0.645855125,6.35E-32,0.000438785
+"Clark, L. A., Vorhies, L. & McEwen, J. L. (2002). Personality disorder symptomatology from the Five-Factor Model perspective. In P. T. Costa & T. A. Widiger (Eds.), Personality disorders and the Five-Factor Model of personality (2nd ed., pp. 125-147). Washington, DC: American Psychological Association.",0.52,0.576339755,0.072357461,194,NA,7.83E-15,Correlation,0.489963581,0.536012412,1505,0.025802693,NA,4.93E-49,NA,0.076820447,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.040327343,-0.030036419,-0.069971475,4.93E-49,7.83E-15
+"Clark, L. A., Vorhies, L. & McEwen, J. L. (2002). Personality disorder symptomatology from the Five-Factor Model perspective. In P. T. Costa & T. A. Widiger (Eds.), Personality disorders and the Five-Factor Model of personality (2nd ed., pp. 125-147). Washington, DC: American Psychological Association.",0.37,0.3884231,0.072357461,194,NA,1.10E-07,Correlation,0.42964466,0.459460816,1505,0.025802693,NA,5.65E-38,NA,0.076820447,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.071037717,0.05964466,0.182887466,5.65E-38,1.10E-07
+"Clark, L. A., Vorhies, L. & McEwen, J. L. (2002). Personality disorder symptomatology from the Five-Factor Model perspective. In P. T. Costa & T. A. Widiger (Eds.), Personality disorders and the Five-Factor Model of personality (2nd ed., pp. 125-147). Washington, DC: American Psychological Association.",0.38,0.40005965,0.072357461,194,NA,4.63E-08,Correlation,0.43572152,0.466937457,1505,0.025802693,NA,2.34E-33,NA,0.076820447,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.066877807,0.05572152,0.167169588,2.34E-33,4.63E-08
+"Clark, L. A., Vorhies, L. & McEwen, J. L. (2002). Personality disorder symptomatology from the Five-Factor Model perspective. In P. T. Costa & T. A. Widiger (Eds.), Personality disorders and the Five-Factor Model of personality (2nd ed., pp. 125-147). Washington, DC: American Psychological Association.",0.45,0.484700279,0.072357461,194,NA,4.62E-11,Correlation,0.558277642,0.63032744,1505,0.025802693,NA,1.68E-89,NA,0.076820447,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.145627162,0.108277642,0.30044786,1.68E-89,4.62E-11
+"Clark, L. A., Vorhies, L. & McEwen, J. L. (2002). Personality disorder symptomatology from the Five-Factor Model perspective. In P. T. Costa & T. A. Widiger (Eds.), Personality disorders and the Five-Factor Model of personality (2nd ed., pp. 125-147). Washington, DC: American Psychological Association.",0.37,0.3884231,0.072357461,194,NA,1.10E-07,Correlation,0.383810929,0.404521333,1505,0.025802693,NA,5.51E-26,NA,0.076820447,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.016098233,0.013810929,0.041445097,5.51E-26,1.10E-07
+"Clark, L. A., Vorhies, L. & McEwen, J. L. (2002). Personality disorder symptomatology from the Five-Factor Model perspective. In P. T. Costa & T. A. Widiger (Eds.), Personality disorders and the Five-Factor Model of personality (2nd ed., pp. 125-147). Washington, DC: American Psychological Association.",0.38,0.40005965,0.072357461,194,NA,4.63E-08,Correlation,0.401515349,0.425454221,1505,0.025802693,NA,3.88E-27,NA,0.076820447,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.025394571,0.021515349,0.063476962,3.88E-27,4.63E-08
+"Clark, L. A., Vorhies, L. & McEwen, J. L. (2002). Personality disorder symptomatology from the Five-Factor Model perspective. In P. T. Costa & T. A. Widiger (Eds.), Personality disorders and the Five-Factor Model of personality (2nd ed., pp. 125-147). Washington, DC: American Psychological Association.",0.3,0.309519604,0.072357461,194,NA,2.14E-05,Correlation,0.289075837,0.297557537,1505,0.025802693,NA,7.04E-17,NA,0.076820447,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.011962068,-0.010924163,-0.038647205,7.04E-17,2.14E-05
+"Gottfredson, G. D., Jones, E. M., & Holland, J. L. (1993). Personality and vocational interests: The relation of Holland’s six interest dimensions to five robust dimensions of personality. Journal of Counseling Psychology, 40, 518-524.",0.25,0.255412812,0.037216146,725,NA,8.86E-12,"Correlation, separately by sex",0.160161885,0.161552839,1503,0.025819889,NA,1.07E-08,NA,0.045295786,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.093859973,-0.089838115,-0.367483419,1.07E-08,8.86E-12
+"Gottfredson, G. D., Jones, E. M., & Holland, J. L. (1993). Personality and vocational interests: The relation of Holland’s six interest dimensions to five robust dimensions of personality. Journal of Counseling Psychology, 40, 518-524.",0.3,0.309519604,0.037216146,725,NA,1.60E-16,"Correlation, separately by sex",0.434877669,0.465896326,1503,0.025819889,NA,7.54E-61,NA,0.045295786,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.156376722,0.134877669,0.505223967,7.54E-61,1.60E-16
+"Gottfredson, G. D., Jones, E. M., & Holland, J. L. (1993). Personality and vocational interests: The relation of Holland’s six interest dimensions to five robust dimensions of personality. Journal of Counseling Psychology, 40, 518-524.",0.16,0.161386696,0.037216146,725,NA,1.52E-05,"Correlation, separately by sex",0.168433095,0.170053568,1503,0.025819889,NA,2.48E-09,NA,0.045295786,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.008666872,0.008433095,0.053702518,2.48E-09,1.52E-05
+"Gottfredson, G. D., Jones, E. M., & Holland, J. L. (1993). Personality and vocational interests: The relation of Holland’s six interest dimensions to five robust dimensions of personality. Journal of Counseling Psychology, 40, 518-524.",0.11,0.110446916,0.037216146,725,NA,0.003039831,"Correlation, separately by sex",0.092752813,0.093020182,1503,0.025819889,NA,0.001075593,NA,0.045295786,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.017426734,-0.017247187,-0.157783802,0.001075593,0.003039831
+"Gottfredson, G. D., Jones, E. M., & Holland, J. L. (1993). Personality and vocational interests: The relation of Holland’s six interest dimensions to five robust dimensions of personality. Journal of Counseling Psychology, 40, 518-524.",0.16,0.161386696,0.037216146,725,NA,1.52E-05,"Correlation, separately by sex",0.196332229,0.198914857,1503,0.025819889,NA,1.50E-12,NA,0.045295786,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.037528161,0.036332229,0.232535656,1.50E-12,1.52E-05
+"Roberts, B. W., Caspi, A., & Moffitt, T. E. (2003). Work experiences and personality development in young adulthood. Journal of Personality and Social Psychology, 84, 582-593.",0.19,0.192337169,0.034179296,859,NA,2.00E-08,Correlation,-0.017704085,-0.017705935,838,0.034606427,NA,0.60902153,NA,0.048639789,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,FALSE,FALSE,-0.210043104,-0.207704085,-1.092056749,0.60902153,2.00E-08
+"Judge, T. A., Higgins, C. A., Thoresen, C. J., & Barrick, M. R. (1999). The Big Five personality traits, general mental ability, and career success across the life span. Personnel Psychology, 52, 621-652.",0.5,0.549306144,0.072357461,194,NA,1.15E-13,Correlation,-0.069578782,-0.069691391,481,0.045738935,NA,0.127942565,NA,0.085601707,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,FALSE,FALSE,-0.618997535,-0.569578782,-1.126871675,0.127942565,1.15E-13
+"Judge, T. A., Higgins, C. A., Thoresen, C. J., & Barrick, M. R. (1999). The Big Five personality traits, general mental ability, and career success across the life span. Personnel Psychology, 52, 621-652.",0.34,0.354092529,0.072357461,194,NA,1.23E-06,Correlation,0.09728102,0.09758965,481,0.045738935,NA,0.033104011,NA,0.085601707,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.256502879,-0.24271898,-0.72439506,0.033104011,1.23E-06
+"Judge, T. A., Higgins, C. A., Thoresen, C. J., & Barrick, M. R. (1999). The Big Five personality traits, general mental ability, and career success across the life span. Personnel Psychology, 52, 621-652.",0.2,0.202732554,0.072357461,194,NA,0.005174249,Correlation,0.248901294,0.254241202,512,0.044324221,NA,2.71E-08,NA,0.08485422,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.051508647,0.048901294,0.254071911,2.71E-08,0.005174249
+"Judge, T. A., Higgins, C. A., Thoresen, C. J., & Barrick, M. R. (1999). The Big Five personality traits, general mental ability, and career success across the life span. Personnel Psychology, 52, 621-652.",0.26,0.266108407,0.072357461,194,NA,0.000251091,Correlation,0.317382406,0.328733605,512,0.044324221,NA,8.13E-13,NA,0.08485422,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.062625198,0.057382406,0.235337166,8.13E-13,0.000251091
+"Thoresen, C. J., Kaplan, S. A., Barsky, A. P., Warren, C. R., & de Chermont (2003). The affective underpinnings of job perceptions and attitudes: A Meta-analytic review and integration. Psychological Bulletin, 129, 914-945.",0.18,0.181982689,0.009121112,12023,NA,4.27E-88,Correlation,0.209542254,0.212692531,747,0.036661779,NA,7.86E-08,NA,0.037779369,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.030709843,0.029542254,0.16875145,7.86E-08,4.27E-88
+"Thoresen, C. J., Kaplan, S. A., Barsky, A. P., Warren, C. R., & de Chermont (2003). The affective underpinnings of job perceptions and attitudes: A Meta-analytic review and integration. Psychological Bulletin, 129, 914-945.",0.23,0.234189467,0.008607586,13500,NA,1.48E-161,Correlation,0.178691949,0.180631166,747,0.036661779,NA,4.94E-06,NA,0.037658685,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.053558301,-0.051308051,-0.228696456,4.94E-06,1.48E-161
+"Thoresen, C. J., Kaplan, S. A., Barsky, A. P., Warren, C. R., & de Chermont (2003). The affective underpinnings of job perceptions and attitudes: A Meta-analytic review and integration. Psychological Bulletin, 129, 914-945.",0.17,0.171666664,0.045221563,492,NA,0.000151374,Correlation,0.323577092,0.335637392,748,0.036637165,NA,1.08E-19,NA,0.058200272,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.163970729,0.153577092,0.955169311,1.08E-19,0.000151374
+"Thoresen, C. J., Kaplan, S. A., Barsky, A. P., Warren, C. R., & de Chermont (2003). The affective underpinnings of job perceptions and attitudes: A Meta-analytic review and integration. Psychological Bulletin, 129, 914-945.",0.19,0.192337169,0.037529331,713,NA,3.20E-07,Correlation,0.259824582,0.26592028,748,0.036637165,NA,5.25E-13,NA,0.052447427,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.07358311,0.069824582,0.382573533,5.25E-13,3.20E-07
+"Barrick, M. R., & Mount, M. K. (1991). The Big Five personality dimensions and job performance: A meta-analysis. Personnel Psychology, 44, 1-26.",0.09,0.090244188,0.019048483,2759,NA,2.19E-06,Correlation,0.096934276,0.097239605,853,0.034299717,NA,0.00460266,NA,0.039234109,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.006995417,0.006934276,0.077516542,0.00460266,2.19E-06
+"Barrick, M. R., & Mount, M. K. (1991). The Big Five personality dimensions and job performance: A meta-analysis. Personnel Psychology, 44, 1-26.",0.11,0.110446916,0.019262853,2698,NA,1.01E-08,Correlation,0.034479424,0.034493097,853,0.034299717,NA,0.314495382,NA,0.039338634,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,FALSE,FALSE,-0.075953818,-0.075520576,-0.687695241,0.314495382,1.01E-08
+"Barrick, M. R., & Mount, M. K. (1991). The Big Five personality dimensions and job performance: A meta-analysis. Personnel Psychology, 44, 1-26.",0.13,0.13073985,0.03739788,718,NA,0.000479099,Correlation,-0.0276155,-0.027622523,782,0.035828718,NA,0.440612782,NA,0.051790911,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,FALSE,FALSE,-0.158362373,-0.1576155,-1.211278527,0.440612782,0.000479099
+"Roberts, B. W., Caspi, A., & Moffitt, T. E. (2003). Work experiences and personality development in young adulthood. Journal of Personality and Social Psychology, 84, 582-593.",0.18,0.181982689,0.034179296,859,NA,1.09E-07,Correlation,0.171879098,0.173602322,944,0.032599068,NA,2.57E-07,NA,0.047232653,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.008380366,-0.008120902,-0.046050348,2.57E-07,1.09E-07
+"Judge, T. A., & Bono, J. E. (2000). Five-factor model of personality and transformational leadership. Journal of Applied Psychology, 85, 751-765.",0.22,0.223656109,0.077615053,169,NA,0.00405217,Correlation,0.470532694,0.510754286,747,0.036661779,NA,2.20E-38,NA,0.085838117,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.287098177,0.250532694,1.283658998,2.20E-38,0.00405217
+"Judge, T. A., & Bono, J. E. (2000). Five-factor model of personality and transformational leadership. Journal of Applied Psychology, 85, 751-765.",0.27,0.276863823,0.077615053,169,NA,0.000385062,Correlation,0.282043765,0.289901081,747,0.036661779,NA,7.08E-14,NA,0.085838117,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.013037258,0.012043765,0.047089065,7.08E-14,0.000385062
+"Roberts, B. W., Caspi, A., & Moffitt, T. E. (2003). Work experiences and personality development in young adulthood. Journal of Personality and Social Psychology, 84, 582-593.",0.22,0.223656109,0.034179296,859,NA,7.10E-11,Correlation,0.327634261,0.34017572,944,0.032599068,NA,4.93E-25,NA,0.047232653,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.116519611,0.107634261,0.520976653,4.93E-25,7.10E-11
+"Carlo, G., Okun, M. A., Knight, G. P., & de Guzman, M. R. T. (2005). The interplay of traits and motives on volunteering: Agreeableness, extraversion and prosocial value motivation. Personality and Individual Differences, 38, 1293-1305.",0.14,0.140925576,0.035511041,796,NA,7.39E-05,Correlation,0.19566153,0.198217365,1504,0.025811287,NA,1.92E-14,NA,0.04390053,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.057291789,0.05566153,0.406539329,1.92E-14,7.39E-05
+"Carlo, G., Okun, M. A., Knight, G. P., & de Guzman, M. R. T. (2005). The interplay of traits and motives on volunteering: Agreeableness, extraversion and prosocial value motivation. Personality and Individual Differences, 38, 1293-1305.",0.23,0.234189467,0.035511041,796,NA,5.13E-11,Correlation,0.171234188,0.172937856,1504,0.025811287,NA,2.32E-11,NA,0.04390053,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.06125161,-0.058765812,-0.261547247,2.32E-11,5.13E-11
+"Aspinwall, L. G., & Taylor, S. E. (1992). Modeling cognitive adaptation: A longitudinal investigation of the impact of individual differences and coping on college adjustment and performance. Journal of Personality and Social Psychology, 63, 989-1003.",0.19,0.192337169,NA,672,NA,7.41E-07,"Structural equation model, controlling for self-esteem and other psychological variables",0.319176612,0.330730056,1505,NA,NA,5.95E-29,NA,0.046481687,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.138392887,0.129176612,0.71953272,5.95E-29,7.41E-07
+"Aspinwall, L. G., & Taylor, S. E. (1992). Modeling cognitive adaptation: A longitudinal investigation of the impact of individual differences and coping on college adjustment and performance. Journal of Personality and Social Psychology, 63, 989-1003.",0.13,0.13073985,NA,672,NA,0.000750375,"Structural equation model, controlling for self-esteem and other psychological variables",0.053232748,0.053283116,1505,NA,NA,0.069405058,NA,0.046481687,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,FALSE,FALSE,-0.077456734,-0.076767252,-0.592449314,0.069405058,0.000750375
+"Aspinwall, L. G., & Taylor, S. E. (1992). Modeling cognitive adaptation: A longitudinal investigation of the impact of individual differences and coping on college adjustment and performance. Journal of Personality and Social Psychology, 63, 989-1003.",0.19,0.192337169,NA,672,NA,7.41E-07,"Structural equation model, controlling for self-esteem and other psychological variables",0.185835481,0.188020198,1505,NA,NA,1.43E-10,NA,0.046481687,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.004316971,-0.004164519,-0.022444811,1.43E-10,7.41E-07
+"Aspinwall, L. G., & Taylor, S. E. (1992). Modeling cognitive adaptation: A longitudinal investigation of the impact of individual differences and coping on college adjustment and performance. Journal of Personality and Social Psychology, 63, 989-1003.",0.13,0.13073985,NA,672,NA,0.000750375,"Structural equation model, controlling for self-esteem and other psychological variables",0.289088691,0.297571563,1505,NA,NA,1.24E-23,NA,0.046481687,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,0.166831713,0.159088691,1.27605862,1.24E-23,0.000750375
+"Courneya, K. S., & Hellsten, L. M. (1998). Personality correlates of exercise behavior, motives, barriers and preferences: An application of the five-factor model. Personality and Individual Differences, 24, 625-633.",0.18,0.181982689,0.061898446,264,NA,0.003337802,Correlation,0.092584725,0.092850637,1191,0.029012943,NA,0.001386962,NA,0.068360577,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.089132051,-0.087415275,-0.489783132,0.001386962,0.003337802
+"Williamson, D. A., Kelley, M. L., Davis, C. J., Ruggiero, L., & Blouin, D. C. (1985). Psychopathology of eating disorders: A controlled comparison of bulimic, obese, and normal subjects. Journal of Consulting and Clinical Psychology, 53, 161-166.",0.37,0.3884231,0.19245009,30,NA,0.044164787,"ANOVA (one-way), participants matched for age and height",0.049190234,0.049229966,758,0.036393726,NA,0.176667311,NA,0.195861023,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,FALSE,FALSE,-0.339193133,-0.320809766,-0.873256852,0.176667311,0.044164787
+"Greene, K., Krcmar, M., Walters, L. H., Rubin, D. L., Hale, J., & Hale, L. (2000). Targeting adolescent risk-taking behaviors: The contributions of egocentrism and sensation-seeking. Journal of Adolescence, 23, 439-461.",0.25,0.255412812,0.037241946,724,NA,8.86E-12,Correlation,0.082952059,0.083143114,798,0.035466345,NA,0.01909501,NA,0.051427854,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.172269698,-0.167047941,-0.674475555,0.01909501,8.86E-12
+"Greene, K., Krcmar, M., Walters, L. H., Rubin, D. L., Hale, J., & Hale, L. (2000). Targeting adolescent risk-taking behaviors: The contributions of egocentrism and sensation-seeking. Journal of Adolescence, 23, 439-461.",0.48,0.522984278,0.037241946,724,NA,5.38E-43,Correlation,0.044483787,0.044513164,1499,0.025854384,NA,0.085125543,NA,0.045336649,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,FALSE,FALSE,-0.478471114,-0.435516213,-0.91488623,0.085125543,5.38E-43
+"Greene, K., Krcmar, M., Walters, L. H., Rubin, D. L., Hale, J., & Hale, L. (2000). Targeting adolescent risk-taking behaviors: The contributions of egocentrism and sensation-seeking. Journal of Adolescence, 23, 439-461.",0.48,0.522984278,0.037241946,724,NA,5.38E-43,Correlation,0.077125743,0.077279216,1492,0.025915086,NA,0.002872757,NA,0.045371293,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.445705062,-0.402874257,-0.852234151,0.002872757,5.38E-43
+"Pfefferbaum, B., & Woods, P. B. (1994). Self-report study of impulsive and delinquent behavior in college students. Journal of Adolescent Health, 15, 295-302.",0.35,0.365443754,0.058420624,296,NA,5.90E-10,Correlation,0.108023664,0.108446811,1488,0.025949965,NA,2.97E-05,NA,0.063924721,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.256996943,-0.241976336,-0.703246232,2.97E-05,5.90E-10
+"Mann, J. J., Waternaux, C., Haas, G. L., & Malone, K. M. (1999). Toward a clinical model of suicidal behavior in psychiatric patients. American Journal of Psychiatry, 156, 181-189.",0.28,0.287682072,0.070710678,203,NA,5.21E-05,t-test (independent),0.163994886,0.165489252,1509,0.025768404,NA,1.47E-10,NA,0.075259621,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.122192821,-0.116005114,-0.424749515,1.47E-10,5.21E-05
+"Lichtenstein, P., Pedersen, N. L., Plomin, R., de Faire, U., & McClearn, G. E. (1989). Type A behavior pattern, related personality traits and self-reported coronary heart disease. Personality and Individual Differences, 10, 419-426.",0.15,0.151140436,0.030082842,1108,NA,5.35E-07,"Chi-squared, using a median split for personality, separately by sex",0.036078047,0.036093713,1235,0.028490144,NA,0.2055219,NA,0.041432664,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,FALSE,FALSE,-0.115046723,-0.113921953,-0.761190892,0.2055219,5.35E-07
+"Trull, T. J., & Sher, K. J. (1994). Relationship between the five-factor model of personality and Axis I disorders in a nonclinical sample. Journal of Abnormal Psychology, 103, 350-360.",0.25,0.255412812,0.04637389,468,NA,4.23E-08,"ANOVA (oneway), after standardizing personality scores within sex",0.063887926,0.063975063,1505,0.025802693,NA,0.013207021,NA,0.05306898,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.191437749,-0.186112074,-0.74952289,0.013207021,4.23E-08
+"Trull, T. J., & Sher, K. J. (1994). Relationship between the five-factor model of personality and Axis I disorders in a nonclinical sample. Journal of Abnormal Psychology, 103, 350-360.",0.18,0.181982689,0.04637389,468,NA,9.02E-05,"ANOVA (oneway), after standardizing personality scores within sex",0.021507395,0.021510712,1505,0.025802693,NA,0.404568084,NA,0.05306898,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,FALSE,FALSE,-0.160471977,-0.158492605,-0.881798033,0.404568084,9.02E-05
+"Trull, T. J., & Sher, K. J. (1994). Relationship between the five-factor model of personality and Axis I disorders in a nonclinical sample. Journal of Abnormal Psychology, 103, 350-360.",0.34,0.354092529,0.04637389,468,NA,3.97E-14,"ANOVA (oneway), after standardizing personality scores within sex",0.306746682,0.316950204,1505,0.025802693,NA,3.92E-34,NA,0.05306898,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.037142325,-0.033253318,-0.104894404,3.92E-34,3.97E-14
+"Trull, T. J., & Sher, K. J. (1994). Relationship between the five-factor model of personality and Axis I disorders in a nonclinical sample. Journal of Abnormal Psychology, 103, 350-360.",0.42,0.447692024,0.04637389,468,NA,2.00E-21,"ANOVA (oneway), after standardizing personality scores within sex",0.125690971,0.126359215,1505,0.025802693,NA,1.01E-06,NA,0.05306898,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.321332809,-0.294309029,-0.717754152,1.01E-06,2.00E-21
+"Trull, T. J., & Sher, K. J. (1994). Relationship between the five-factor model of personality and Axis I disorders in a nonclinical sample. Journal of Abnormal Psychology, 103, 350-360.",0.46,0.497311288,0.04637389,468,NA,6.97E-26,"ANOVA (oneway), after standardizing personality scores within sex",0.307966228,0.318296977,1505,0.025802693,NA,2.10E-34,NA,0.05306898,"Soto (2019)
+ Personality Psychology",loopr,NA,NA,NA,TRUE,TRUE,-0.179014311,-0.152033772,-0.359964302,2.10E-34,6.97E-26
+"Knobe, J. (2003). Intentional action and side effects in ordinary language. Analysis, 63, 190-193. doi: 10.1111/1467-8284.00419",0.59,0.67,0.115470054,78,NA,NA,Welch Two Sample t-test,0.66,0.79,7982,0.011195043,NA,< 1E-10,Welch Two Sample t-test,0.116011475,"Klein et al. (2018)
+ Many Labs 2",ML2,1.45,1.75,NA,TRUE,TRUE,0.12,0.07,0.179104478,1.00E-10,NA
+"Hauser, M., Cushman, F., Young, L., Kang-Xing Jin, R., & Mikhail, J. (2007). A dissociation between moral judgments and justifications. Mind & Language, 22, 1-21. doi: 10.1111/j.1468-0017.2006.00297.x",0.78,1.05,NA,2646,NA,NA,Chi square,0.56,0.63,6842,NA,NA,< 1E-10,Two Sided Fisher's Exact Test,0.022903671,"Klein et al. (2018)
+ Many Labs 2",ML2,2.5,1.35,NA,TRUE,TRUE,-0.42,-0.22,-0.4,1.00E-10,NA
+"Ross, L., Greene, D., & House, P. (1977). The “false consensus effect”: An egocentric bias in social perception and attribution processes. Journal of Experimental Social Psychology, 13, 279-301. doi: 10.1016/0022-1031(77)90049-X",0.44,0.48,0.113960576,80,NA,NA,Welch Two Sample t-test,0.51,0.56,7205,0.011783477,NA,< 1E-10,Welch Two Sample t-test,0.11456816,"Klein et al. (2018)
+ Many Labs 2",ML2,0.99,1.18,NA,TRUE,TRUE,0.08,0.07,0.166666667,1.00E-10,NA
+"Gray, K., & Wegner, D. M. (2009). Moral typecasting: divergent perceptions of moral agents and moral patients. Journal of Personality and Social Psychology, 96, 505-520. doi: 10.1037/a0013748",0.37,0.39,0.123091491,69,NA,NA,Welch Two Sample t-test,0.43,0.46,8002,0.011181039,NA,< 1E-10,Welch Two Sample t-test,0.123598264,"Klein et al. (2018)
+ Many Labs 2",ML2,0.8,0.95,NA,TRUE,TRUE,0.07,0.06,0.179487179,1.00E-10,NA
+"Ross, L., Greene, D., & House, P. (1977). The “false consensus effect”: An egocentric bias in social perception and attribution processes. Journal of Experimental Social Psychology, 13, 279-301. doi: 10.1016/0022-1031(77)90049-X",0.37,0.39,0.113960576,80,NA,NA,Welch Two Sample t-test,0.43,0.46,7827,0.011305391,NA,< 1E-10,Welch Two Sample t-test,0.114519976,"Klein et al. (2018)
+ Many Labs 2",ML2,0.8,0.95,NA,TRUE,TRUE,0.07,0.06,0.179487179,1.00E-10,NA
+"Hsee, C. K. (1998). Less is better: When low-value options are valued more highly than highvalue options. Journal of Behavioral Decision Making, 11, 107-121.",0.33,0.34,0.111803399,83,NA,NA,Welch Two Sample t-test,0.36,0.38,7646,0.011438473,NA,< 1E-10,Welch Two Sample t-test,0.112387004,"Klein et al. (2018)
+ Many Labs 2",ML2,0.69,0.78,NA,TRUE,TRUE,0.04,0.03,0.117647059,1.00E-10,NA
+"Tversky, A., & Kahneman, D. (1981). The framing of decisions and the psychology of choice. Science, 211, 453-458.",0.48,0.52,NA,181,NA,NA,Chi square,0.2,0.2,7228,NA,NA,< 1E-10,Two Sided Fisher's Exact Test,0.07587085,"Klein et al. (2018)
+ Many Labs 2",ML2,1.08,0.4,NA,TRUE,TRUE,-0.32,-0.28,-0.615384615,1.00E-10,NA
+"Graham, J., Haidt, J., & Nosek, B. A. (2009). Liberals and conservatives rely on different sets of moral foundations. Journal of Personality and Social Psychology, 96, 1029–1046.",0.25,0.26,0.028795614,1209,NA,NA,Fisher r-to-Z test (1 cor),0.14,0.14,6966,0.011984,NA,< 1E-10,Fisher r-to-Z test (1 cor),0.0311898,"Klein et al. (2018)
+ Many Labs 2",ML2,0.52,0.29,NA,TRUE,TRUE,-0.12,-0.11,-0.461538462,1.00E-10,NA
+"Hauser, M., Cushman, F., Young, L., Kang-Xing Jin, R., & Mikhail, J. (2007). A dissociation between moral judgments and justifications. Mind & Language, 22, 1-21.",0.17,0.17,0.019577758,2612,NA,NA,Two Sample t-test,0.12,0.12,7923,0.011236664,NA,< 1E-10,Two Sample t-test,0.022573242,"Klein et al. (2018)
+ Many Labs 2",ML2,0.34,0.25,NA,TRUE,TRUE,-0.05,-0.05,-0.294117647,1.00E-10,NA
+"Risen, J. L., & Gilovich, T. (2008). Why people are reluctant to tempt fate. Journal of Personality and Social Psychology, 95, 293.",0.19,0.19,0.092450033,120,NA,NA,Two Sample t-test,0.09,0.09,4599,0.01475061,NA,< 1E-10,Two Sample t-test,0.093619384,"Klein et al. (2018)
+ Many Labs 2",ML2,0.39,0.18,NA,TRUE,TRUE,-0.1,-0.1,-0.526315789,1.00E-10,NA
+"Bauer, M. A., Wilkie, J. E., Kim, J. K., & Bodenhausen, G. V. (2012). Cuing consumerism situational materialism undermines personal and social well-being. Psychological Science, 23, 517-523.",0.4,0.42,0.115470054,78,NA,NA,Two Sample t-test,0.06,0.06,6608,0.012304489,NA,< 1E-10,Two Sample t-test,0.116123786,"Klein et al. (2018)
+ Many Labs 2",ML2,0.87,0.12,NA,TRUE,TRUE,-0.36,-0.34,-0.857142857,1.00E-10,NA
+"Critcher, C. R., & Gilovich, T. (2008). Incidental environmental anchors. Journal of Behavioral Decision Making, 21, 241-251",0.15,0.15,0.07124705,200,NA,NA,Two Sample t-test,0.02,0.02,6826,0.012106325,NA,9.21E-02,Two Sample t-test,0.072268286,"Klein et al. (2018)
+ Many Labs 2",ML2,0.3,0.04,NA,FALSE,FALSE,-0.13,-0.13,-0.866666667,0.0921,NA
+"Giessner, S. R., & Schubert, T. W. (2007). High in the hierarchy: How vertical location and judgments of leaders’ power are interrelated. Organizational Behavior and Human Decision Processes, 104, 30-44.",0.27,0.27,0.12803688,64,NA,NA,Two Sample t-test,0.01,0.01,7890,0.011260148,NA,0.16227,Two Sample t-test,0.128531061,"Klein et al. (2018)
+ Many Labs 2",ML2,0.55,0.03,NA,FALSE,FALSE,-0.26,-0.26,-0.962962963,0.16227,NA
+"Tversky, A., & Gati, I. (1978). Studies of similarity. Cognition and categorization, 1, 79-98.",0.23,0.24,0.081378846,154,NA,NA,One Sample t-test,0,0,3549,0.016793091,NA,0.55036,One Sample t-test,0.083093468,"Klein et al. (2018)
+ Many Labs 2",ML2,0.48,0.01,NA,FALSE,FALSE,-0.24,-0.23,-1,0.55036,NA
+"Zhong, C. B., & Liljenquist, K. (2006). Washing away your sins: Threatened morality and physical cleansing. Science, 313, 1451–1452.",0.23,0.24,0.204124145,27,NA,NA,Two Sample t-test,0,0,7001,0.011953994,NA,0.91048,Two Sample t-test,0.204473873,"Klein et al. (2018)
+ Many Labs 2",ML2,0.48,0,NA,FALSE,FALSE,-0.24,-0.23,-1,0.91048,NA
+"Kay, A. C., Laurin, K., Fitzsimons, G. M., & Landau, M. J. (2014). A functional basis for structure-seeking: Exposure to structure promotes willingness to engage in motivated action. Journal of Experimental Psychology: General, 143, 486-491.",0.24,0.24,0.125,67,NA,NA,Welch Two Sample t-test,-0.01,-0.01,6506,0.012400612,NA,0.34678,Welch Two Sample t-test,0.125613595,"Klein et al. (2018)
+ Many Labs 2",ML2,0.49,-0.02,NA,FALSE,FALSE,-0.25,-0.25,-1.041666667,0.34678,NA
+"Van Lange, P. A. M., Otten, W., De Bruin, E. M. N., & Joireman, J. A. (1997). Development of prosocial, individualistic, and competitive orientations: Theory and preliminary evidence. Journal of Personality and Social Psychology, 4, 733 - 746.",0.09,0.09,0.043314808,536,NA,NA,Fisher r-to-Z test (1 cor),-0.01,-0.01,6234,0.012668381,NA,0.1827,Fisher r-to-Z test (1 cor),0.045129375,"Klein et al. (2018)
+ Many Labs 2",ML2,0.19,-0.03,NA,FALSE,FALSE,-0.1,-0.1,-1.111111111,0.1827,NA
+"Alter, A. L., Oppenheimer, D. M., Epley, N., & Eyre, R. N. (2007). Overcoming intuition: metacognitive difficulty activates analytic reasoning. Journal of Experimental Psychology: General, 136, 569.",0.3,0.31,0.162221421,41,NA,NA,Two Sample t-test,-0.01,-0.01,6935,0.012010766,NA,0.17122,Two Sample t-test,0.162665448,"Klein et al. (2018)
+ Many Labs 2",ML2,0.63,-0.03,NA,FALSE,FALSE,-0.32,-0.31,-1.032258065,0.17122,NA
+"Zaval, L., Keenan, E. A., Johnson, E. J., & Weber, E. U. (2014). How warm days increase belief in global warming. Nature Climate Change, 4, 143-147.",0.15,0.15,0.072739297,192,NA,NA,Two Sample t-test,-0.01,-0.01,4204,0.015428498,NA,0.27449,Two Sample t-test,0.074357541,"Klein et al. (2018)
+ Many Labs 2",ML2,0.31,-0.03,NA,FALSE,FALSE,-0.16,-0.16,-1.066666667,0.27449,NA
+"Anderson, C., Kraus, M. W., Galinsky, A. D., & Keltner, D. (2012). The local-ladder effect social status and subjective well-being. Psychological Science, 23, 764-771. doi: 10.1177/0956797611434537",0.27,0.28,0.094072087,116,NA,NA,Two Sample t-test,-0.02,-0.02,6905,0.012036841,NA,7.86E-02,Two Sample t-test,0.094839038,"Klein et al. (2018)
+ Many Labs 2",ML2,0.57,-0.04,NA,FALSE,FALSE,-0.3,-0.29,-1.071428571,0.07857,NA
+"Rottenstreich, Y., & Hsee, C. K. (2001). Money, kisses, and electric shocks: On the affective psychology of risk. Psychological Science, 12, 185-190.",0.35,0.36,NA,40,NA,NA,Chi square,-0.04,-0.04,7450,NA,NA,2.19E-03,Two Sided Fisher's Exact Test,0.164806885,"Klein et al. (2018)
+ Many Labs 2",ML2,0.74,-0.08,NA,TRUE,FALSE,-0.4,-0.39,-1.111111111,0.00219,NA
+"Shafir, E. (1993). Choosing versus rejecting: Why some options are both better and worse than others. Memory & Cognition, 21, 546-556.",0.17,0.17,0.077382323,170,NA,NA,One Sample Z-test,-0.06,-0.06,7901,0.011252303,NA,5.47E-10,One Sample Z-test,0.078196153,"Klein et al. (2018)
+ Many Labs 2",ML2,0.35,-0.13,NA,TRUE,FALSE,-0.23,-0.23,-1.352941176,5.47E-10,NA
