@@ -27,6 +27,13 @@ jagMod <- jags.model(file = 'Analysis/BMWMod.R',
 # Running model and summarising 
 samples <- coda.samples(jagMod,params,n.iter = 100000)
 samplesSum <- summary(samples)
+g <- list()
+for (v in 1:nvar(samples)) {
+    g[v] <- gelman.diag(samples[,v])
+ }
+rhats <- unlist(lapply(g, function(x) {x[1]} ))
+rhatAlpha <- rhats[varnames(samples) == "alpha"]
+rhatPhi <- rhats[varnames(samples) == "phi"]
 
 ## Collecting information from both models
 sums <- do.call(cbind.data.frame, samplesSum)
@@ -59,6 +66,8 @@ propBelow.1THA.BMM <- sum(samplesDechained[,which(str_detect(colnames(samplesDec
 # saveRDS(phi, "Data/mixtureModelOutput/phiSimple.rds")
 # saveRDS(alphaHPD, "Data/mixtureModelOutput/HDIsAlphaSimple.rds") # this was used to save the data that was used later for analysis 
 # saveRDS(phiHPD, "Data/mixtureModelOutput/HPDphiSimple.rds")
+# saveRDS(rhatAlpha, "Data/mixtureModelOutput/rhatAlpha.rds")
+# saveRDS(rhatPhi, "Data/mixtureModelOutput/rhatPhi.rds")
 # write.csv(jagData, "Data/mixtureModelOutput/jagData.csv", row.names = F)
 # saveRDS(propBelow.1.BMM, "Data/mixtureModelOutput/ValuesBelow.1.rds")
   

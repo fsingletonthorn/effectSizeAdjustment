@@ -426,6 +426,8 @@ phiSimple <- readRDS("Data/mixtureModelOutput/phiSimple.rds")
 phiSimpleHDI <- readRDS("Data/mixtureModelOutput/HPDphiSimple.rds")
 propBelow.1.BMM <- readRDS("Data/mixtureModelOutput/ValuesBelow.1.rds")
 jagData <- read_csv("Data/mixtureModelOutput/jagData.csv")
+rhatAlpha <- readRDS("Data/mixtureModelOutput/rhatAlpha.rds")
+rhatPhi <- readRDS("Data/mixtureModelOutput/rhatPhi.rds")
 
 # Ploting the results
 mixtureModelPlot <- ggplot(jagData, aes(x = correlation.o, y = correlation.r,  color = probRealEffect, size = n.r)) + # scale_colour_continuous(low = "#ece2f0", high = "#1c9099")+
@@ -438,9 +440,6 @@ mixtureModelPlot <- ggplot(jagData, aes(x = correlation.o, y = correlation.r,  c
   scale_size(trans = "log", breaks = c(10, 100, 1000, 10000)) + geom_point(colour = "black", na.rm = T, size = .1, shape = 3) +
   xlab("Original correlation")+ ylab("Replication correlation") + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) 
 
-# decreaseCalc <- data_frame(o.div2 = allData$fis.o/2, r = allData$fis.r , "originalDiv2Less" = allData$fis.r > (allData$fis.o / 2))
-
-# sum(decreaseCalc$originalDiv2Less)
 
 # Summary table of included data
 
