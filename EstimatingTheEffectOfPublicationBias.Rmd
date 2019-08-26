@@ -124,12 +124,13 @@ kable(niceREModSum)
  kable(blups, col.names = c("Project" , "Estimate", "Standard Error", "95% PI lower bound", "95% PI upper bound"))
 
 ggplot(blups, aes(x = intrcpt, xmin = pi.lb, xmax = pi.ub , y = Project)) +  geom_errorbarh() +
-  geom_point() + theme_classic() + xlab("Empirical Bayes estimates and credibal intervals of random effects (Fisher Z score)") + ylab(NULL)
+  geom_point() + theme_classic() + xlab("Empirical Bayes estimates and credible intervals of random effects (Fisher Z score)") + ylab(NULL)
 
 options(scipen = 1, digits = 3)
 
 ```
-Figure 2. Empirical Bayes estimates and 95% credible intervals for the random effect of each replicaiton project in Fisher Z scores (i.e., estimates of the difference between the replication project's mean effect size difference and the overall estimated mean effect size difference). These values are equivalent to 95% confidence intervals assuming that the studies are a random sample from a population with normally distributed average effect size difference.
+
+*Figure 2.* Empirical Bayes estimates and 95% credible intervals for the random effect of each replication  project in Fisher Z scores (i.e., estimates of the difference between the replication project's mean effect size difference and the overall estimated mean effect size difference).
 
 
 #### Analyses 2 and 3: Results from multilevel random effects meta-analysis with exclusions 
