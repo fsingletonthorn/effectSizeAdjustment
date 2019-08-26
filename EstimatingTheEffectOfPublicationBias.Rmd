@@ -113,16 +113,24 @@ kable(niceREModSum)
 
 \n 
 
-```{r blup}
-
+```{r blups}
 # If you are interested, please uncomment the following for a table of the Empirical Bayes estimates and 95% credible intervals for random effects (i.e., estimates of the difference between the replication project's mean effect size difference and the overall estimated mean effect size difference). These values are equivalent to 95% confidence intervals assuming that the studies are a random sample from a population with normally distributed average effect size difference.
 
-# blups <- BLUPsSource[[1]]
-# row.names(blups) <- str_remove_all(row.names(blups), "\\n")
-# kable(blups, col.names = c("Estimate", "Standard Error", "95% PI lower bound", "95% PI upper bound"))
+ blups <- BLUPsSource[[1]]
+ # row.names(blups) <- str_remove_all(row.names(blups), "\\n")
+ blups$Project <- row.names(blups)
+ blups <- dplyr::select(blups, Project, everything())
+ row.names(blups) <- NULL
+ kable(blups, col.names = c("Project" , "Estimate", "Standard Error", "95% PI lower bound", "95% PI upper bound"))
+
+ggplot(blups, aes(x = intrcpt, xmin = pi.lb, xmax = pi.ub , y = Project)) +  geom_errorbarh() +
+  geom_point() + theme_classic() + xlab("Empirical Bayes estimates and credibal intervals of random effects (Fisher Z score)") + ylab(NULL)
 
 options(scipen = 1, digits = 3)
+
 ```
+Figure 2. Empirical Bayes estimates and 95% credible intervals for the random effect of each replicaiton project in Fisher Z scores (i.e., estimates of the difference between the replication project's mean effect size difference and the overall estimated mean effect size difference). These values are equivalent to 95% confidence intervals assuming that the studies are a random sample from a population with normally distributed average effect size difference.
+
 
 #### Analyses 2 and 3: Results from multilevel random effects meta-analysis with exclusions 
 
@@ -166,14 +174,14 @@ As was pointed out in {Camerer, 2018 #967}, values close to the diagonal (i.e., 
 mixtureModelPlot + coord_equal(ratio=1)
 ```
 
-###### Figure 2. 
+###### Figure 3. 
 A scatterplot of replication study effect sizes (in correlation coefficients) plotted against original study effect sizes, colored by the posterior assignment rate, the proportion of times each study was assigned to the alternative hypothesis. Points that fall on the solid, diagonal line represent replication effect sizes equal to the original effect sizes. Point size represents (the log) of the number of participants in the replication study.
 
 ## Discussion 
 
 The results show that there was a substantial average decrease in effects sizes between original and replication studies and suggest that this is still the case even after accounting for the presence of null effects. The results of the multilevel meta-analysis show an estimated mean decrease of r = `r REModSum$estimate_Cor`, (95% CI [`r REModSum$CI95_Cor`]), equivalent to a `r REModSum$estimate_D` point Cohen's d decrease (95% CI [`r REModSum$CI95_d`]), or an estimated decrease of `r abs(round((REModSum$estimate_Z/mean(allData$fis.o, na.rm = T)),2))*100`%  (95% CI [`r abs(round((REModSum$CI95_Z/mean(allData$fis.o, na.rm = T))*100))[1]`%, `r abs(round((REModSum$CI95_Z/mean(allData$fis.o, na.rm = T))*100)[2])`%]) of the mean effect size in the original studies (a Fisher z equivalent to r = `r ztor(mean(allData$fis.o, na.rm = T))`). 
 
-Arguably of more interest to researchers examining and planning research is the question of how much effect size attenuation should be expected under the assumption that the effect size is non-zero. All of the methods used here largely agreed, although the degree of precision in their estimates differs. The Bayesian mixture model suggests that there is an average decrease of `r round((1-as.numeric(alphaSimple))*100)`%, with a 95% highest probability density interval of [`r  (1-round(as.numeric(HDISimple)[2], 2))*100`%, `r  (1-round(as.numeric(HDISimple)[1], 2))*100`%]. The multilevel meta-analysis models that excluded non-significant results and studies in which the replications studies were statistically equivalent to the null both led to similar conclusions, although they give less precise estimates, highlighting the uncertainty in these estimates.. For example, the confidence intervals over both of the models in Analyses 2 and 3 extend from a meaningful decrease of r = `r ztor(min(modSumariesR$MLM95lb[-1]))` to a trivial  increase of r = `r ztor(max(modSumariesR$MLM95ub[-1]))`.
+Arguably of more interest to researchers examining and planning research is the question of how much effect size attenuation should be expected under the assumption that the effect size is non-zero. All of the methods used here largely agreed, although the degree of precision in their estimates differs. The Bayesian mixture model suggests that there is an average decrease of `r round((1-as.numeric(alphaSimple))*100)`%, with a 95% highest probability density interval of [`r  (1-round(as.numeric(HDISimple)[2], 2))*100`%, `r  (1-round(as.numeric(HDISimple)[1], 2))*100`%]. The multilevel meta-analysis models that excluded non-significant results and studies in which the replications studies were statistically equivalent to the null both led to similar conclusions, although they give less precise estimates, highlighting the uncertainty in these estimates. For example, the confidence intervals over both of the models in Analyses 2 and 3 extend from a meaningful decrease of r = `r ztor(min(modSumariesR$MLM95lb[-1]))` to a trivial  increase of r = `r ztor(max(modSumariesR$MLM95ub[-1]))`.
 
 In using these results to inform future research (e.g., in sample size planning) and to interpret the published literature, it is essential to take note of the level of heterogeneity in the effect size attenuation across not just replicated effects but also across replication projects. The sampling decisions and replication methods used by each of the included projects appears to have had a considerable effect on the amount of effect size attenuation seen (e.g., looking at the results of Analysis 1, the estimated standard deviation of the  mean level of effect size attenuation  across projects is `r round(sqrt(REMod$sigma2[2]), 3)`, 95% CI [`r confIntsREMod[[1]]$random[2,c(2,3)]`]). The degree of heterogeneity in the amount of effect size attenuation across studies and projects means that using any single estimate of the amount of effect size decrease is likely to be misleading in the case of any individual replication study.
 
@@ -181,7 +189,7 @@ In using these results to inform future research (e.g., in sample size planning)
 catPlot 
 ```
 
-Figure 3. A caterpillar plot of the effect size difference between original and replication study effect sizes ordered by magnitude, error bars are 95% confidence intervals around effect size differences.
+Figure 4. A caterpillar plot of the effect size difference between original and replication study effect sizes ordered by magnitude, error bars are 95% confidence intervals around effect size differences.
 
 #### Limitations and future directions
 
@@ -189,7 +197,10 @@ In interpreting these results it is important to note several limitations. First
 
 The Bayesian mixture model assumes independence between effects, a uniform attenuation factor across all areas of psychological research, and allows for effects sampled from the alternative distribution to be negligibly small or even negative. Future research could help develop a more nuanced account of the data-generation process underlying this dataset by, for example, building a model that allows for the attenuation rate to change across replication studies, or by including more components in order to allowing for studies with negligible or negative but non-null effects in addition to the alternative and null components.
 
-Most importantly, none of the replication projects included in this research exclusively replicated true randomly selected studies from the literature. The sampling strategies of the replication projects vary widely (e.g., Soto, in press, examines studies included in a previous overview of trait-outcome associations whereas Camerer et al., 2018 only included studies published between 2010 and 2015 in the journals Nature and Science). It is possible that the effect size decreases seen here are systematically different from what would be seen across the behavioural sciences literature more broadly. As stated in the introduction, this analysis therefore should be seen as producing an estimate of the effect size differences we would expect to see in future large-scale replication projects, under the assumption that the effects of the different sampling decisions used by these studies lead to normally distributed effects around some global mean level of effect size attenuation. While the findings presented here should be considered preliminary, this analyses nonetheless provides an initial estimate of the mean effect size attenuation that could be reasonably expected in replication studies and the degree of heterogeneity that is seen across studies. It also suggests that, even after accounting for the presence of null effects, there still noteworthy differences between original and replication studies’ effect sizes.
+The large amount of heterogeneity across the replication projects reinforces the need for future replication projects to attempt to closely replicate a random sample from defined populations of studies. While the current set of replication projects allows us to make reasonable inferences about future replication projects, the varied sampling strategies employed by the previous projects necessarily limit the predictions and inferences we can draw. At the moment, it is difficult to say whether the heterogeneity in effect size attenuation are due to intra-field differences in replicability and effect size attenuation, differences caused by the sampling strategies, or other issues such as differences in the quality of the replication studies.
+
+In order to be able to start to disentangle these different possible causes and develop an account of the predictors and moderators of replication success and effect size attenuation, we need to begin to develop a large representative database of replication studies. Especially if such a database could be augmented with meta-data regarding the type of analysis, design and effects under study, this resource could allow us to make meaningful predictions about individual future replications. However, until a large database of such studies becomes available, analyses like the current one provide the best estimates possible, albeit estimates that should be read and understood with these caveats in mind.
+
 
 ### Conclusion 
 
