@@ -89,8 +89,8 @@ RPP$sei.o <- sqrt(1/(RPP$N.o-3))
 RPP$sei.r <- sqrt(1/(RPP$N.r-3))
 
 ### p-values original and replication study
-RPP$pval.o <- pnorm(RPP$fis.o, sd = RPP$sei.o, lower.tail = FALSE)
-RPP$pval.r <- pnorm(RPP$fis.r, sd = RPP$sei.r, lower.tail = FALSE)
+RPP$pval.o <- 2 * (pnorm(abs(RPP$fis.o), sd = RPP$sei.o, lower.tail = FALSE))
+RPP$pval.r <- 2 * (pnorm(abs(RPP$fis.r), sd = RPP$sei.r, lower.tail = FALSE))
 
 ### Standard error of difference score
 RPP$sei <- sqrt(1/(RPP$N.o-3) + 1/(RPP$N.r-3))
