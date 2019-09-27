@@ -191,6 +191,12 @@ catPlot
 
 Figure 4. A caterpillar plot of the effect size differences between original and replication study effect sizes ordered by magnitude in Fisher Z score units, error bars are 95% confidence intervals around effect size differences.
 
+```{r dpi = 300}
+grid::grid.draw(gt)
+```
+Figure 5. An illustration of the Empirical Bayes estimates for the random effect of each replication project (top panel), random effects for the study (middle panel), and effect (bottom panel) in Fisher Z scores. The superimposed curves show the estimated distributions that each random effect is assumed to be drawn from. The colours of the curves and points indicates the replication project.
+
+
 #### Limitations and future directions
 
 In interpreting these results it is important to note several limitations. Firstly, the current study cannot distinguish between effect size *heterogeneity* (i.e., effect sizes that are different due to subtle unobserved moderators {Kenny, 2019 #1041} and effect size *exaggeration*. However, in so far as effect size heterogeneity tends to lead to smaller effects in replication studies, the distinction may not matter for the purposes of researchers hoping to replicate or plan future similar studies of the same type of effects. It also cannot be ruled out that the effect size differences seen in these large-scale replication projects are larger than would be seen by individuals attempting to replicate particular effects (e.g., if researchers in these large-scale replications have less access to the tacit knowledge that would normally facilitate replicators' efforts).
