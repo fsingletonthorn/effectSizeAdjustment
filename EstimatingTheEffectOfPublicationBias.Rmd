@@ -114,7 +114,7 @@ kable(niceREModSum)
 \n 
 
 ```{r blups}
-# If you are interested, please uncomment the following for a table of the Empirical Bayes estimates and standard errors intervals for random effects (i.e., estimates of the difference between the replication project's mean effect size difference and the overall estimated mean effect size difference). These values are equivalent to 95% confidence intervals assuming that the studies are a random sample from a population with normally distributed average effect size difference.
+# If you are interested, please uncomment the following for a table of the Empirical Bayes estimates and prediction intervals for random effects (i.e., estimates of the difference between the replication project's mean effect size difference and the overall estimated mean effect size difference). 
 
  blups <- BLUPsSource[[1]]
  # row.names(blups) <- str_remove_all(row.names(blups), "\\n")
@@ -191,7 +191,7 @@ catPlot
 
 *Figure 4.* A caterpillar plot of the effect size differences between original and replication study effect sizes ordered by magnitude in Fisher Z score units, error bars are 95% confidence intervals around effect size differences.
 
-```{r dpi = 300}
+```{r dpi = 300, warning=F}
 grid.arrange(project_title, pannel1,
              article_title, pannel2,
              effect_title, pannel3,
