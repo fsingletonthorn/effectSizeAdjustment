@@ -13,6 +13,7 @@ library(reshape2)
 library(car)
 library(broom)
 library(gridExtra)
+library(grid)
 
 # Excluding missind data
 allData <- allData[!is.na(allData$fis.o) & !is.na(allData$fis.r) & !is.na(allData$n.o) & !is.na(allData$n.r),]
@@ -487,15 +488,15 @@ confIntsREMod <- confint(REMod)
 colourPal <- c('#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00',"#8dd3c7",'#a65628','#f781bf')
 
 #### MLM variability plots ####
-# MLMplot 
+# # MLMplot 
 projectEst <-  ranef(REMod)[[1]] +  REMod$b[[1]]
 projectEst$projectName <- row.names(projectEst) %>%
   str_remove( "(\\s\\n.*)|(\\n.*)")
 projectEst$colour <- colourPal
 
-# Calculating Estimated study effects 
-studyEst <-  ranef(REMod)[[2]] 
-studyEst$names <- row.names(studyEst) 
+# Calculating Estimated study effects
+studyEst <-  ranef(REMod)[[2]]
+studyEst$names <- row.names(studyEst)
 studyEst$projectName <- row.names(studyEst) %>%
   str_remove( "(\\s\\n.*)|(\\n.*)")
 temporaryOut <- left_join(studyEst, projectEst, by = c("projectName"))
@@ -503,90 +504,112 @@ studyEst$intrcpt <- studyEst$intrcpt + temporaryOut$intrcpt.y
 studyEst$colour <- temporaryOut$colour
 
 
-# Calcualting estiamted effect - effects 
+# Calcualting estiamted effect - effects
 effectEst <-  ranef(REMod)[[3]]
-effectEst$names <- row.names(effectEst) %>% 
+effectEst$names <- row.names(effectEst) %>%
   str_remove( "/\\d*$")
 effectEst$projectName <- row.names(effectEst) %>%
   str_remove( "(\\s\\n.*)|(\\n.*)")
-effectEst$names <- row.names(effectEst) %>% 
+effectEst$names <- row.names(effectEst) %>%
   str_remove( "/\\d*$")
 temporaryOut <- left_join(effectEst, studyEst, by = c("names" = "names"))
 effectEst$intrcpt <- effectEst$intrcpt  + temporaryOut$intrcpt.y
 effectEst$colour <- temporaryOut$colour
 
-# Allests 
+# Allests
 allEsts <- bind_rows(projectEst, studyEst, effectEst, .id = "level")
 allEsts$level <- factor(allEsts$level, labels = c("Project", "Study", "Effect"))
 allEsts$project <- factor(str_remove( allEsts$names, "(\\s\\n.*)|(\\n.*)"))
 
-# pannel1 <- allEsts %>% 
-#   filter(level == 1) %>%
-#   ggplot(aes(y = 2, x = intrcpt, colour = projectName, fill = projectName)) + 
-#   geom_point(size = 2.5, alpha = 1) +   
-#   scale_fill_manual(values = colourPal)  +
-#   scale_colour_manual(values = colourPal) +
-#   xlab("") + 
-#   theme_classic() +
-#   theme(axis.title.y=element_blank(),
-#         axis.text.y=element_blank(),
-#         axis.ticks.y=element_blank(),
-#         legend.position = "top",
-#         legend.title = element_blank()) + xlim(-.7,.7) + 
-#   stat_function(fun = dnorm , args=list(mean = REMod$b[[1]],  sd =  sqrt(REMod$sigma2)[1]), alpha = .4) 
-# 
-# pannel2 <- allEsts %>% 
-#   filter(level == 2) %>%
-#   ggplot(aes(y = 2, x = intrcpt, colour = projectName, fill = projectName)) + 
-#   geom_jitter(width = 0, height = 1.5, size = 1.5, alpha = .5) +   
-#   scale_fill_manual(values = colourPal)  +
-#   scale_colour_manual(values = colourPal) +
-#   ylab("") + xlab("") + 
-#   theme_classic() +
-#   theme(axis.title.y=element_blank(),
-#         axis.text.y=element_blank(),
-#         axis.ticks.y=element_blank(),
-#         legend.position = "none")+ xlim(-.7,.7)
-# 
-# pannel3 <- allEsts %>% 
-#   filter(level == 3) %>%
-#   ggplot(aes(y = 2, x = intrcpt, colour = projectName, fill = projectName)) + 
-#   geom_jitter(width = 0, height = 1, size = 1, alpha = .4) +   
-#   scale_fill_manual(values = colourPal)  +
-#   scale_colour_manual(values = colourPal) +
-#   ylab("") + xlab("Fisher Z score") + 
-#   theme_classic() +
-#   theme(axis.title.y=element_blank(),
-#         axis.text.y=element_blank(),
-#         axis.ticks.y=element_blank(),
-#         legend.position = "none") + xlim(-.7,.7)
-# 
-# for(i in 1:nrow(projectEst)) {
-#   pannel2 <- pannel2 + 
-#      stat_function(fun = dnorm , args=list(mean = projectEst$intrcpt[i],  sd =  sqrt(REMod$sigma2)[2]), alpha = .3, colour = projectEst$colour[i]) 
-# }
-# 
-# for(i in 1:nrow(studyEst)) {
-#   pannel3<- pannel3 + 
-#     stat_function(fun = dnorm , args=list(mean = studyEst$intrcpt[i],  sd =  sqrt(REMod$sigma2)[3]), alpha = .01, colour = studyEst$colour[i]) 
-# }
+ pannel1 <- allEsts %>%
+   filter(level == "Project") %>%
+   ggplot(aes(y = 2, x = intrcpt, colour = projectName, fill = projectName)) +
+   stat_function(fun = dnorm , args=list(mean = REMod$b[[1]],  sd =  sqrt(REMod$sigma2)[1]), alpha = .4, colour = "black") +
+   geom_jitter(height = .1, width = 0, size = 2.5, alpha = 1) +
+   scale_fill_manual(values = colourPal)  +
+  scale_colour_manual(values = colourPal) +
+  xlab("") +
+  theme_classic() +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        axis.line.y = element_blank(),
+        legend.position = "none",
+        legend.title = element_blank()) + xlim(-.7,.7)
+#
+pannel2 <- allEsts %>%
+  filter(level == "Study") %>%
+  ggplot(aes(y = 1.7, x = intrcpt, colour = projectName, fill = projectName)) +
+  scale_fill_manual(values = colourPal)  +
+  scale_colour_manual(values = colourPal) +
+  ylab("") + xlab("") +
+  theme_classic() +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.line.y = element_blank(),
+        axis.ticks.y=element_blank(),
+        legend.position = "none")+ xlim(-.7,.7)
 
-facetedPlot <- allEsts %>%
-  ggplot(aes(y = 2, x = intrcpt, colour = projectName, fill = projectName)) + 
-    geom_jitter(width = 0, height = .3, size = 1.2) +
-    scale_fill_manual(values = colourPal)  +
-    facet_wrap(~level, ncol = 1) +
-    scale_colour_manual(values = colourPal) +
-    ylab("") + xlab("Fisher Z score") +
-    theme_bw() +
-    theme(axis.title.y=element_blank(),
-          axis.text.y=element_blank(),
-          axis.ticks.y=element_blank(),
-          legend.position = "top")
-  
-  
-gt <- ggplot_build(facetedPlot) %>%
-ggplot_gtable()
+for(i in 1:nrow(projectEst)) {
+  pannel2 <- pannel2 +
+     stat_function(fun = dnorm , args=list(mean = projectEst$intrcpt[i],  sd =  sqrt(REMod$sigma2)[2]), alpha = .3, colour = projectEst$colour[i])
+}
 
-gt$heights[9] <- gt$heights[9] * .3
-#grid::grid.draw(gt)
+pannel2 <- pannel2 + geom_jitter(width = 0, height = 1, size = 1.5, alpha = .5)
+
+pannel3 <- allEsts %>%
+  filter(level == "Effect") %>%
+  ggplot(aes(y = 2, x = intrcpt, colour = projectName, fill = projectName)) +
+  scale_fill_manual(values = colourPal)  +
+  scale_colour_manual(values = colourPal) +
+  ylab("") + xlab("Fisher Z score difference") +
+  theme_classic() +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.line.y = element_blank(),
+        axis.ticks.y=element_blank(),
+        legend.title = element_blank(),
+        legend.position = "bottom") + xlim(-.7,.7) + 
+  guides(colour = guide_legend(override.aes = list(alpha = 1, size = 3)))
+
+# cowplot::plot_grid(pannel1, pannel2, pannel3, align = 'v', ncol = 1)
+
+for(i in 1:nrow(studyEst)) {
+  pannel3<- pannel3 +
+    stat_function(fun = dnorm , args=list(mean = studyEst$intrcpt[i],  sd =  sqrt(REMod$sigma2)[3]), alpha = .01, colour = studyEst$colour[i])
+}
+
+pannel3 <- pannel3 +  geom_jitter(width = 0, height = 1, size = 1, alpha = .5) 
+
+project_title <- grobTree(rectGrob(gp=gpar(fill="lightgrey")),
+                 textGrob("Project", x=0.5, hjust=0.5,
+                          gp=gpar(col="black", cex=1.3)))
+
+article_title <- grobTree(rectGrob(gp=gpar(fill="lightgrey")),
+                 textGrob("Article", x=0.5, hjust=0.5,
+                          gp=gpar(col="black", cex=1.3)))
+
+effect_title <- grobTree(rectGrob(gp=gpar(fill="lightgrey")),
+                 textGrob("Effect", x=0.5, hjust=0.5,
+                          gp=gpar(col="black", cex=1.3)))
+
+
+# facetedPlot <- allEsts %>%
+#   ggplot(aes(y = 2, x = intrcpt, colour = projectName, fill = projectName)) + 
+#     geom_jitter(width = 0, height = .3, size = 1.2) +
+#     scale_fill_manual(values = colourPal)  +
+#     facet_wrap(~level, ncol = 1) +
+#     scale_colour_manual(values = colourPal) +
+#     ylab("") + xlab("Fisher Z score") +
+#     theme_bw() +
+#     theme(axis.title.y=element_blank(),
+#           axis.text.y=element_blank(),
+#           axis.ticks.y=element_blank(),
+#           legend.position = "top")
+#   
+#   
+# gt <- ggplot_build(facetedPlot) %>%
+# ggplot_gtable()
+# 
+# gt$heights[9] <- gt$heights[9] * .3
+# #grid::grid.draw(gt)

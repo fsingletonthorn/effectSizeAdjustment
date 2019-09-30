@@ -192,10 +192,13 @@ catPlot
 Figure 4. A caterpillar plot of the effect size differences between original and replication study effect sizes ordered by magnitude in Fisher Z score units, error bars are 95% confidence intervals around effect size differences.
 
 ```{r dpi = 300}
-grid::grid.draw(gt)
+grid.arrange(project_title, pannel1,
+             article_title, pannel2,
+             effect_title, pannel3,
+             heights=c(1.6,9,1.6,9,1.6,15), ncol = 1)
 ```
-Figure 5. An illustration of the Empirical Bayes estimates for the random effect of each replication project (top panel), random effects for the study (middle panel), and effect (bottom panel) in Fisher Z scores. The superimposed curves show the estimated distributions that each random effect is assumed to be drawn from. The colours of the curves and points indicates the replication project.
 
+*Figure 5.* An illustration of the Empirical Bayes estimates for the random effect of each replication project (top panel), study (middle panel), and effect (bottom panel) in Fisher Z scores differences. The superimposed curves show the estimated distributions that each estimate is assumed to be drawn from. The colours of each point and curve show the replication project.
 
 #### Limitations and future directions
 
@@ -206,7 +209,6 @@ The Bayesian mixture model assumes independence between effects, a uniform atten
 The large amount of heterogeneity across replication projects limits the utility of the fixed effects parameter estimates (i.e., the estimated mean level of attenuation seen across all projects). While the current dataset allows us to make reasonable inferences about future replication projects, the varied sampling strategies employed by the previous projects necessarily limit the inferences we can draw. At the moment, it is difficult to say whether the heterogeneity in effect size attenuation are due to intra-field differences in replicability and effect size attenuation, differences caused by the sampling strategies, or other issues such as differences in the quality of the replication studies.
 
 In order to be able to start to disentangle these different possible causes and develop an account of the predictors and moderators of replication success and effect size attenuation, we need to begin to develop a large representative database of replication studies. Especially if such a database could be augmented with meta-data regarding the type of analysis, design and effects under study, this resource could allow us to make meaningful predictions about individual future replications. However, until a large database of such studies becomes available, analyses like the current one provide the best estimates possible, albeit estimates that should be read and understood with these caveats in mind.
-
 
 ### Conclusion 
 
