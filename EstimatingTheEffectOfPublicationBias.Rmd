@@ -103,7 +103,7 @@ The random effects meta-analysis including all data estimated a r = `r REModSum$
 options(scipen = 1, digits = 3)
 ```
 
-Greater variance was attributable to the article and effect level than to the project (with standard deviations for each random effect of $\sigma_{article}$ = `r round(sqrt(REMod$sigma2[2]), 3)`, $\sigma_{effect}$ = `r round(sqrt(REMod$sigma2[3]), 3)`, compared to $\sigma_{project}$ = `r round(sqrt(REMod$sigma2[1]), 3)`), representing an intraclass correlation (ICC) for the project of `r round(REMod$sigma2[1] / sum(REMod$sigma2), 3)`. There was a large amount of unexplained heterogeneity, `r niceREModSum[5, "Random effects"]`, $I^2$ = `r Io2` (calculated following {Nakagawa, 2012 #1023}), suggesting that `r round(Io2)`% of variance in effect sizes was due to heterogeneity (i.e., variance in the true effect size differences), while the remaining `r 100-round(Io2)`%  was attributable to sampling variance. See figure 2 for Empirical Bayes estimates and 95% credible intervals of the random effect for each of the replication projects.
+Greater variance was attributable to the article and effect level than to the project (with standard deviations for each random effect of $\sigma_{article}$ = `r round(sqrt(REMod$sigma2[2]), 3)`, $\sigma_{effect}$ = `r round(sqrt(REMod$sigma2[3]), 3)`, compared to $\sigma_{project}$ = `r round(sqrt(REMod$sigma2[1]), 3)`), representing an intraclass correlation (ICC) for the project of `r round(REMod$sigma2[1] / sum(REMod$sigma2), 3)`. There was a large amount of unexplained heterogeneity, `r niceREModSum[5, "Random effects"]`, $I^2$ = `r Io2` (calculated following {Nakagawa, 2012 #1023}), suggesting that `r round(Io2)`% of variance in effect sizes was due to heterogeneity (i.e., variance in the true effect size differences), while the remaining `r 100-round(Io2)`%  was attributable to sampling variance. See figure 2 for Empirical Bayes estimates of the random effect for each of the replication projects (calculated following {Raudenbush, 1985 #1055}).
 
 Table 3. Model output from a multilevel random effects meta-analysis of the difference between original and replication effect sizes, with random effects for the project (i.e., which large scale replication project the replication was a part of) and the original (i.e., replicated) article or effect. 
 
@@ -114,23 +114,23 @@ kable(niceREModSum)
 \n 
 
 ```{r blups}
-# If you are interested, please uncomment the following for a table of the Empirical Bayes estimates and 95% credible intervals for random effects (i.e., estimates of the difference between the replication project's mean effect size difference and the overall estimated mean effect size difference). These values are equivalent to 95% confidence intervals assuming that the studies are a random sample from a population with normally distributed average effect size difference.
+# If you are interested, please uncomment the following for a table of the Empirical Bayes estimates and standard errors intervals for random effects (i.e., estimates of the difference between the replication project's mean effect size difference and the overall estimated mean effect size difference). These values are equivalent to 95% confidence intervals assuming that the studies are a random sample from a population with normally distributed average effect size difference.
 
  blups <- BLUPsSource[[1]]
  # row.names(blups) <- str_remove_all(row.names(blups), "\\n")
  blups$Project <- row.names(blups)
  blups <- dplyr::select(blups, Project, everything())
  row.names(blups) <- NULL
- kable(blups, col.names = c("Project" , "Estimate", "Standard Error", "95% PI lower bound", "95% PI upper bound"))
+ # kable(blups, col.names = c("Project" , "Estimate", "Standard Error", "95% PI lower bound", "95% PI upper bound"))
 
-ggplot(blups, aes(x = intrcpt, xmin = pi.lb, xmax = pi.ub , y = Project)) +  geom_errorbarh() +
-  geom_point() + theme_classic() + xlab("Empirical Bayes estimates and credible intervals of random effects (Fisher Z score)") + ylab(NULL)
+ggplot(blups, aes(x = intrcpt, xmin = intrcpt - se, xmax = intrcpt + se , y = Project)) +  geom_errorbarh() +
+  geom_point() + theme_classic() + xlab("Empirical Bayes estimates and standard errors of random effects (Fisher Z score)") + ylab(NULL)
 
 options(scipen = 1, digits = 3)
 
 ```
 
-*Figure 2.* Empirical Bayes estimates and 95% credible intervals for the random effect of each replication  project in Fisher Z scores (i.e., estimates of the difference between the replication project's mean effect size difference and the overall estimated mean effect size difference).
+*Figure 2.* Empirical Bayes estimates of the random effect of each replication  project in Fisher Z scores (i.e., estimates of the difference between the replication project's mean effect size difference and the overall estimated mean effect size difference). Error bars are $\pm$ 1 standard error.
 
 #### Analyses 2 and 3: Results from multilevel random effects meta-analysis with exclusions 
 
@@ -189,7 +189,7 @@ In using these results to inform future research (e.g., in sample size planning)
 catPlot 
 ```
 
-Figure 4. A caterpillar plot of the effect size differences between original and replication study effect sizes ordered by magnitude in Fisher Z score units, error bars are 95% confidence intervals around effect size differences.
+*Figure 4.* A caterpillar plot of the effect size differences between original and replication study effect sizes ordered by magnitude in Fisher Z score units, error bars are 95% confidence intervals around effect size differences.
 
 ```{r dpi = 300}
 grid.arrange(project_title, pannel1,
@@ -198,7 +198,7 @@ grid.arrange(project_title, pannel1,
              heights=c(1.6,9,1.6,9,1.6,15), ncol = 1)
 ```
 
-*Figure 5.* An illustration of the Empirical Bayes estimates for the random effect of each replication project (top panel), study (middle panel), and effect (bottom panel) in Fisher Z scores differences. The superimposed curves show the estimated distributions that each estimate is assumed to be drawn from. The colours of each point and curve show the replication project.
+*Figure 5.* Histograms of the expected differences (i.e., the sum of the Empirical Bayes estimates for random effects and the model intercept from Analysis 1) between original and replication studies for each replication project (top panel), study (middle panel), and effect (bottom panel) in Fisher Z score, illustrating the degree of heterogeneity expected at each level of the multilevel model.
 
 #### Limitations and future directions
 
