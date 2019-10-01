@@ -162,24 +162,24 @@ kableReductions <- kable(tableReductions, digits = 2)
 
 # Plotting effects on each other 
 plotAllData <- ggplot(allData, aes(correlation.o, correlation.r, size = n.r, colour = as.factor(source))) +
-  geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T, alpha = .5) +
-  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + 
+  geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T, alpha = 1) +
+  scale_colour_viridis_d() + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + 
   guides( size = guide_legend(title = "Replication\nSample size", values= trans_format("identity", function(x) round(exp(x),0)), order = 2),
           colour = guide_legend(title = "Replication projects"), override.aes = list(alpha = 1), order = 1) +
   xlab("Original correlation")+ ylab("Replication correlation") + scale_size(trans = "log", breaks = c(10, 100, 1000, 10000))
 
 # Plotting only non-equivalent studies  
 plotNonequiv <- ggplot(allData[!allData$statisticallyEquiv.ro & !is.na(allData$statisticallyEquiv.ro),], aes(correlation.o, correlation.r, size = n.r, colour = as.factor(source))) +
-  geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T, alpha = .5) +
-  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + 
+  geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T, alpha = 1) +
+  scale_colour_viridis_d() + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + 
   guides( size = guide_legend(title = "Replication\nSample size", values= trans_format("identity", function(x) round(exp(x),0)), order = 2),
           colour = guide_legend(title = "Replication projects"), override.aes = list(alpha = 1), order = 1) +
   xlab("Original correlation")+ ylab("Replication correlation") + scale_size(trans = "log", breaks = c(10, 100, 1000, 10000))
 
 # Plotting just significant studies (sig and in same direction)
 plotSigR <- ggplot(allData[allData$significantSameDirection.r==TRUE,], aes(correlation.o, correlation.r, size = n.r, colour = as.factor(source))) +
-  geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T, alpha = .5) +
-  ochRe::scale_colour_ochre(palette = "tasmania") + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + 
+  geom_abline( slope = 1, intercept = 0) +  geom_point(na.rm = T, alpha = 1) +
+  scale_colour_viridis_d() + theme_classic() + ylim(c(-.5, 1))+ xlim(c(-.5, 1)) + 
   guides( size = guide_legend(title = "Replication\nSample size", values= trans_format("identity", function(x) round(exp(x),0)), order = 2),
           colour = guide_legend(title = "Replication projects"), override.aes = list(alpha = 1), order = 1) +
   xlab("Original correlation")+ ylab("Replication correlation") + scale_size(trans = "log", breaks = c(10, 100, 1000, 10000))
@@ -419,7 +419,7 @@ catPlot <- ggplot(plotDat, aes(1:nrow(plotDat),
   xlab(NULL) + ylab("Correlation difference") + 
   theme(axis.title.x=element_blank(),                                            
         axis.text.x=element_blank(), 
-        axis.ticks.x=element_blank()) +  ochRe::scale_colour_ochre(palette = "tasmania") 
+        axis.ticks.x=element_blank()) + scale_colour_viridis_d()
 
 ## Loading data from mixture model to avoid having to rerun the whole model
 HDISimple <- readRDS("Data/mixtureModelOutput/HDIsAlphaSimple.rds")
@@ -485,7 +485,7 @@ Io2 <- 100 * sum(REMod$sigma2) / (sum(REMod$sigma2) + (REMod$k-REMod$p)/sum(diag
 
 # Estimates of the variability 
 confIntsREMod <- confint(REMod)
-colourPal <- c(ochRe::ochre_palettes$tasmania, "#c47000")
+colourPal <- c("#440154FF", "#46337EFF", "#365C8DFF", "#277F8EFF", "#1FA187FF", "#4AC16DFF", "#9FDA3AFF", "#FDE725FF")
  # c('#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00',"#8dd3c7",'#a65628','#f781bf')
 
 #### MLM variability plots ####
@@ -535,7 +535,8 @@ effect_title <- grobTree(rectGrob(gp=gpar(fill="lightgrey")),
                           gp=gpar(col="black", cex=1.3)))
 
 
-######## Atttempt 2 at plots ##### 
+######## Plots of BLUPs at each level ##### 
+
 pannel1 <-  allEsts %>%
   filter(level == "Project") %>%
   ggplot(aes(x = intrcpt,  fill = projectName)) +
