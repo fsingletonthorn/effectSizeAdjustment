@@ -166,7 +166,7 @@ To assess how sensitive the results of the multilevel models were to the inclusi
 
 #### Analysis 4: Bayesian mixture model results
 
-The Bayesian mixture model was estimated using four Markov chains from each of which 100,000 draws were taken (excluding an 11,000 draw burn-in period). Trace and density plots for the discussed parameters were examined and, along with and $\hat{R}$ values within .001 of 1, appeared to suggest that the model successfully converged {Gelman, 2011 #1052}. The overall posterior assignment rate (i.e., the proportion of studies that were estimated to be from the non-null alternative hypothesis) was `r round(phiSimple,2)*100`%, with a 95% highest probability density interval of [`r round(phiSimpleHDI, 2 )[1] * 100`%, `r round(phiSimpleHDI, 2 )[2] * 100`%]. The overall attenuation factor (i.e., the estimated amount that effect sizes decreases between the original and replication studies) was `r round((1-as.numeric(alphaSimple))*100)`% with a 95% highest probability density interval of [`r  (1-round(as.numeric(HDISimple)[2], 2))*100`%, `r  (1-round(as.numeric(HDISimple)[1], 2))*100`%]. Figure 2 shows the original effect sizes plotted against replication effect sizes weighted by sample size, along with the posterior assignment rate. The color of each point indicates how often each effect was assigned to the alternative hypothesis.
+The Bayesian mixture model was estimated using four Markov chains from each of which 100,000 draws were taken (excluding an 11,000 draw burn-in period). Trace and density plots for the discussed parameters were examined and, along with $\hat{R}$ values within .001 of 1, suggest that the model successfully converged {Gelman, 2011 #1052}. The overall posterior assignment rate (i.e., the proportion of studies that were estimated to be from the non-null alternative hypothesis) was `r round(phiSimple,2)*100`%, with a 95% highest probability density interval of [`r round(phiSimpleHDI, 2 )[1] * 100`%, `r round(phiSimpleHDI, 2 )[2] * 100`%]. The overall attenuation factor (i.e., the estimated amount that effect sizes decreases between the original and replication studies) was `r round((1-as.numeric(alphaSimple))*100)`% with a 95% highest probability density interval of [`r  (1-round(as.numeric(HDISimple)[2], 2))*100`%, `r  (1-round(as.numeric(HDISimple)[1], 2))*100`%]. Figure 2 shows the original effect sizes plotted against replication effect sizes weighted by sample size, along with the posterior assignment rate. The color of each point indicates how often each effect was assigned to the alternative hypothesis.
 
 As was pointed out in {Camerer, 2018 #967}, values close to the diagonal (i.e., cases in which the original and replication effect sizes are similar) were reliably assigned to the alternative hypothesis component whereas effects far below the diagonal were more often assigned to the null hypothesis component. The overall posterior assignment rate might be overly optimistic (i.e., assign studies to the non-null hypothesis at a high rate), likely in part due to the fact that this model allows for "true" effect sizes to be estimated as being extremely low or near zero and still assigned to the alternative hypothesis, with `r round(propBelow.1.BMM, 2) * 100`% of the estimated "true" replication effect sizes being smaller than a correlation coefficient of .10.
 
@@ -189,7 +189,7 @@ In using these results to inform future research (e.g., in sample size planning)
 catPlot 
 ```
 
-*Figure 4.* A caterpillar plot of the effect size differences between original and replication study effect sizes ordered by magnitude in Fisher Z score units, error bars are 95% confidence intervals around effect size differences.
+*Figure 4.* A caterpillar plot of the effect size differences between original and replication study effect sizes ordered by magnitude in correlation coefficients, error bars are 95% confidence intervals around effect size differences.
 
 ```{r dpi = 300, warning=F}
 grid.arrange(project_title, pannel1,
@@ -206,9 +206,10 @@ In interpreting these results it is important to note several limitations. First
 
 The Bayesian mixture model assumes independence between effects, a uniform attenuation factor across all areas of psychological research, and allows for effects sampled from the alternative distribution to be negligibly small or even negative. Future research could help develop a more nuanced account of the data-generation process underlying this dataset by, for example, building a model that allows for the attenuation rate to change across replication studies, or by including more components in order to allowing for studies with negligible or negative but non-null effects in addition to the alternative and null components.
 
-The large amount of heterogeneity across replication projects limits the utility of the fixed effects parameter estimates (i.e., the estimated mean level of attenuation seen across all projects). While the current dataset allows us to make reasonable inferences about future replication projects, the varied sampling strategies employed by the previous projects necessarily limit the inferences we can draw. At the moment, it is difficult to say whether the heterogeneity in effect size attenuation are due to intra-field differences in replicability and effect size attenuation, differences caused by the sampling strategies, or other issues such as differences in the quality of the replication studies.
+The large amount of heterogeneity across replication projects limits the utility of the fixed effects parameter estimates (i.e., the estimated mean level of attenuation seen across all projects). While the current dataset allows us to make reasonable inferences about future replication projects, the varied sampling strategies employed by the previous projects necessarily limit the inferences we can draw. At the moment, it is difficult to say whether the heterogeneity in effect size attenuation is due to inter-field differences in replicability and effect size attenuation, differences caused by the sampling strategies, or other issues such as differences in the quality of the replication studies.
 
-In order to be able to start to disentangle these different possible causes and develop an account of the predictors and moderators of replication success and effect size attenuation, we need to begin to develop a large representative database of replication studies. Especially if such a database could be augmented with meta-data regarding the type of analysis, design and effects under study, this resource could allow us to make meaningful predictions about individual future replications. However, until a large database of such studies becomes available, analyses like the current one provide the best estimates possible, albeit estimates that should be read and understood with these caveats in mind.
+In order to be able to start to disentangle these different possible causes and develop an account of the predictors and moderators of replication success and effect size attenuation, we need to begin to develop a large representative database of replication studies. Especially if such a database could be augmented with meta-data regarding the type of analysis, design and effects under study, this resource could allow us to make meaningful predictions about individual future replications. However, such a resource becomes available, analyses like the current one provide the best estimates possible, albeit estimates that should be read and understood with these caveats in mind.
+
 
 ### Conclusion 
 
@@ -318,7 +319,7 @@ A total of `r nrow(data8)` of `r nrow(data8) + 6 ` paired original and replicati
 
 #### Many labs 3 {Ebersole, 2016 #985}
 ##### Sampling frame
-A non-random sample of nine original studies were replicated, and one conceptual replication was performed. The conceptual replication was excluded from the current analyses. Ebersole et al., report that they aimed to identify two-condition experiments or correlational designs. Seven out of the nine included studies were included in a single computer delivered experiment, and were followed by extensive individual difference and data quality indicators. Two experiments were exclusively performed in person as, in one case, the study required participants to physically hold a clipboard, and in one as the original authors said that the experiment needed to be administered using a paper and pencil format. 
+A non-random sample of nine original studies were replicated, and one conceptual replication was performed. The conceptual replication was excluded from the current analyses. Ebersole et al., report that they aimed to identify two-condition experiments or correlational designs. Seven out of the nine included studies were included in a single computer delivered experiment, and were followed by extensive individual difference and data quality indicators. Two experiments were exclusively performed in person as, in one case, the study required participants to physically hold a clipboard, and in one as the original authors said that the experiment needed to be administered using a paper and pencil format.
 
 ##### Participants
 ```{r}
@@ -358,7 +359,7 @@ kable(niceModelSums$`All Data`)
 ```
 
 ```{r}
-plotAllData 
+plotAllData  + coord_equal(ratio=1)
 ```
 
 Figure SM`r figSMN <- 1; figSMN`. Scatter plot of replication effect sizes (in correlation coefficients) plotted against original effects including all data.
@@ -372,7 +373,7 @@ kable(niceModelSums$`Only Signficant replications`)
 
 
 ```{r}
-plotSigR 
+plotSigR  + coord_equal(ratio=1)
 ```
 
 Figure SM`r figSMN <- figSMN+1; figSMN`. Scatter plot of replication effect sizes (in correlation coefficients) plotted against original effects including only statistically significant replications. 
@@ -385,7 +386,7 @@ kable(niceModelSums$`Non-equivalent studies`)
 ```
 
 ```{r}
-plotNonequiv 
+plotNonequiv  + coord_equal(ratio=1)
 ```
 
 Figure SM`r figSMN <- figSMN+1; figSMN`. Scatter plot of replication effect sizes (in correlation coefficients) plotted against original effects including studies which are not statistically equivalent to the null, using equivalence bounds set as the minimum effect size that would have been statistically significant in the original study.

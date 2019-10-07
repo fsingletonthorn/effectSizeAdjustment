@@ -407,13 +407,13 @@ ggsave(plot =  fisherZChangePlot,
 
 ## more plots - catapillar plot of correlation differences 
 plotDat <- allData[!is.na(allData$fisherZDiff),]
-plotDat <- plotDat[order(plotDat$correlationDifference.ro),]
+plotDat <- plotDat[order(plotDat$fisherZDiff),]
 names(plotDat)[names(plotDat)=="source"]  <- "Project"
 
 catPlot <- ggplot(plotDat, aes(1:nrow(plotDat), 
-                               correlationDifference.ro, 
-                               ymin = correlationDifference.ro + ztor(1.96*seDifference.ro), 
-                               ymax = correlationDifference.ro -  ztor(1.96*seDifference.ro), 
+                               ztor(fisherZDiff), 
+                               ymin = ztor( fisherZDiff + 1.96*seDifference.ro), 
+                               ymax =  ztor( fisherZDiff - 1.96*seDifference.ro), 
                                color = Project)) + 
   geom_point(na.rm = T) + geom_errorbar(na.rm = T) + theme_classic() + 
   xlab(NULL) + ylab("Correlation difference") + 
